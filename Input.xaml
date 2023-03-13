@@ -11,6 +11,9 @@
       Background="White">
 
     <Grid>
-        <TextBlock Text="Input page" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <StackPanel>
+            <TextBlock Text="Part Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
+            <TextBox HorizontalAlignment="Left" Margin="15,10,0,0" Width="100" Height="20" FontSize="15" KeyDown="TextBox_KeyDown"/>
+        </StackPanel>
     </Grid>
 </Page>

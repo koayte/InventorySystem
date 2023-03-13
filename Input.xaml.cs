@@ -24,5 +24,13 @@ namespace InventorySystem
         {
             InitializeComponent();
         }
+
+        private void PartNum_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key== Key.Enter)
+            {
+                // Submit request to SQL database
+            }
+        }
     }
 }
