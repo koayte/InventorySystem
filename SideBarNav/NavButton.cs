@@ -58,18 +58,16 @@ namespace InventorySystem.SideBarNav
             set { SetValue(NavlinkProperty, value); }
         }
         public static readonly DependencyProperty NavlinkProperty =
-            DependencyProperty.Register("Navlink", typeof(Uri), typeof(NavButton), new PropertyMetadata());
+            DependencyProperty.Register("Navlink", typeof(Uri), typeof(NavButton), new PropertyMetadata(null));
 
-        // Hold information for the icon to click.
-        public Geometry Icon
+        // Hold information for the textblock to click. 
+        public string Textlabel
         {
-            get { return (Geometry)GetValue(IconProperty); }
-            set { SetValue(IconProperty, value); }
+            get { return (string)GetValue(TextlabelProperty); }
+            set { SetValue(TextlabelProperty, value); }
         }
-
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(Geometry), typeof(NavButton), new PropertyMetadata(0));
+        public static readonly DependencyProperty TextlabelProperty =
+            DependencyProperty.Register("Textlabel", typeof(string), typeof(NavButton), new PropertyMetadata(null));
 
     }
 }

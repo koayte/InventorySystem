@@ -1,8 +1,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:InventorySystem.SideBarNav"
-    xmlns:MyNamespace="clr-namespace:InventorySystem.SideBarNav">
+    xmlns:local="clr-namespace:InventorySystem"
+    xmlns:y="clr-namespace:InventorySystem.SideBarNav">
 
     <!--
     NOTES
@@ -11,33 +11,38 @@
     ControlTemplate.Triggers looks for a specific condition to occur, then sets specific properties (e.g. animation) to control.
     -->
 
-    <Style TargetType="{x:Type local:NavButton}"> <!-- Parent is a ListBoxItem -->
+    <Style TargetType="{x:Type y:NavButton}"> <!-- Parent is a ListBoxItem -->
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:NavButton}">
+                <ControlTemplate TargetType="{x:Type y:NavButton}">
                     <Border x:Name="background"
                             Background="Transparent"
-                            CornerRadius="8"
+                            Width="118"
+                            HorizontalAlignment="Left"
                             Padding="{TemplateBinding Padding}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <Path x:Name="icon"
+                        <!--<Path x:Name="icon"
                               Data="{TemplateBinding Icon}"
                               Height="18"
                               Width="18"
                               Stretch="Uniform"
-                              Fill="#7b8792"/>
+                              Fill="White"/>-->
+                        <TextBlock x:Name="textlabel" 
+                                   Text="{TemplateBinding Textlabel}"
+                                   FontSize="15"
+                                   Foreground="White"
+                                   Margin="10,10,0,10"
+                                   HorizontalAlignment="Left"/>
                     </Border>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" TargetName="background" Value="#d0ebff" />
-                            <Setter Property="Fill" TargetName="icon" Value="#2a84f1" />
+                            <Setter Property="Background" TargetName="background" Value="#717694" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" TargetName="background" Value="#d0ebff" />
-                            <Setter Property="Fill" TargetName="icon" Value="#2a84f1" />
+                            <Setter Property="Background" TargetName="background" Value="#717694" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

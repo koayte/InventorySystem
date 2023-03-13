@@ -4,21 +4,23 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventorySystem"
+        xmlns:y="clr-namespace:InventorySystem.SideBarNav"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen"
-        Background="Transparent"> <!-- Add AllowsTransparency, WindowsStyle=none etc. later -->
+        Background="Transparent"> <!-- AllowsTransparency="True", WindowStyle="None" -->
     <Grid>
-        <!-- Window Border -->
-        <Border Background="WhiteSmoke"
-         CornerRadius="20"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="sidebar" BorderThickness="0" Margin="0,0,0,0" Grid.Column="0" Background="#131b4f">
+            <y:NavButton x:Name="input" Textlabel="Input" HorizontalAlignment="Left"/>
+            <y:NavButton x:Name="output" Textlabel="Output" HorizontalAlignment="Left"/>
+        </ListBox>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="650" />
-            </Grid.ColumnDefinitions>
-        </Grid>
-        
+        <Frame Grid.Column="1" x:Name="navframe" Background="White" />
+
     </Grid>
+    
+    
 </Window>
