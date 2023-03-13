@@ -1,5 +1,4 @@
-﻿using InventorySystem.SideBarNav;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,19 +16,13 @@ using System.Windows.Shapes;
 namespace InventorySystem
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Input.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Input : Page
     {
-        public MainWindow()
+        public Input()
         {
             InitializeComponent();
-        }
-
-        private void sidebar_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var selected = sidebar.SelectedItem as NavButton;
-            navframe.Navigate(selected.Navlink);
         }
     }
 }

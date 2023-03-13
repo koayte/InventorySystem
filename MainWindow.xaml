@@ -13,12 +13,17 @@
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ListBox x:Name="sidebar" BorderThickness="0" Margin="0,0,0,0" Grid.Column="0" Background="#131b4f">
-            <y:NavButton x:Name="input" Textlabel="Input" HorizontalAlignment="Left"/>
-            <y:NavButton x:Name="output" Textlabel="Output" HorizontalAlignment="Left"/>
+        <ListBox x:Name="sidebar"
+                 BorderThickness="0"
+                 Margin="0,0,0,0"
+                 Grid.Column="0"
+                 Background="#131b4f"
+                 SelectionChanged="sidebar_SelectionChanged"
+                 SelectionMode="Single">
+            <y:NavButton x:Name="input" Textlabel="Input" Navlink="/Input.xaml"/>
         </ListBox>
 
-        <Frame Grid.Column="1" x:Name="navframe" Background="White" />
+        <Frame Grid.Column="1" x:Name="navframe" NavigationUIVisibility="Hidden"  Background="White" />
 
     </Grid>
     
