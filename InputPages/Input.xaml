@@ -10,10 +10,20 @@
       Title="Input"
       Background="White">
 
+    <Page.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="3" />
+                </Style>
+            </Style.Resources>
+        </Style>
+    </Page.Resources>
+    
     <Grid>
         <StackPanel>
             <TextBlock Text="Part Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-            <TextBox HorizontalAlignment="Left" Margin="15,10,0,0" Width="100" Height="20" FontSize="15" KeyDown="PartNum_KeyDown"/>
+            <TextBox x:Name="PartNumInputOG" HorizontalAlignment="Left" Margin="15,10,0,0" Width="100" Height="20" FontSize="15" TextChanged="PartNumInputOG_TextChanged"/>
         </StackPanel>
     </Grid>
 </Page>

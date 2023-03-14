@@ -20,7 +20,7 @@
                  Background="#131b4f"
                  SelectionChanged="sidebar_SelectionChanged"
                  SelectionMode="Single">
-            <y:NavButton x:Name="input" Textlabel="Input" Navlink="/Input.xaml"/>
+            <y:NavButton x:Name="input" Textlabel="Input" Navlink="/InputPages/Input.xaml"/>
         </ListBox>
 
         <Frame Grid.Column="1" x:Name="navframe" NavigationUIVisibility="Hidden"  Background="White" />
