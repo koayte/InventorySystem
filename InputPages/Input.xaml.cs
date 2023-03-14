@@ -64,8 +64,46 @@ namespace InventorySystem
                         Location.Text = location;
                     }
                     connection.Close();
+                }
 
-                    // Auto-check ModelNum and SerialNums checkboxes based on PartNum
+                // Autocheck ModelNum checkboxes based on PartNum
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    string commandText = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND ModelNum IS NOT NULL";
+                    MySqlCommand autoCheckModelNum = new MySqlCommand(commandText, connection);
+                    autoCheckModelNum.Parameters.AddWithValue("@PartNum", partNum);
+
+                    connection.Open();
+                    MySqlDataReader reader = autoCheckModelNum.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        int ModelNumExists = int.Parse(reader.GetString(0));
+                        if (ModelNumExists > 0)
+                        {
+                            ModelNumCheckbox.IsChecked = true;
+                        }
+                    }
+                    connection.Close();
+                }
+
+                // Autocheck ModelNum checkboxes based on PartNum
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    string commandText = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND SerialNums IS NOT NULL";
+                    MySqlCommand autoCheckSerialNums = new MySqlCommand(commandText, connection);
+                    autoCheckSerialNums.Parameters.AddWithValue("@PartNum", partNum);
+
+                    connection.Open();
+                    MySqlDataReader reader = autoCheckSerialNums.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        int SerialNumExists = int.Parse(reader.GetString(0));
+                        if (SerialNumExists > 0)
+                        {
+                            SerialNumsCheckbox.IsChecked = true;
+                        }
+                    }
+                    connection.Close();
                 }
             }
         }
