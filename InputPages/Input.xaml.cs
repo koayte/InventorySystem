@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace InventorySystem
 {
@@ -23,6 +25,7 @@ namespace InventorySystem
     public partial class Input : Page
     {
         public string connectionString = "SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;";
+        public DispatcherTimer timer;
 
         public Input()
         {
@@ -45,6 +48,8 @@ namespace InventorySystem
             {
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
+
+                    // Autofill Description and Location based on PartNum 
                     string commandText = "SELECT Description, Location FROM inputs WHERE PartNum = @PartNum";
                     MySqlCommand autoFillDescLoc = new MySqlCommand(commandText, connection);
                     autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
@@ -59,17 +64,20 @@ namespace InventorySystem
                         Location.Text = location;
                     }
                     connection.Close();
+
+                    // Auto-check ModelNum and SerialNums checkboxes based on PartNum
                 }
             }
         }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        
+        // Making ModelNum and SerialNums non-editable if checkboxes are unchecked.
+        private void Model_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             ModelNum.IsReadOnly = false;
             ModelNumber.Foreground = Brushes.Black;
         }
 
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void Model_CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             ModelNum.IsReadOnly = true;
             if (!string.IsNullOrEmpty(ModelNum.Text))
@@ -78,6 +86,55 @@ namespace InventorySystem
             }
 
             ModelNumber.Foreground = Brushes.Gray;
+        }
+
+        private void Serial_CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            SerialNums.IsReadOnly = false;
+            SerialNumbers.Foreground = Brushes.Black;
+        }
+
+        private void Serial_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SerialNums.IsReadOnly = true;
+            if (!string.IsNullOrEmpty(SerialNums.Text))
+            {
+                SerialNums.Text = string.Empty;
+            }
+
+            SerialNumbers.Foreground = Brushes.Gray;
+        }
+
+
+        // Add comma after every serial number being entered by scanning
+        private void SerialNum_Entered(object sender, TextChangedEventArgs e)
+        {
+            TextBox SerialNums = sender as TextBox;
+
+            if (SerialNums.Text.Length > 0)
+            {
+                char lastChar = SerialNums.Text[SerialNums.Text.Length - 1];
+
+
+                if (char.IsDigit(lastChar))
+                {
+                    if (timer != null)
+                    {
+                        timer.Stop();
+                    }
+
+                    timer = new DispatcherTimer();
+                    timer.Interval = TimeSpan.FromSeconds(0.5);
+                    timer.Tick += (s, args) =>
+                    {
+                        SerialNums.Text += ",";
+                        SerialNums.CaretIndex = SerialNums.Text.Length;
+                        timer.Stop();
+                    };
+                    timer.Start();
+
+                }
+            }
         }
     }
 }

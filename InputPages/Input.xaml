@@ -12,12 +12,25 @@
 
     <Page.Resources>
         <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Height" Value="27"/>
+            <Setter Property="Margin" Value="20,5,0,0"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Width" Value="200" />
             <Style.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="3" />
                 </Style>
             </Style.Resources>
         </Style>
+
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="20,15,0,0" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+
     </Page.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
@@ -25,14 +38,14 @@
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Part Number -->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Part Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-                    <TextBox x:Name="PartNum" HorizontalAlignment="Left" Margin="15,5,0,0" Width="200" Height="20" FontSize="15" TextChanged="PartNum_TextChanged"/>
+                    <TextBlock Text="Part Number"/>
+                    <TextBox x:Name="PartNum" TextChanged="PartNum_TextChanged"/>
                 </StackPanel>
 
                 <!-- Quantity-->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Quantity" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-                    <TextBox x:Name="Qty" HorizontalAlignment="Left" Margin="15,5,0,0" Width="100" Height="20" FontSize="15"/>
+                    <TextBlock Text="Quantity"/>
+                    <TextBox x:Name="Qty"/>
                 </StackPanel>
             </StackPanel>
 
@@ -40,14 +53,18 @@
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Description -->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Description" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-                    <TextBox x:Name="Description" HorizontalAlignment="Left" Margin="15,5,0,0" Width="200" Height="20" FontSize="15"/>
+                    <TextBlock Text="Description" />
+                    <TextBox x:Name="Description" />
                 </StackPanel>
 
                 <!-- Location-->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Location" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-                    <TextBox x:Name="Location" HorizontalAlignment="Left" Margin="15,5,0,0" Width="100" Height="20" FontSize="15"/>
+                    <TextBlock Text="Location" />
+                    <ComboBox x:Name="Location" HorizontalAlignment="Left" Margin="20,5,0,0" Height="27" Width="200" FontSize="15" IsEditable="True">
+                        <ComboBoxItem VerticalAlignment="Center">Cabinet A</ComboBoxItem>
+                        <ComboBoxItem VerticalAlignment="Center">Cabinet B</ComboBoxItem>
+                        <ComboBoxItem VerticalAlignment="Center">Cabinet C</ComboBoxItem>
+                    </ComboBox>
                 </StackPanel>
             </StackPanel>
 
@@ -56,19 +73,19 @@
                 <!-- Model Number -->
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
-                        <TextBlock x:Name="ModelNumber" Text="Model Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15" Foreground="Gray"/>
-                        <CheckBox x:Name="ModelNumCheckbox" VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
+                        <TextBlock x:Name="ModelNumber" Text="Model Number" Foreground="Gray"/>
+                        <CheckBox x:Name="ModelNumCheckbox" VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Model_CheckBox_Checked" Unchecked="Model_CheckBox_Unchecked" />
                     </WrapPanel>
-                    <TextBox x:Name="ModelNum" HorizontalAlignment="Left" Margin="15,5,0,0" Width="150" Height="20" FontSize="15" IsReadOnly="True"/>
+                    <TextBox x:Name="ModelNum" IsReadOnly="True"/>
                 </StackPanel>
 
                 <!-- Serial Number -->
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
-                        <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-                        <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2"/>
+                        <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" Foreground="Gray"/>
+                        <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Serial_CheckBox_Checked" Unchecked="Serial_CheckBox_Unchecked"/>
                     </WrapPanel>
-                    <TextBox x:Name="SerialNums" HorizontalAlignment="Left" Margin="15,5,0,0" Width="150" Height="20" FontSize="15"/>
+                    <TextBox x:Name="SerialNums" IsReadOnly="True" TextChanged="SerialNum_Entered"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
