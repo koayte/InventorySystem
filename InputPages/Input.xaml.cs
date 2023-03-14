@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,15 +22,47 @@ namespace InventorySystem
     /// </summary>
     public partial class Input : Page
     {
+        public string connectionString = "SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;";
+
         public Input()
         {
             InitializeComponent();
 
-            string connectionString = "SERVER=localhost; DATABASE=inventory_db; UID=semi; PASSWORD=semitech;";
 
-            MySqlConnection connection = new MySqlConnection(connectionString);
 
-            MySqlCommand cmd = new MySqlCommand("select ", connection);
+            //MySqlCommand cmd = new MySqlCommand("select * from inputs", connection);
+
+            //connection.Open();
+            //DataTable dt = new DataTable();
+            //dt.Load(cmd.ExecuteReader());
+            //connection.Close();
+
+            //dataGrid.DataContext = dt;
+        }
+
+        private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string partNum = PartNum.Text;
+            if (!string.IsNullOrEmpty(partNum))
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    string commandText = "SELECT Description, Location FROM inputs WHERE PartNum = @PartNum";
+                    MySqlCommand autoFillDescLoc = new MySqlCommand(commandText, connection);
+                    autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
+
+                    connection.Open();
+                    MySqlDataReader reader = autoFillDescLoc.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        string desc = reader.GetString(0);
+                        string location = reader.GetString(1);
+                        Description.Text = desc;
+                        Location.Text = location;
+                    }
+                    connection.Close();
+                }
+            }
         }
 
         //private void PartNum_KeyDown(object sender, KeyEventArgs e)
@@ -37,20 +70,10 @@ namespace InventorySystem
         //    if (e.Key== Key.Enter)
         //    {
         //        string PartNum = PartNumInputOG.Text;
-                
+
         //        // Submit request to SQL database
         //    }
         //}
 
-        private void PartNumInputOG_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string PartNum = PartNumInputOG.Text;
-            if (!string.IsNullOrEmpty(PartNum) )
-            {
-                // query database, check if exists 
-                // if exists, bring to ItemExists page 
-                // if not, bring to DoesNotExist page 
-            }
-        }
     }
 }

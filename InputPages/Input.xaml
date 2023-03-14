@@ -19,11 +19,59 @@
             </Style.Resources>
         </Style>
     </Page.Resources>
-    
     <Grid>
-        <StackPanel>
-            <TextBlock Text="Part Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-            <TextBox x:Name="PartNumInputOG" HorizontalAlignment="Left" Margin="15,10,0,0" Width="100" Height="20" FontSize="15" TextChanged="PartNumInputOG_TextChanged"/>
+        <StackPanel Orientation="Vertical">
+            <!-- First row -->
+            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                <!-- Part Number -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Part Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
+                    <TextBox x:Name="PartNum" HorizontalAlignment="Left" Margin="15,5,0,0" Width="200" Height="20" FontSize="15" TextChanged="PartNum_TextChanged"/>
+                </StackPanel>
+
+                <!-- Quantity-->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Quantity" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
+                    <TextBox x:Name="Qty" HorizontalAlignment="Left" Margin="15,5,0,0" Width="100" Height="20" FontSize="15"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Second row -->
+            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                <!-- Description -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Description" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
+                    <TextBox x:Name="Description" HorizontalAlignment="Left" Margin="15,5,0,0" Width="200" Height="20" FontSize="15"/>
+                </StackPanel>
+
+                <!-- Location-->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Location" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
+                    <TextBox x:Name="Location" HorizontalAlignment="Left" Margin="15,5,0,0" Width="100" Height="20" FontSize="15"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Third row -->
+            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                <!-- Model Number -->
+                <StackPanel Orientation="Vertical">
+                    <WrapPanel>
+                        <TextBlock Text="Model Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
+                        <CheckBox VerticalAlignment="Bottom" Margin="7,0,0,2"/>
+                    </WrapPanel>
+                    <TextBox x:Name="ModelNum" HorizontalAlignment="Left" Margin="15,5,0,0" Width="150" Height="20" FontSize="15"/>
+                </StackPanel>
+
+                <!-- Serial Number -->
+                <StackPanel Orientation="Vertical">
+                    <WrapPanel>
+                        <TextBlock Text="Serial Numbers" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
+                        <CheckBox VerticalAlignment="Bottom" Margin="7,0,0,2"/>
+                    </WrapPanel>
+                    <TextBox x:Name="SerialNums" HorizontalAlignment="Left" Margin="15,5,0,0" Width="150" Height="20" FontSize="15"/>
+                </StackPanel>
+            </StackPanel>
         </StackPanel>
+        
     </Grid>
 </Page>
