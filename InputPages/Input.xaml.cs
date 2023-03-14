@@ -28,8 +28,6 @@ namespace InventorySystem
         {
             InitializeComponent();
 
-
-
             //MySqlCommand cmd = new MySqlCommand("select * from inputs", connection);
 
             //connection.Open();
@@ -65,15 +63,21 @@ namespace InventorySystem
             }
         }
 
-        //private void PartNum_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.Key== Key.Enter)
-        //    {
-        //        string PartNum = PartNumInputOG.Text;
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ModelNum.IsReadOnly = false;
+            ModelNumber.Foreground = Brushes.Black;
+        }
 
-        //        // Submit request to SQL database
-        //    }
-        //}
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ModelNum.IsReadOnly = true;
+            if (!string.IsNullOrEmpty(ModelNum.Text))
+            {
+                ModelNum.Text = string.Empty;
+            }
 
+            ModelNumber.Foreground = Brushes.Gray;
+        }
     }
 }

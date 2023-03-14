@@ -56,17 +56,17 @@
                 <!-- Model Number -->
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
-                        <TextBlock Text="Model Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-                        <CheckBox VerticalAlignment="Bottom" Margin="7,0,0,2"/>
+                        <TextBlock x:Name="ModelNumber" Text="Model Number" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15" Foreground="Gray"/>
+                        <CheckBox x:Name="ModelNumCheckbox" VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
                     </WrapPanel>
-                    <TextBox x:Name="ModelNum" HorizontalAlignment="Left" Margin="15,5,0,0" Width="150" Height="20" FontSize="15"/>
+                    <TextBox x:Name="ModelNum" HorizontalAlignment="Left" Margin="15,5,0,0" Width="150" Height="20" FontSize="15" IsReadOnly="True"/>
                 </StackPanel>
 
                 <!-- Serial Number -->
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
-                        <TextBlock Text="Serial Numbers" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
-                        <CheckBox VerticalAlignment="Bottom" Margin="7,0,0,2"/>
+                        <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,15,0,0" FontSize="15"/>
+                        <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2"/>
                     </WrapPanel>
                     <TextBox x:Name="SerialNums" HorizontalAlignment="Left" Margin="15,5,0,0" Width="150" Height="20" FontSize="15"/>
                 </StackPanel>
