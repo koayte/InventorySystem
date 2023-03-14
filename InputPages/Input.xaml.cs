@@ -59,8 +59,10 @@ namespace InventorySystem
                     {
                         string desc = reader.GetString(0);
                         string location = reader.GetString(1);
+                        int batchId = reader.GetInt32(2) + 1;
                         Description.Text = desc;
                         Location.Text = location;
+                        BatchID.Text = batchId.ToString();
                     }
                     connection.Close();
                 }
