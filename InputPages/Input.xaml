@@ -34,22 +34,29 @@
     </Page.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <!-- First row -->
+            <!-- First row, Part Number -->
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Part Number"/>
+                <TextBox x:Name="PartNum" Width="420" TextChanged="PartNum_TextChanged"/>
+            </StackPanel>
+            
+            <!-- Second Row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                <!-- Part Number -->
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Part Number"/>
-                    <TextBox x:Name="PartNum" TextChanged="PartNum_TextChanged"/>
-                </StackPanel>
-
-                <!-- Quantity-->
+                <!-- Quantity -->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Quantity"/>
                     <TextBox x:Name="Qty"/>
                 </StackPanel>
+                
+                <!-- Batch ID -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Batch ID"/>
+                    <TextBox x:Name="BatchID"/>
+                </StackPanel>
+                
             </StackPanel>
 
-            <!-- Second row -->
+            <!-- Third row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Description -->
                 <StackPanel Orientation="Vertical">
@@ -68,7 +75,7 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- Third row -->
+            <!-- Fourth row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Model Number -->
                 <StackPanel Orientation="Vertical">
@@ -89,6 +96,9 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+            <Button x:Name="addItem" Content="Add Item" Margin="20,0,0,20" FontSize="15" Height="27" Width="80" Click="addItem_Click"/>
+        </StackPanel>
     </Grid>
 </Page>

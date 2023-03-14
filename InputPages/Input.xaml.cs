@@ -46,11 +46,10 @@ namespace InventorySystem
             string partNum = PartNum.Text;
             if (!string.IsNullOrEmpty(partNum))
             {
+                // Autofill Description, Location and BatchID based on PartNum 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-
-                    // Autofill Description and Location based on PartNum 
-                    string commandText = "SELECT Description, Location FROM inputs WHERE PartNum = @PartNum";
+                    string commandText = "SELECT Description, Location, BatchID FROM inputs WHERE PartNum = @PartNum";
                     MySqlCommand autoFillDescLoc = new MySqlCommand(commandText, connection);
                     autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
 
@@ -86,7 +85,7 @@ namespace InventorySystem
                     connection.Close();
                 }
 
-                // Autocheck ModelNum checkboxes based on PartNum
+                // Autocheck SerialNums checkboxes based on PartNum
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     string commandText = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND SerialNums IS NOT NULL";
@@ -173,6 +172,54 @@ namespace InventorySystem
 
                 }
             }
+        }
+
+        private void addItem_Click(object sender, RoutedEventArgs e)
+        {
+            string partNum = PartNum.Text;
+            string qty = Qty.Text;
+            string description = Description.Text;
+            string location = Location.Text;
+            string modelNum = ModelNum.Text;
+            string serialNums = SerialNums.Text;
+            string batchId = BatchID.Text;
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText1 = "INSERT INTO inputs (PartNum, Qty, Description, Location, ModelNum, SerialNums, BatchID) VALUE (@partNum, @qty, @description, @location, @modelNum, @serialNums, @batchId)";
+                MySqlCommand addRow = new MySqlCommand(commandText1, connection);
+                addRow.Parameters.AddWithValue("@partNum", partNum);
+                addRow.Parameters.AddWithValue("@qty", qty);
+                addRow.Parameters.AddWithValue("@description", description);
+                addRow.Parameters.AddWithValue("@location", location);
+                addRow.Parameters.AddWithValue("@modelNum", modelNum);
+                addRow.Parameters.AddWithValue("@serialNums", serialNums);
+                addRow.Parameters.AddWithValue("@batchId", batchId);
+
+                string commandText2 = "UPDATE inputs SET ModelNum = NULL WHERE ModelNum = ''";
+                MySqlCommand changeEmptyToNullModel = new MySqlCommand(commandText2, connection);
+
+                string commandText3 = "UPDATE inputs SET SerialNums = NULL WHERE SerialNums = ''";
+                MySqlCommand changeEmptyToNullSerial = new MySqlCommand(commandText3, connection);
+
+                connection.Open();
+                addRow.ExecuteNonQuery();
+                changeEmptyToNullModel.ExecuteNonQuery();
+                changeEmptyToNullSerial.ExecuteNonQuery();
+                connection.Close();
+            }
+
+            // clear textboxes so they can be reused, reset checkboxes to default
+            PartNum.Text = String.Empty;
+            Qty.Text = String.Empty;
+            Description.Text = String.Empty;
+            Location.Text = String.Empty;
+            ModelNum.Text = String.Empty;
+            SerialNums.Text = String.Empty;
+            BatchID.Text = String.Empty;
+            ModelNumCheckbox.IsChecked = false;
+            SerialNumsCheckbox.IsChecked = false;
+
         }
     }
 }
