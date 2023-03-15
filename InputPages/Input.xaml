@@ -40,7 +40,7 @@
                 <TextBlock Text="Part Number"/>
                 <TextBox x:Name="PartNum" Width="420" TextChanged="PartNum_TextChanged" TabIndex="0" KeyUp="Control_Enter"/>
             </StackPanel>
-            
+
             <!-- Second Row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Quantity -->
@@ -48,13 +48,13 @@
                     <TextBlock Text="Quantity"/>
                     <TextBox x:Name="Qty" KeyUp="Control_Enter"/>
                 </StackPanel>
-                
+
                 <!-- Batch ID -->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Batch ID"/>
                     <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
                 </StackPanel>
-                
+
             </StackPanel>
 
             <!-- Third row -->
