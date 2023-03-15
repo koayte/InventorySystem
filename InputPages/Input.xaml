@@ -96,6 +96,8 @@
                     <TextBox x:Name="SerialNums" IsReadOnly="True" TextChanged="SerialNum_Entered"/>
                 </StackPanel>
             </StackPanel>
+
+            <TextBlock x:Name="warning" Text="Please make sure that Part Number, Quantity, Batch ID, Description and Location are filled in." FontSize="15" Foreground="Red" Margin="20,10,0,0"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">

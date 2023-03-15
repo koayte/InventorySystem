@@ -29,13 +29,13 @@ namespace InventorySystem
         private DispatcherTimer timer;
         private List<TextBox> inputBoxes;
 
-
         public Input()
         {
             InitializeComponent();
             inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums };
         }
 
+        // Checking PartNum against database
         private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
         {
             string partNum = PartNum.Text;
@@ -171,6 +171,27 @@ namespace InventorySystem
             }
         }
 
+
+        // Navigation around UI
+        private void Control_Enter(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((UIElement)sender).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            }
+        }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox != null)
+            {
+                textBox.SelectAll();
+            }
+        }
+
+
+        // Buttons
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
             List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@modelNum", "@serialNums", "@batchID" };
@@ -183,7 +204,6 @@ namespace InventorySystem
 
                 for (int i = 0; i < placeholders.Count; i++)
                 {
-
                     switch (i)
                     {
                         // For parameter @modelNum, if input text is empty, submit a null value.
@@ -241,36 +261,6 @@ namespace InventorySystem
             PartNum.Focus();
 
         }
-
-        
-        private void Control_Enter(object sender, KeyEventArgs e)
-        {
-            //TextBox currentTextbox = sender as TextBox;
-            //if (e.Key == Key.Enter)
-            //{
-            //    int currentTextBoxIndex = inputBoxes.IndexOf(currentTextbox);
-            //    if (currentTextBoxIndex < 3)
-            //    {
-            //        TextBox nextTextBox = inputBoxes[currentTextBoxIndex + 1];
-            //        nextTextBox.Focus();
-            //    }
-            //}
-
-            if (e.Key == Key.Enter)
-            {
-                ((UIElement)sender).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-            }
-        }
-
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            if (textBox != null)
-            {
-                textBox.SelectAll();
-            }
-        }
-
         private void clearAll_Click(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < inputBoxes.Count; i++)
