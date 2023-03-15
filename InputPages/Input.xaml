@@ -100,6 +100,7 @@
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
             <Button x:Name="addItem" Content="Add Item" Margin="20,0,0,20" FontSize="15" Height="27" Width="80" Click="addItem_Click"/>
+            <Button x:Name="clearAll" Content="Clear" Margin="20,0,0,20" FontSize="15" Height="27" Width="60" Click="clearAll_Click"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -101,16 +101,6 @@ namespace InventorySystem
                     }
                     connection.Close();
                 }
-
-                // Shift focus (caret position) to the next TextBox (Qty).
-                //timer = new DispatcherTimer();
-                //timer.Interval = TimeSpan.FromSeconds(0.8);
-                //timer.Tick += (s, args) =>
-                //{
-                //    Qty.Focus();
-                //    timer.Stop();
-                //};
-                //timer.Start();
             }
         }
         
@@ -239,6 +229,9 @@ namespace InventorySystem
             ModelNumCheckbox.IsChecked = false;
             SerialNumsCheckbox.IsChecked = false;
 
+            // Send caret position back to PartNum textbox.
+            PartNum.Focus();
+
         }
 
         
@@ -264,7 +257,22 @@ namespace InventorySystem
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = sender as TextBox;
-            textBox.SelectAll();
+            if (textBox != null)
+            {
+                textBox.SelectAll();
+            }
+        }
+
+        private void clearAll_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < inputBoxes.Count; i++)
+            {
+                inputBoxes[i].Text = String.Empty;
+            }
+            Location.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
+            ModelNumCheckbox.IsChecked = false;
+            SerialNumsCheckbox.IsChecked = false;
+            PartNum.Focus();
         }
     }
 }
