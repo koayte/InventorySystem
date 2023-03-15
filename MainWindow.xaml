@@ -21,6 +21,7 @@
                  SelectionChanged="sidebar_SelectionChanged"
                  SelectionMode="Single">
             <y:NavButton x:Name="input" Textlabel="Input" Navlink="/InputPages/Input.xaml"/>
+            <y:NavButton x:Name="inventory" Textlabel="Inventory" Navlink="/InventoryPage/Inventory.xaml"/>
         </ListBox>
 
         <Frame Grid.Column="1" x:Name="navframe" NavigationUIVisibility="Hidden"  Background="White" />
