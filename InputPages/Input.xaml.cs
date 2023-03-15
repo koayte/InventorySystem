@@ -33,7 +33,6 @@ namespace InventorySystem
         {
             InitializeComponent();
             inputBoxes = new List<TextBox> { PartNum, Qty, Description, ModelNum, SerialNums, BatchID };
-            PartNum.Select(0, 0);
 
             //MySqlCommand cmd = new MySqlCommand("select * from inputs", connection);
 
@@ -84,7 +83,6 @@ namespace InventorySystem
                     else
                     {
                         BatchID.Text = "1";
-                        
                     }
                     connection.Close();
 
@@ -113,6 +111,15 @@ namespace InventorySystem
                     connection.Close();
                 }
 
+                // Shift focus (caret position) to the next TextBox (Qty).
+                timer = new DispatcherTimer();
+                timer.Interval = TimeSpan.FromSeconds(0.8);
+                timer.Tick += (s, args) =>
+                {
+                    Qty.Focus();
+                    timer.Stop();
+                };
+                timer.Start();
             }
         }
         
