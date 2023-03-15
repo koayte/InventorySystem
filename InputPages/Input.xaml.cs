@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Crypto.Tls;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -205,7 +206,14 @@ namespace InventorySystem
                             }
                             else
                             {
-                                addRow.Parameters.AddWithValue(placeholders[i], inputs[i]);
+                                // Remove last character if it is a comma.
+                                string serialNums = SerialNums.Text;
+                                char lastChar = serialNums[serialNums.Length - 1];
+                                if (lastChar == ',')
+                                {
+                                    serialNums = serialNums.Remove(serialNums.Length - 1, 1);
+                                    addRow.Parameters.AddWithValue(placeholders[i], serialNums);
+                                }
                             }
                             break;
 
