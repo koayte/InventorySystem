@@ -25,11 +25,14 @@ namespace InventorySystem
     public partial class Input : Page
     {
         public string connectionString = "SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;";
-        public DispatcherTimer timer;
+        private DispatcherTimer timer;
+        private List<TextBox> inputBoxes;
+
 
         public Input()
         {
             InitializeComponent();
+            inputBoxes = new List<TextBox> { PartNum, Qty, Description, ModelNum, SerialNums, BatchID };
 
             //MySqlCommand cmd = new MySqlCommand("select * from inputs", connection);
 
@@ -154,7 +157,6 @@ namespace InventorySystem
             {
                 char lastChar = SerialNums.Text[SerialNums.Text.Length - 1];
 
-
                 if (char.IsDigit(lastChar))
                 {
                     if (timer != null)
@@ -178,47 +180,69 @@ namespace InventorySystem
 
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
-            string partNum = PartNum.Text;
-            string qty = Qty.Text;
-            string description = Description.Text;
-            string location = Location.Text;
-            string modelNum = ModelNum.Text;
-            string serialNums = SerialNums.Text;
-            string batchId = BatchID.Text;
+            //string partNum = PartNum.Text;
+            //string qty = Qty.Text;
+            //string description = Description.Text;
+            //string location = Location.Text;
+            //string modelNum = ModelNum.Text;
+            //string serialNums = SerialNums.Text;
+            //string batchId = BatchID.Text;
+
+            List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@modelNum", "@serialNums", "@batchID" };
+            List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Location.Text, ModelNum.Text, SerialNums.Text, BatchID.Text };
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 string commandText1 = "INSERT INTO inputs (PartNum, Qty, Description, Location, ModelNum, SerialNums, BatchID) VALUE (@partNum, @qty, @description, @location, @modelNum, @serialNums, @batchId)";
                 MySqlCommand addRow = new MySqlCommand(commandText1, connection);
-                addRow.Parameters.AddWithValue("@partNum", partNum);
-                addRow.Parameters.AddWithValue("@qty", qty);
-                addRow.Parameters.AddWithValue("@description", description);
-                addRow.Parameters.AddWithValue("@location", location);
-                addRow.Parameters.AddWithValue("@modelNum", modelNum);
-                addRow.Parameters.AddWithValue("@serialNums", serialNums);
-                addRow.Parameters.AddWithValue("@batchId", batchId);
 
-                string commandText2 = "UPDATE inputs SET ModelNum = NULL WHERE ModelNum = ''";
-                MySqlCommand changeEmptyToNullModel = new MySqlCommand(commandText2, connection);
+                for (int i = 0; i < placeholders.Count; i++)
+                {
 
-                string commandText3 = "UPDATE inputs SET SerialNums = NULL WHERE SerialNums = ''";
-                MySqlCommand changeEmptyToNullSerial = new MySqlCommand(commandText3, connection);
+                    switch (i)
+                    {
+                        // For parameter @modelNum, if input text is empty, submit a null value.
+                        case 4:
+                            if (string.IsNullOrEmpty(inputs[i]))
+                            {
+                                addRow.Parameters.AddWithValue(placeholders[i], DBNull.Value);
+                            }
+                            else
+                            {
+                                addRow.Parameters.AddWithValue(placeholders[i], inputs[i]);
+                            }
+                            break;
+
+                        // For parameter @serialNums, if input text is empty, submit a null value.
+                        case 5:
+                            if (string.IsNullOrEmpty(inputs[i]))
+                            {
+                                addRow.Parameters.AddWithValue(placeholders[i], DBNull.Value);
+                            }
+                            else
+                            {
+                                addRow.Parameters.AddWithValue(placeholders[i], inputs[i]);
+                            }
+                            break;
+
+                        default:
+                            addRow.Parameters.AddWithValue(placeholders[i], inputs[i]);
+                            break;
+                    }
+
+                }
 
                 connection.Open();
                 addRow.ExecuteNonQuery();
-                changeEmptyToNullModel.ExecuteNonQuery();
-                changeEmptyToNullSerial.ExecuteNonQuery();
                 connection.Close();
             }
 
-            // clear textboxes so they can be reused, reset checkboxes to default
-            PartNum.Text = String.Empty;
-            Qty.Text = String.Empty;
-            Description.Text = String.Empty;
-            Location.Text = String.Empty;
-            ModelNum.Text = String.Empty;
-            SerialNums.Text = String.Empty;
-            BatchID.Text = String.Empty;
+            // Clear textboxes so they can be reused, reset checkboxes to default
+            for (int i = 0; i < inputBoxes.Count; i++)
+            {
+                inputBoxes[i].Text = String.Empty;
+            }
+            Location.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
             ModelNumCheckbox.IsChecked = false;
             SerialNumsCheckbox.IsChecked = false;
 
