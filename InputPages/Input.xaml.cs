@@ -33,6 +33,7 @@ namespace InventorySystem
         {
             InitializeComponent();
             inputBoxes = new List<TextBox> { PartNum, Qty, Description, ModelNum, SerialNums, BatchID };
+            PartNum.Select(0, 0);
 
             //MySqlCommand cmd = new MySqlCommand("select * from inputs", connection);
 
@@ -49,59 +50,61 @@ namespace InventorySystem
             string partNum = PartNum.Text;
             if (!string.IsNullOrEmpty(partNum))
             {
-                // Autofill Description, Location and BatchID based on PartNum 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-                    string commandText = "SELECT Description, Location, BatchID FROM inputs WHERE PartNum = @PartNum";
-                    MySqlCommand autoFillDescLoc = new MySqlCommand(commandText, connection);
+                    // Autofill Description, Location and BatchID based on PartNum 
+                    string commandText1 = "SELECT Description, Location, BatchID FROM inputs WHERE PartNum = @PartNum ORDER BY BatchID";
+                    MySqlCommand autoFillDescLoc = new MySqlCommand(commandText1, connection);
                     autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
 
-                    connection.Open();
-                    MySqlDataReader reader = autoFillDescLoc.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        string desc = reader.GetString(0);
-                        string location = reader.GetString(1);
-                        int batchId = reader.GetInt32(2) + 1;
-                        Description.Text = desc;
-                        Location.Text = location;
-                        BatchID.Text = batchId.ToString();
-                    }
-                    connection.Close();
-                }
-
-                // Autocheck ModelNum checkboxes based on PartNum
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    string commandText = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND ModelNum IS NOT NULL";
-                    MySqlCommand autoCheckModelNum = new MySqlCommand(commandText, connection);
+                    // Autocheck ModelNum checkboxes based on PartNum
+                    string commandText2 = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND ModelNum IS NOT NULL";
+                    MySqlCommand autoCheckModelNum = new MySqlCommand(commandText2, connection);
                     autoCheckModelNum.Parameters.AddWithValue("@PartNum", partNum);
 
+                    // Autocheck SerialNums checkboxes based on PartNum
+                    string commandText3 = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND SerialNums IS NOT NULL";
+                    MySqlCommand autoCheckSerialNums = new MySqlCommand(commandText3, connection);
+                    autoCheckSerialNums.Parameters.AddWithValue("@PartNum", partNum);
+
                     connection.Open();
-                    MySqlDataReader reader = autoCheckModelNum.ExecuteReader();
-                    if (reader.Read())
+                    MySqlDataReader reader1 = autoFillDescLoc.ExecuteReader();
+                    if (reader1.HasRows)
                     {
-                        int ModelNumExists = int.Parse(reader.GetString(0));
+                        while (reader1.Read())
+                        {
+                            Description.Text = reader1.GetString(0);
+                            Location.Text = reader1.GetString(1);
+                            int batchId = reader1.GetInt32(2) + 1;
+                            BatchID.Text = batchId.ToString();
+                        }
+                        // PartNum does not exist in current inventory
+
+                    }
+                    else
+                    {
+                        BatchID.Text = "1";
+                        
+                    }
+                    connection.Close();
+
+                    connection.Open();
+                    MySqlDataReader reader2 = autoCheckModelNum.ExecuteReader();
+                    if (reader2.Read())
+                    {
+                        int ModelNumExists = int.Parse(reader2.GetString(0));
                         if (ModelNumExists > 0)
                         {
                             ModelNumCheckbox.IsChecked = true;
                         }
                     }
                     connection.Close();
-                }
-
-                // Autocheck SerialNums checkboxes based on PartNum
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    string commandText = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND SerialNums IS NOT NULL";
-                    MySqlCommand autoCheckSerialNums = new MySqlCommand(commandText, connection);
-                    autoCheckSerialNums.Parameters.AddWithValue("@PartNum", partNum);
 
                     connection.Open();
-                    MySqlDataReader reader = autoCheckSerialNums.ExecuteReader();
-                    if (reader.Read())
+                    MySqlDataReader reader3 = autoCheckSerialNums.ExecuteReader();
+                    if (reader3.Read())
                     {
-                        int SerialNumExists = int.Parse(reader.GetString(0));
+                        int SerialNumExists = int.Parse(reader3.GetString(0));
                         if (SerialNumExists > 0)
                         {
                             SerialNumsCheckbox.IsChecked = true;
@@ -109,6 +112,7 @@ namespace InventorySystem
                     }
                     connection.Close();
                 }
+
             }
         }
         
@@ -180,21 +184,13 @@ namespace InventorySystem
 
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
-            //string partNum = PartNum.Text;
-            //string qty = Qty.Text;
-            //string description = Description.Text;
-            //string location = Location.Text;
-            //string modelNum = ModelNum.Text;
-            //string serialNums = SerialNums.Text;
-            //string batchId = BatchID.Text;
-
             List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@modelNum", "@serialNums", "@batchID" };
             List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Location.Text, ModelNum.Text, SerialNums.Text, BatchID.Text };
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText1 = "INSERT INTO inputs (PartNum, Qty, Description, Location, ModelNum, SerialNums, BatchID) VALUE (@partNum, @qty, @description, @location, @modelNum, @serialNums, @batchId)";
-                MySqlCommand addRow = new MySqlCommand(commandText1, connection);
+                string commandText = "INSERT INTO inputs (PartNum, Qty, Description, Location, ModelNum, SerialNums, BatchID) VALUE (@partNum, @qty, @description, @location, @modelNum, @serialNums, @batchId)";
+                MySqlCommand addRow = new MySqlCommand(commandText, connection);
 
                 for (int i = 0; i < placeholders.Count; i++)
                 {
@@ -229,7 +225,6 @@ namespace InventorySystem
                             addRow.Parameters.AddWithValue(placeholders[i], inputs[i]);
                             break;
                     }
-
                 }
 
                 connection.Open();

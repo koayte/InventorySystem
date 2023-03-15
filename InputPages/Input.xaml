@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:InventorySystem"
       xmlns:y="clr-namespace:InventorySystem.SideBarNav"
+      FocusManager.FocusedElement="{Binding ElementName=PartNum}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Input"
@@ -37,7 +38,7 @@
             <!-- First row, Part Number -->
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Part Number"/>
-                <TextBox x:Name="PartNum" Width="420" TextChanged="PartNum_TextChanged"/>
+                <TextBox x:Name="PartNum" Width="420" TextChanged="PartNum_TextChanged" TabIndex="0"/>
             </StackPanel>
             
             <!-- Second Row -->
