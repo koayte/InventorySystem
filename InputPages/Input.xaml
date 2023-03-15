@@ -38,7 +38,7 @@
             <!-- First row, Part Number -->
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Part Number"/>
-                <TextBox x:Name="PartNum" Width="420" TextChanged="PartNum_TextChanged" TabIndex="0"/>
+                <TextBox x:Name="PartNum" Width="420" TextChanged="PartNum_TextChanged" TabIndex="0" KeyUp="Control_Enter"/>
             </StackPanel>
             
             <!-- Second Row -->
@@ -46,13 +46,13 @@
                 <!-- Quantity -->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Quantity"/>
-                    <TextBox x:Name="Qty"/>
+                    <TextBox x:Name="Qty" KeyUp="Control_Enter"/>
                 </StackPanel>
                 
                 <!-- Batch ID -->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Batch ID"/>
-                    <TextBox x:Name="BatchID"/>
+                    <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
                 </StackPanel>
                 
             </StackPanel>
@@ -62,13 +62,13 @@
                 <!-- Description -->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Description" />
-                    <TextBox x:Name="Description" />
+                    <TextBox x:Name="Description" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
                 </StackPanel>
 
                 <!-- Location-->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Location" />
-                    <ComboBox x:Name="Location" HorizontalAlignment="Left" Margin="20,5,0,0" Height="27" Width="200" FontSize="15" IsEditable="True">
+                    <ComboBox x:Name="Location" HorizontalAlignment="Left" Margin="20,5,0,0" Height="27" Width="200" FontSize="15" IsEditable="True" KeyUp="Control_Enter">
                         <ComboBoxItem VerticalAlignment="Center">Cabinet A</ComboBoxItem>
                         <ComboBoxItem VerticalAlignment="Center">Cabinet B</ComboBoxItem>
                         <ComboBoxItem VerticalAlignment="Center">Cabinet C</ComboBoxItem>
@@ -84,7 +84,7 @@
                         <TextBlock x:Name="ModelNumber" Text="Model Number" Foreground="Gray"/>
                         <CheckBox x:Name="ModelNumCheckbox" VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Model_CheckBox_Checked" Unchecked="Model_CheckBox_Unchecked" />
                     </WrapPanel>
-                    <TextBox x:Name="ModelNum" IsReadOnly="True"/>
+                    <TextBox x:Name="ModelNum" IsReadOnly="True" KeyUp="Control_Enter"/>
                 </StackPanel>
 
                 <!-- Serial Number -->

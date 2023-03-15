@@ -32,16 +32,7 @@ namespace InventorySystem
         public Input()
         {
             InitializeComponent();
-            inputBoxes = new List<TextBox> { PartNum, Qty, Description, ModelNum, SerialNums, BatchID };
-
-            //MySqlCommand cmd = new MySqlCommand("select * from inputs", connection);
-
-            //connection.Open();
-            //DataTable dt = new DataTable();
-            //dt.Load(cmd.ExecuteReader());
-            //connection.Close();
-
-            //dataGrid.DataContext = dt;
+            inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums };
         }
 
         private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
@@ -112,14 +103,14 @@ namespace InventorySystem
                 }
 
                 // Shift focus (caret position) to the next TextBox (Qty).
-                timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(0.8);
-                timer.Tick += (s, args) =>
-                {
-                    Qty.Focus();
-                    timer.Stop();
-                };
-                timer.Start();
+                //timer = new DispatcherTimer();
+                //timer.Interval = TimeSpan.FromSeconds(0.8);
+                //timer.Tick += (s, args) =>
+                //{
+                //    Qty.Focus();
+                //    timer.Stop();
+                //};
+                //timer.Start();
             }
         }
         
@@ -248,6 +239,32 @@ namespace InventorySystem
             ModelNumCheckbox.IsChecked = false;
             SerialNumsCheckbox.IsChecked = false;
 
+        }
+
+        
+        private void Control_Enter(object sender, KeyEventArgs e)
+        {
+            //TextBox currentTextbox = sender as TextBox;
+            //if (e.Key == Key.Enter)
+            //{
+            //    int currentTextBoxIndex = inputBoxes.IndexOf(currentTextbox);
+            //    if (currentTextBoxIndex < 3)
+            //    {
+            //        TextBox nextTextBox = inputBoxes[currentTextBoxIndex + 1];
+            //        nextTextBox.Focus();
+            //    }
+            //}
+
+            if (e.Key == Key.Enter)
+            {
+                ((UIElement)sender).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            }
+        }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            textBox.SelectAll();
         }
     }
 }
