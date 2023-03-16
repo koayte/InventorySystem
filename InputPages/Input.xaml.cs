@@ -110,7 +110,10 @@ namespace InventorySystem
         {
             ModelNum.IsReadOnly = false;
             ModelNumber.Foreground = Brushes.Black;
-            ModelNum.Focus();
+            if (!string.IsNullOrEmpty(Qty.Text) && !string.IsNullOrEmpty(BatchID.Text) && !string.IsNullOrEmpty(Description.Text))
+            {
+                ModelNum.Focus();
+            }
         }
 
         private void Model_CheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -128,7 +131,10 @@ namespace InventorySystem
         {
             SerialNums.IsReadOnly = false;
             SerialNumbers.Foreground = Brushes.Black;
-            SerialNums.Focus();
+            if (!string.IsNullOrEmpty(Qty.Text) && !string.IsNullOrEmpty(BatchID.Text) && !string.IsNullOrEmpty(Description.Text))
+            {
+                SerialNums.Focus();
+            }
         }
 
         private void Serial_CheckBox_Unchecked(object sender, RoutedEventArgs e)

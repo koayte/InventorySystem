@@ -42,23 +42,68 @@
                     <Setter Property="VerticalAlignment" Value="Top"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
                     <Setter Property="Padding" Value="3,0,0,0"/>
+                    <Setter Property="BorderThickness" Value="0.3"/>
+                    <Setter Property="Background" Value="#ededed"/>
+                </Style>
+
+                <Style TargetType="ComboBox">
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="BorderThickness" Value="0.3"/>
+                </Style>
+
+                <Style TargetType="DatePicker">
+                    <Style.Resources>
+                        <Style TargetType="DatePickerTextBox">
+                            <Setter Property="Background" Value="#ededed" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type DatePickerTextBox}">
+                                        <Grid>
+                                            <Grid x:Name="WatermarkContent"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                                <Border x:Name="ContentElement" BorderBrush="#FFFFFFFF" BorderThickness="0" Visibility="Visible"/>
+                                                <Border x:Name="watermark_decorator" BorderBrush="#FFFFFFFF" BorderThickness="0" Visibility="Visible"/>
+                                                <ScrollViewer x:Name="PART_ContentHost"
+                                                              Margin="0"
+                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                <Border x:Name="FocusVisual" BorderBrush="#FF45D6FA" CornerRadius="1" IsHitTestVisible="False" Opacity="0"/>
+                                            </Grid>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Style.Resources>
+                    <Setter Property="VerticalAlignment" Value="Top"/>
                     <Setter Property="BorderThickness" Value="0.2"/>
                 </Style>
+                
             </StackPanel.Resources>
-            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=PartNumHeader}"/>
-            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=BatchHeader}"/>
-            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=DescHeader}"/>
-            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=QtyHeader}"/>
-            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=LocHeader}"/>
-            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=ModelNumHeader}"/>
-            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=SerialNumsHeader}"/>
-            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=DateHeader}"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=PartNumHeader}" x:Name="PartNumSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=BatchHeader}" x:Name="BatchSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=DescHeader}" x:Name="DescSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=QtyHeader}" x:Name="QtySearch" TextChanged="Search_TextChanged"/>
+            <ComboBox Width="{Binding ActualWidth, ElementName=LocHeader}" x:Name="LocSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged">
+                <ComboBoxItem>Cabinet A</ComboBoxItem>
+                <ComboBoxItem>Cabinet B</ComboBoxItem>
+                <ComboBoxItem>Cabinet C</ComboBoxItem>
+            </ComboBox>
+            <TextBox Width="{Binding ActualWidth, ElementName=ModelNumHeader}" x:Name="ModelNumSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
+            <DatePicker Width="{Binding ActualWidth, ElementName=DateHeader}"
+                        Background="#ededed"
+                        x:Name="DateSearch"
+                        TextBoxBase.TextChanged="Search_TextChanged"
+                        SelectedDate="{Binding MyDate, StringFormat=dd-mm-yyyy}" />
         </StackPanel>
 
         <DataGrid x:Name="inventoryGrid"
                   Margin="20,42,20,20"
                   ItemsSource="{Binding}"
                   AutoGenerateColumns="False"
+                  BorderThickness="0"
                   Style="{StaticResource dataGridStyle}"
                   RowStyle="{StaticResource dataGridRowStyle}"
                   CellStyle="{StaticResource dataGridCellStyle}"
@@ -101,7 +146,7 @@
                 <DataGridTemplateColumn Header="Location" Width="65" x:Name="LocHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Location}" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="LocData"  Text="{Binding Location}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
