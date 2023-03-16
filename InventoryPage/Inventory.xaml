@@ -25,20 +25,48 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="3,0,3,0"/>
         </Style>
+
+        <Style x:Key="dataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#131b4f" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Height" Value="27"/>
+        </Style>
     </Page.Resources>
-    
+
     <Grid>
+        <StackPanel Margin="20,20,20,20" Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="TextBox">
+                    <Setter Property="Height" Value="23"/>
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="3,0,0,0"/>
+                    <Setter Property="BorderThickness" Value="0.2"/>
+                </Style>
+            </StackPanel.Resources>
+            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=PartNumHeader}"/>
+            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=BatchHeader}"/>
+            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=DescHeader}"/>
+            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=QtyHeader}"/>
+            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=LocHeader}"/>
+            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=ModelNumHeader}"/>
+            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=SerialNumsHeader}"/>
+            <TextBox Text="hello" Width="{Binding ActualWidth, ElementName=DateHeader}"/>
+        </StackPanel>
+
         <DataGrid x:Name="inventoryGrid"
-                  Margin="20"
+                  Margin="20,42,20,20"
                   ItemsSource="{Binding}"
                   AutoGenerateColumns="False"
                   Style="{StaticResource dataGridStyle}"
                   RowStyle="{StaticResource dataGridRowStyle}"
-                  CellStyle="{StaticResource dataGridCellStyle}">
+                  CellStyle="{StaticResource dataGridCellStyle}"
+                  ColumnHeaderStyle="{StaticResource dataGridHeaderStyle}">
             <!-- Consider adding search functionality: https://www.codeproject.com/Articles/42227/Automatic-WPF-Toolkit-DataGrid-Filtering -->
-            
+
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Part Number" Width="95">
+                <DataGridTemplateColumn Header="Part Number" Width="95" x:Name="PartNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding PartNum}" TextWrapping="Wrap"/>
@@ -46,7 +74,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Batch" Width="40">
+                <DataGridTemplateColumn Header="Batch" Width="40" x:Name="BatchHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding BatchID}" TextWrapping="Wrap"/>
@@ -54,7 +82,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Description" Width="100">
+                <DataGridTemplateColumn Header="Description" Width="100" x:Name="DescHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
@@ -62,7 +90,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Quantity" Width="30">
+                <DataGridTemplateColumn Header="Quantity" Width="30" x:Name="QtyHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Qty}" TextWrapping="Wrap"/>
@@ -70,7 +98,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Location" Width="65">
+                <DataGridTemplateColumn Header="Location" Width="65" x:Name="LocHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Location}" TextWrapping="Wrap"/>
@@ -78,7 +106,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Model Number" Width="92">
+                <DataGridTemplateColumn Header="Model Number" Width="92" x:Name="ModelNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ModelNum}" TextWrapping="Wrap"/>
@@ -86,7 +114,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Serial Numbers" Width="100">
+                <DataGridTemplateColumn Header="Serial Numbers" Width="100" x:Name="SerialNumsHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding SerialNums}" TextWrapping="Wrap"/>
@@ -94,16 +122,14 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                
-
-                <DataGridTemplateColumn Header="Date" Width="*">
+                <DataGridTemplateColumn Header="Date" Width="*" x:Name="DateHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Time}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
+
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
