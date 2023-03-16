@@ -110,6 +110,7 @@ namespace InventorySystem
         {
             ModelNum.IsReadOnly = false;
             ModelNumber.Foreground = Brushes.Black;
+            ModelNum.Focus();
         }
 
         private void Model_CheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -127,6 +128,7 @@ namespace InventorySystem
         {
             SerialNums.IsReadOnly = false;
             SerialNumbers.Foreground = Brushes.Black;
+            SerialNums.Focus();
         }
 
         private void Serial_CheckBox_Unchecked(object sender, RoutedEventArgs e)
