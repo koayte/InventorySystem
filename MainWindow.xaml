@@ -10,7 +10,7 @@
         Background="Transparent"> <!-- AllowsTransparency="True", WindowStyle="None" -->
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <ListBox x:Name="sidebar"
@@ -20,8 +20,8 @@
                  Background="#131b4f"
                  SelectionChanged="sidebar_SelectionChanged"
                  SelectionMode="Single">
-            <y:NavButton x:Name="input" Textlabel="Input" Navlink="/InputPages/Input.xaml"/>
-            <y:NavButton x:Name="inventory" Textlabel="Inventory" Navlink="/InventoryPage/Inventory.xaml"/>
+            <y:NavButton x:Name="input" Textlabel="Input" Navlink="/InputPages/Input.xaml" Width="97"/>
+            <y:NavButton x:Name="inventory" Textlabel="Inventory" Navlink="/InventoryPage/Inventory.xaml" Width="97"/>
         </ListBox>
 
         <Frame Grid.Column="1" x:Name="navframe" NavigationUIVisibility="Hidden"  Background="White" />

@@ -24,6 +24,7 @@
         <Style x:Key="dataGridCellStyle" TargetType="DataGridCell">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="3,0,3,0"/>
+            <Setter Property="Padding" Value="0"/>
         </Style>
 
         <Style x:Key="dataGridHeaderStyle" TargetType="DataGridColumnHeader">
@@ -32,6 +33,8 @@
             <Setter Property="Padding" Value="4"/>
             <Setter Property="Height" Value="27"/>
         </Style>
+
+        <local:WidthConverter x:Key="WidthConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -42,19 +45,22 @@
                     <Setter Property="VerticalAlignment" Value="Top"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
                     <Setter Property="Padding" Value="3,0,0,0"/>
-                    <Setter Property="BorderThickness" Value="0.3"/>
-                    <Setter Property="Background" Value="#ededed"/>
+                    <Setter Property="BorderThickness" Value="0.5"/>
+                    <!-- <Setter Property="Background" Value="#EDEDED"/> -->
+                    <Setter Property="Margin" Value="0,0,5,0"/>
                 </Style>
 
                 <Style TargetType="ComboBox">
                     <Setter Property="VerticalAlignment" Value="Top"/>
-                    <Setter Property="BorderThickness" Value="0.3"/>
+                    <Setter Property="BorderThickness" Value="0.5"/>
+                    <Setter Property="Margin" Value="0,0,5,0"/>
+                    <Setter Property="Height" Value="23"/>
                 </Style>
 
                 <Style TargetType="DatePicker">
                     <Style.Resources>
                         <Style TargetType="DatePickerTextBox">
-                            <Setter Property="Background" Value="#ededed" />
+                            <Setter Property="Background" Value="White" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type DatePickerTextBox}">
@@ -68,7 +74,7 @@
                                                               Margin="0"
                                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                <Border x:Name="FocusVisual" BorderBrush="#FF45D6FA" CornerRadius="1" IsHitTestVisible="False" Opacity="0"/>
+                                                <Border x:Name="FocusVisual" BorderBrush="#FFFFFF" CornerRadius="1" IsHitTestVisible="False" Opacity="0"/>
                                             </Grid>
                                         </Grid>
                                     </ControlTemplate>
@@ -77,21 +83,22 @@
                         </Style>
                     </Style.Resources>
                     <Setter Property="VerticalAlignment" Value="Top"/>
-                    <Setter Property="BorderThickness" Value="0.2"/>
+                    <Setter Property="BorderThickness" Value="0.5"/>
                 </Style>
-                
+
             </StackPanel.Resources>
-            <TextBox Width="{Binding ActualWidth, ElementName=PartNumHeader}" x:Name="PartNumSearch" TextChanged="Search_TextChanged"/>
-            <TextBox Width="{Binding ActualWidth, ElementName=BatchHeader}" x:Name="BatchSearch" TextChanged="Search_TextChanged"/>
-            <TextBox Width="{Binding ActualWidth, ElementName=DescHeader}" x:Name="DescSearch" TextChanged="Search_TextChanged"/>
-            <TextBox Width="{Binding ActualWidth, ElementName=QtyHeader}" x:Name="QtySearch" TextChanged="Search_TextChanged"/>
-            <ComboBox Width="{Binding ActualWidth, ElementName=LocHeader}" x:Name="LocSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged">
+
+            <TextBox Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource WidthConverter}}" x:Name="PartNumSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" x:Name="BatchSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" x:Name="DescSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" x:Name="QtySearch" TextChanged="Search_TextChanged"/>
+            <ComboBox Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}" x:Name="LocSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged">
                 <ComboBoxItem>Cabinet A</ComboBoxItem>
                 <ComboBoxItem>Cabinet B</ComboBoxItem>
                 <ComboBoxItem>Cabinet C</ComboBoxItem>
             </ComboBox>
-            <TextBox Width="{Binding ActualWidth, ElementName=ModelNumHeader}" x:Name="ModelNumSearch" TextChanged="Search_TextChanged"/>
-            <TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" x:Name="ModelNumSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
             <DatePicker Width="{Binding ActualWidth, ElementName=DateHeader}"
                         Background="#ededed"
                         x:Name="DateSearch"
@@ -100,7 +107,7 @@
         </StackPanel>
 
         <DataGrid x:Name="inventoryGrid"
-                  Margin="20,42,20,20"
+                  Margin="20,50,20,20"
                   ItemsSource="{Binding}"
                   AutoGenerateColumns="False"
                   BorderThickness="0"
