@@ -7,17 +7,19 @@
       xmlns:y="clr-namespace:InventorySystem.SideBarNav"
       FocusManager.FocusedElement="{Binding ElementName=PartNum}"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="700"
       Title="Input"
       Background="White">
 
+    
     <Page.Resources>
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="27"/>
-            <Setter Property="Margin" Value="20,5,0,0"/>
+            <Setter Property="Margin" Value="19,5,0,0"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="Width" Value="200" />
+            <Setter Property="Width" Value="202" />
             <Style.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="3" />
@@ -25,8 +27,20 @@
             </Style.Resources>
         </Style>
 
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="19,0,0,19"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="27"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3"/>
+                </Style>
+                
+            </Style.Resources>
+        </Style>
+
         <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Margin" Value="20,15,0,0" />
+            <Setter Property="Margin" Value="19,15,0,0" />
             <Setter Property="FontSize" Value="15" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -35,14 +49,26 @@
     </Page.Resources>
 
     <Grid>
-        <StackPanel Orientation="Vertical">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="442"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Orientation="Vertical" Grid.Column="0">
             <!-- First row, Part Number -->
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Part Number"/>
-                <TextBox x:Name="PartNum" Width="420" TextChanged="PartNum_TextChanged" TabIndex="0" KeyUp="Control_Enter"/>
+                <TextBox x:Name="PartNum" Width="423" TextChanged="PartNum_TextChanged" TabIndex="0" KeyUp="Control_Enter"/>
             </StackPanel>
 
-            <!-- Second Row -->
+            <!-- Second Row, Description-->
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Description" />
+                <TextBox x:Name="Description" Width="423" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
+            </StackPanel>
+            
+            <!-- Third Row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Quantity -->
                 <StackPanel Orientation="Vertical">
@@ -55,30 +81,27 @@
                     <TextBlock Text="Batch ID"/>
                     <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
                 </StackPanel>
-
             </StackPanel>
 
-            <!-- Third row -->
+            <!-- Fourth row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                <!-- Description -->
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Description" />
-                    <TextBox x:Name="Description" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
-                </StackPanel>
-
                 <!-- Location-->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Location" />
-                    <ComboBox x:Name="Location" HorizontalAlignment="Left" Margin="20,5,0,0" Height="27" Width="200" FontSize="15" IsEditable="True" KeyUp="Control_Enter">
+                    <ComboBox x:Name="Location"
+                              HorizontalAlignment="Left"
+                              VerticalContentAlignment="Center"
+                              Margin="19,5,0,0"
+                              Height="27" Width="202"
+                              FontSize="15"
+                              IsEditable="True"
+                              KeyUp="Control_Enter">
                         <ComboBoxItem VerticalAlignment="Center">Cabinet A</ComboBoxItem>
                         <ComboBoxItem VerticalAlignment="Center">Cabinet B</ComboBoxItem>
                         <ComboBoxItem VerticalAlignment="Center">Cabinet C</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
-            </StackPanel>
 
-            <!-- Fourth row -->
-            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Model Number -->
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
@@ -87,23 +110,26 @@
                     </WrapPanel>
                     <TextBox x:Name="ModelNum" IsReadOnly="True" KeyUp="Control_Enter"/>
                 </StackPanel>
-
-                <!-- Serial Number -->
-                <StackPanel Orientation="Vertical">
-                    <WrapPanel>
-                        <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" Foreground="Gray"/>
-                        <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Serial_CheckBox_Checked" Unchecked="Serial_CheckBox_Unchecked"/>
-                    </WrapPanel>
-                    <TextBox x:Name="SerialNums" IsReadOnly="True" TextChanged="SerialNum_Entered"/>
-                </StackPanel>
             </StackPanel>
+        </StackPanel>
 
-            <TextBlock x:Name="warning" Text="Please make sure that Part Number, Quantity, Batch ID, Description and Location are filled in." FontSize="15" Foreground="Red" Margin="20,10,0,0"/>
+        <!-- Serial Number -->
+        <StackPanel Orientation="Vertical" Grid.Column="1">
+            <WrapPanel>
+                <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" Foreground="Gray"/>
+                <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Serial_CheckBox_Checked" Unchecked="Serial_CheckBox_Unchecked"/>
+            </WrapPanel>
+
+            <TextBox x:Name="SerialNums" IsReadOnly="True" Height="228"
+                     TextChanged="SerialNum_Entered"
+                     VerticalScrollBarVisibility="Auto"
+                     VerticalContentAlignment="Top"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-            <Button x:Name="addItem" Content="Add Item" Margin="20,0,0,20" FontSize="15" Height="27" Width="80" Click="addItem_Click"/>
-            <Button x:Name="clearAll" Content="Clear" Margin="20,0,0,20" FontSize="15" Height="27" Width="60" Click="clearAll_Click"/>
+            <Button x:Name="addItem" Content="Add Item" Width="80" Click="addItem_Click"/>
+            <Button x:Name="clearAll" Content="Clear" Width="60" Click="clearAll_Click"/>
+            <Button x:Name="updateItem" Content="Update" Width="70"/>
         </StackPanel>
     </Grid>
 </Page>
