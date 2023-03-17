@@ -149,7 +149,7 @@ namespace InventorySystem
         }
 
 
-        // Add comma after every serial number being entered by scanning
+        // Add new line after every serial number if there is no automatic new line while scanning.
         private void SerialNum_Entered(object sender, TextChangedEventArgs e)
         {
             TextBox SerialNums = sender as TextBox;
@@ -158,7 +158,7 @@ namespace InventorySystem
             {
                 char lastChar = SerialNums.Text[SerialNums.Text.Length - 1];
 
-                if (char.IsDigit(lastChar))
+                if (lastChar != '\n')
                 {
                     if (timer != null)
                     {
@@ -169,7 +169,7 @@ namespace InventorySystem
                     timer.Interval = TimeSpan.FromSeconds(0.5);
                     timer.Tick += (s, args) =>
                     {
-                        SerialNums.Text += ",";
+                        SerialNums.Text += '\n';
                         SerialNums.CaretIndex = SerialNums.Text.Length;
                         timer.Stop();
                     };
