@@ -39,11 +39,21 @@
             </Style.Resources>
         </Style>
 
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Margin" Value="19,15,0,0" />
+        <Style x:Key="TextLabels" TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="19,3,0,0" />
             <Setter Property="FontSize" Value="15" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+
+        <Style x:Key="WarningLabels" TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="19,3,0,0" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="Red"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Height" Value="15"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
 
     </Page.Resources>
@@ -51,35 +61,40 @@
     <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="442"/>
+            <ColumnDefinition Width="442"/> 
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
         <StackPanel Orientation="Vertical" Grid.Column="0">
             <!-- First row, Part Number -->
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Part Number"/>
+                <TextBlock Text="Part Number" Style="{StaticResource TextLabels}"/>
                 <TextBox x:Name="PartNum" Width="423" TextChanged="PartNum_TextChanged" TabIndex="0" KeyUp="Control_Enter"/>
+                <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}"/>
+
             </StackPanel>
 
             <!-- Second Row, Description-->
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Description" />
+                <TextBlock Text="Description" Style="{StaticResource TextLabels}"/>
                 <TextBox x:Name="Description" Width="423" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
+                <TextBlock x:Name="DescriptionWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Description}"/>
             </StackPanel>
             
             <!-- Third Row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Quantity -->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Quantity"/>
-                    <TextBox x:Name="Qty" KeyUp="Control_Enter"/>
+                    <TextBlock Text="Quantity" Style="{StaticResource TextLabels}"/>
+                    <TextBox x:Name="Qty" KeyUp="Control_Enter" TextChanged="Qty_CheckIfInt"/>
+                    <TextBlock x:Name="QtyWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Qty}"/>
                 </StackPanel>
 
                 <!-- Batch ID -->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Batch ID"/>
+                    <TextBlock Text="Batch ID" Style="{StaticResource TextLabels}"/>
                     <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
+                    <TextBlock x:Name="BatchIDWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=BatchID}"/>
                 </StackPanel>
             </StackPanel>
 
@@ -87,7 +102,7 @@
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Location-->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Location" />
+                    <TextBlock Text="Location" Style="{StaticResource TextLabels}"/>
                     <ComboBox x:Name="Location"
                               HorizontalAlignment="Left"
                               VerticalContentAlignment="Center"
@@ -100,15 +115,17 @@
                         <ComboBoxItem VerticalAlignment="Center">Cabinet B</ComboBoxItem>
                         <ComboBoxItem VerticalAlignment="Center">Cabinet C</ComboBoxItem>
                     </ComboBox>
+                    <TextBlock x:Name="LocationWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Location}"/>
                 </StackPanel>
 
                 <!-- Model Number -->
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
-                        <TextBlock x:Name="ModelNumber" Text="Model Number" Foreground="Gray"/>
+                        <TextBlock x:Name="ModelNumber" Text="Model Number" Foreground="Gray" Style="{StaticResource TextLabels}"/>
                         <CheckBox x:Name="ModelNumCheckbox" VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Model_CheckBox_Checked" Unchecked="Model_CheckBox_Unchecked" KeyUp="Control_Enter"/>
                     </WrapPanel>
                     <TextBox x:Name="ModelNum" IsReadOnly="True" KeyUp="Control_Enter"/>
+                    <TextBlock x:Name="ModelNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=ModelNum}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
@@ -116,14 +133,18 @@
         <!-- Serial Number -->
         <StackPanel Orientation="Vertical" Grid.Column="1">
             <WrapPanel>
-                <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" Foreground="Gray"/>
+                <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" Foreground="Gray" Style="{StaticResource TextLabels}"/>
                 <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Serial_CheckBox_Checked" Unchecked="Serial_CheckBox_Unchecked"/>
             </WrapPanel>
 
-            <TextBox x:Name="SerialNums" IsReadOnly="True" Height="228"
+            <TextBox x:Name="SerialNums" IsReadOnly="True" Height="252"
                      TextChanged="SerialNum_Entered"
                      VerticalScrollBarVisibility="Auto"
                      VerticalContentAlignment="Top"/>
+
+            <TextBlock x:Name="SerialNumsWarning" Height="Auto"
+                       Style="{StaticResource WarningLabels}"
+                       Width="{Binding ActualWidth, ElementName=SerialNums}"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
