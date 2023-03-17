@@ -23,7 +23,7 @@
                  Background="#131b4f"
                  SelectionChanged="SideBar_SelectionChanged"
                  SelectionMode="Single">
-            <y:NavButton x:Name="input" Textlabel="Input" Navlink="/InputPages/Input.xaml" Width="97"/>
+            <y:NavButton x:Name="checkIn" Textlabel="Check in" Navlink="/InputPages/Input.xaml" Width="97"/>
             <y:NavButton x:Name="inventory" Textlabel="Inventory" Navlink="/InventoryPage/Inventory.xaml" Width="97"/>
         </ListBox>
 
