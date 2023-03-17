@@ -1,6 +1,7 @@
 ﻿using InventorySystem.SideBarNav;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,10 +27,20 @@ namespace InventorySystem
             InitializeComponent();
         }
 
-        private void sidebar_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SideBar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selected = sidebar.SelectedItem as NavButton;
             navframe.Navigate(selected.Navlink);
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            int nWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+            int nHieght = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
+
+            this.LayoutTransform = new ScaleTransform(nWidth / 1920, nHieght / 1080);
+        }
     }
+
+
 }

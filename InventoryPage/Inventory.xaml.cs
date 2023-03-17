@@ -32,11 +32,11 @@ namespace InventorySystem.InventoryPage
         public Inventory()
         {
             InitializeComponent();
-            loadIntoDataGrid();
+            LoadIntoDataGrid();
         }
 
 
-        private void loadIntoDataGrid()
+        private void LoadIntoDataGrid()
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {

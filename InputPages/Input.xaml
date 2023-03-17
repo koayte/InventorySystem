@@ -33,6 +33,7 @@
         </Style>
 
     </Page.Resources>
+
     <Grid>
         <StackPanel Orientation="Vertical">
             <!-- First row, Part Number -->
@@ -82,7 +83,7 @@
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
                         <TextBlock x:Name="ModelNumber" Text="Model Number" Foreground="Gray"/>
-                        <CheckBox x:Name="ModelNumCheckbox" VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Model_CheckBox_Checked" Unchecked="Model_CheckBox_Unchecked" />
+                        <CheckBox x:Name="ModelNumCheckbox" VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Model_CheckBox_Checked" Unchecked="Model_CheckBox_Unchecked" KeyUp="Control_Enter"/>
                     </WrapPanel>
                     <TextBox x:Name="ModelNum" IsReadOnly="True" KeyUp="Control_Enter"/>
                 </StackPanel>
