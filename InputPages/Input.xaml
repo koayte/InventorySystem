@@ -148,7 +148,7 @@
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
             <Button x:Name="addItem" Content="Add Item" Width="80" Click="addItem_Click"/>
             <Button x:Name="clearAll" Content="Clear" Width="60" Click="clearAll_Click"/>
-            <Button x:Name="updateItem" Content="Update" Width="70"/>
+            <Button x:Name="updateItem" Content="Update" Width="70"  Click="updateItem_Click"/>
         </StackPanel>
     </Grid>
 </Page>
