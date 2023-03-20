@@ -110,10 +110,8 @@
                               Height="27" Width="202"
                               FontSize="15"
                               IsEditable="True"
-                              KeyUp="Control_Enter">
-                        <ComboBoxItem VerticalAlignment="Center">Cabinet A</ComboBoxItem>
-                        <ComboBoxItem VerticalAlignment="Center">Cabinet B</ComboBoxItem>
-                        <ComboBoxItem VerticalAlignment="Center">Cabinet C</ComboBoxItem>
+                              KeyUp="Control_Enter"
+                              DisplayMemberPath="Area">
                     </ComboBox>
                     <TextBlock x:Name="LocationWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Location}"/>
                 </StackPanel>

@@ -33,6 +33,7 @@ namespace InventorySystem
         {
             InitializeComponent();
             inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums };
+            UpdateLocationComboBox();
         }
 
         // Checking PartNum against database
@@ -240,6 +241,22 @@ namespace InventorySystem
 
             // Send caret position back to PartNum textbox.
             PartNum.Focus();
+        }
+
+        private void UpdateLocationComboBox()
+        {
+            DataTable dt = new DataTable();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand getArea = new MySqlCommand("SELECT * FROM locations", connection);
+                connection.Open();
+                dt.Load(getArea.ExecuteReader());
+                connection.Close();
+
+                // Bind dt to Location ComboBox.
+                Location.ItemsSource = dt.DefaultView;
+            }
         }
 
 
