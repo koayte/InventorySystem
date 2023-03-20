@@ -28,6 +28,7 @@ namespace InventorySystem
         public string connectionString = "SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;";
         private DispatcherTimer timer;
         private List<TextBox> inputBoxes;
+        private List<string> areas = new List<string>();
 
         public Input()
         {
@@ -243,19 +244,65 @@ namespace InventorySystem
             PartNum.Focus();
         }
 
+
+        // Locations
         private void UpdateLocationComboBox()
         {
             DataTable dt = new DataTable();
+            // List<string> areas = new List<string>();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                MySqlCommand getArea = new MySqlCommand("SELECT * FROM locations", connection);
+                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
                 connection.Open();
-                dt.Load(getArea.ExecuteReader());
-                connection.Close();
 
-                // Bind dt to Location ComboBox.
-                Location.ItemsSource = dt.DefaultView;
+                // Load into dt, bind dt to Location ComboBox.
+                using (var reader = getArea.ExecuteReader())
+                {
+                    dt.Load(reader);
+                    Location.ItemsSource = dt.DefaultView;
+                }
+                
+                connection.Close();
+            }
+        }
+
+        private List<string> AddLocationsIntoString()
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
+                connection.Open();
+                using (var reader = getArea.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var area = reader.GetString(0);
+                        areas.Add(area);
+                    }
+                }
+                connection.Close();
+            }
+            return (areas);
+        }
+
+        private void AddNewArea()
+        {
+            areas = AddLocationsIntoString();
+
+            // If user inputs a new area that is not in the current database, add to db.
+            if (!areas.Contains(Location.Text))
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    string commandText = "INSERT INTO locations (Area) VALUE (@Area)";
+                    MySqlCommand addNewArea = new MySqlCommand(commandText, connection);
+                    addNewArea.Parameters.AddWithValue("@Area", Location.Text);
+
+                    connection.Open();
+                    addNewArea.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
 
@@ -317,6 +364,7 @@ namespace InventorySystem
                 connection.Close();
             }
 
+            AddNewArea();
             ClearAll();
 
         }
