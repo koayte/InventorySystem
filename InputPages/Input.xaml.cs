@@ -275,7 +275,6 @@ namespace InventorySystem
         private void UpdateLocationComboBox()
         {
             DataTable dt = new DataTable();
-            // List<string> areas = new List<string>();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {

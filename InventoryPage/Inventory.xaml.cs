@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace InventorySystem.InventoryPage
 {
@@ -33,6 +34,7 @@ namespace InventorySystem.InventoryPage
         {
             InitializeComponent();
             LoadIntoDataGrid();
+            UpdateLocationComboBox();
         }
 
 
@@ -70,6 +72,25 @@ namespace InventorySystem.InventoryPage
             return columnNames;
         }
 
+        private void UpdateLocationComboBox()
+        {
+            DataTable dt = new DataTable();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
+                connection.Open();
+
+                // Load into dt, bind dt to Location ComboBox.
+                using (var reader = getArea.ExecuteReader())
+                {
+                    dt.Load(reader);
+                    LocSearch.ItemsSource = dt.DefaultView;
+                }
+
+                connection.Close();
+            }
+        }
 
         private void ApplyFilter()
         {
