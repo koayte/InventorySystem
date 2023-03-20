@@ -40,13 +40,15 @@ namespace InventorySystem
         // Checking PartNum against database
         private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
         {
+            DateTime dateTime = DateTime.Today;
+            string todayDate = dateTime.ToString("yyyy-MM-dd");
             string partNum = PartNum.Text;
             if (!string.IsNullOrEmpty(partNum))
             {
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-                    // Autofill Description, Location and BatchID based on PartNum 
-                    string commandText1 = "SELECT Description, Location, BatchID FROM inputs WHERE PartNum = @PartNum ORDER BY BatchID";
+                    // Autofill Description and Location based on PartNum 
+                    string commandText1 = "SELECT Description, Location FROM inputs WHERE PartNum = @PartNum";
                     MySqlCommand autoFillDescLoc = new MySqlCommand(commandText1, connection);
                     autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
 
@@ -60,54 +62,78 @@ namespace InventorySystem
                     MySqlCommand autoCheckSerialNums = new MySqlCommand(commandText3, connection);
                     autoCheckSerialNums.Parameters.AddWithValue("@PartNum", partNum);
 
-                    connection.Open();
-                    MySqlDataReader reader1 = autoFillDescLoc.ExecuteReader();
-
-                    // PartNum exists in current inventory
-                    if (reader1.HasRows)
-                    {
-                        PartNumWarning.Text = "Part Number exists in inventory. Please register for the missing fields.";
-
-                        while (reader1.Read())
-                        {
-                            Description.Text = reader1.GetString(0);
-                            Location.Text = reader1.GetString(1);
-                            int batchId = reader1.GetInt32(2) + 1;
-                            BatchID.Text = batchId.ToString();
-                        }
-
-                    }
-
-                    // PartNum does not exist in current inventory
-                    else
-                    {
-                        PartNumWarning.Text = "Part Number does not exist in inventory. Please register for all fields.";
-                        BatchID.Text = "1";
-                    }
-                    connection.Close();
+                    // Get BatchByDay regardless of PartNum for that date
+                    string commandText4 = "SELECT row_number() OVER (PARTITION BY Date ORDER BY Time) BatchByDay FROM inputs " +
+                        "WHERE Date = @Date " +
+                        "ORDER BY BatchByDay DESC";
+                    MySqlCommand getBatchByDay = new MySqlCommand(commandText4, connection);
+                    getBatchByDay.Parameters.AddWithValue("@Date", todayDate);
 
                     connection.Open();
-                    MySqlDataReader reader2 = autoCheckModelNum.ExecuteReader();
-                    if (reader2.Read())
-                    {
-                        int ModelNumExists = int.Parse(reader2.GetString(0));
-                        if (ModelNumExists > 0)
-                        {
-                            ModelNumCheckbox.IsChecked = true;
-                        }
-                    }
-                    connection.Close();
 
-                    connection.Open();
-                    MySqlDataReader reader3 = autoCheckSerialNums.ExecuteReader();
-                    if (reader3.Read())
+                    using (var reader = autoFillDescLoc.ExecuteReader())
                     {
-                        int SerialNumExists = int.Parse(reader3.GetString(0));
-                        if (SerialNumExists > 0)
+                        // PartNum exists in current inventory
+                        if (reader.HasRows)
                         {
-                            SerialNumsCheckbox.IsChecked = true;
+                            PartNumWarning.Text = "Part Number exists in inventory. Please register for the missing fields.";
+
+                            while (reader.Read())
+                            {
+                                Description.Text = reader.GetString(0);
+                                Location.Text = reader.GetString(1);
+                            }
+                        }
+
+                        // PartNum does not exist in current inventory
+                        else
+                        {
+                            PartNumWarning.Text = "Part Number does not exist in inventory. Please register for all fields.";
+                            // BatchID.Text = "1";
                         }
                     }
+
+                    using (var reader = autoCheckModelNum.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int ModelNumExists = int.Parse(reader.GetString(0));
+                            if (ModelNumExists > 0)
+                            {
+                                ModelNumCheckbox.IsChecked = true;
+                            }
+                        }
+                    }
+      
+                    using (var reader = autoCheckSerialNums.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int SerialNumExists = int.Parse(reader.GetString(0));
+                            if (SerialNumExists > 0)
+                            {
+                                SerialNumsCheckbox.IsChecked = true;
+                            }
+                        }
+                    }
+
+                    // Set BatchID as YYYY-mm-dd_BatchByDay. E.g. 2023-03-20_3
+                    using (var reader = getBatchByDay.ExecuteReader())
+                    {
+                        // If the first record of the day has already been input into db.
+                        if (reader.Read())
+                        {
+                            int BatchByDay = reader.GetInt32(0) + 1;
+                            BatchID.Text = todayDate + "_" + BatchByDay.ToString();
+                        }
+
+                        // If this is the first record of the day (hence query gives null results)
+                        else
+                        {
+                            BatchID.Text = todayDate + "_" + "1";
+                        }
+                    }
+
                     connection.Close();
                 }
             }
