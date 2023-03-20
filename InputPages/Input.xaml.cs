@@ -336,58 +336,86 @@ namespace InventorySystem
         // Buttons
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
-            List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@modelNum", "@serialNums", "@batchID" };
-            List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Location.Text, ModelNum.Text, SerialNums.Text, BatchID.Text };
+            List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@batchID", "@modelNum", "@serialNums" };
+            List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Location.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
+            var serialNumberList = SerialNums.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "INSERT INTO inputs (PartNum, Qty, Description, Location, ModelNum, SerialNums, BatchID) VALUE (@partNum, @qty, @description, @location, @modelNum, @serialNums, @batchId)";
+                string commandText = "INSERT INTO inputs (PartNum, Qty, Description, Location, BatchID, ModelNum, SerialNums) VALUE (@partNum, @qty, @description, @location, @batchId, @modelNum, @serialNums)";
                 MySqlCommand addRow = new MySqlCommand(commandText, connection);
 
-                for (int i = 0; i < placeholders.Count; i++)
+
+                // If serial numbers are not entered, enter NULL value. Else, split into multiple db entries.
+                if (string.IsNullOrEmpty(SerialNums.Text))
                 {
-                    switch (i)
+                    connection.Open();
+                    addRow.Parameters.AddWithValue("@serialNums", DBNull.Value);
+                    for (int j = 0; j < placeholders.Count - 1; j++)
                     {
-                        // For parameter @modelNum, if input text is empty, submit a null value.
-                        case 4:
-                            if (string.IsNullOrEmpty(inputs[i]))
-                            {
-                                addRow.Parameters.AddWithValue(placeholders[i], DBNull.Value);
-                            }
-                            else
-                            {
-                                addRow.Parameters.AddWithValue(placeholders[i], inputs[i]);
-                            }
-                            break;
-
-                        // For parameter @serialNums, if input text is empty, submit a null value.
-                        case 5:
-                            if (string.IsNullOrEmpty(inputs[i]))
-                            {
-                                addRow.Parameters.AddWithValue(placeholders[i], DBNull.Value);
-                            }
-                            else
-                            {
-                                // Remove last character if it is a comma.
-                                string serialNums = SerialNums.Text;
-                                char lastChar = serialNums[serialNums.Length - 1];
-                                if (lastChar == ',')
+                        switch (j)
+                        {
+                            case 5: // Set NULL value if model number is empty.
+                                if (string.IsNullOrEmpty(inputs[j]))
                                 {
-                                    serialNums = serialNums.Remove(serialNums.Length - 1, 1);
-                                    addRow.Parameters.AddWithValue(placeholders[i], serialNums);
+                                    addRow.Parameters.AddWithValue(placeholders[j], DBNull.Value);
                                 }
-                            }
-                            break;
+                                else
+                                {
+                                    addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                }
+                                break;
 
-                        default:
-                            addRow.Parameters.AddWithValue(placeholders[i], inputs[i]);
-                            break;
+                            default:
+                                addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                break;
+                        }
                     }
+                    addRow.ExecuteNonQuery();
+                    connection.Close();
+                }
+                else
+                {
+                    connection.Open();
+                    // Create separate rows for each serial number.
+                    foreach (var num in serialNumberList)
+                    {
+                        for (int j = 0; j < placeholders.Count; j++) 
+                        {
+                            switch (j)
+                            {
+                                case 1: // Set quantity = 1 for each row.
+                                    addRow.Parameters.AddWithValue(placeholders[j], "1");
+                                    break;
+
+                                case 5: // Set NULL value if model number is empty.
+                                    if (string.IsNullOrEmpty(inputs[j]))
+                                    {
+                                        addRow.Parameters.AddWithValue(placeholders[j], DBNull.Value);
+                                    }
+                                    else
+                                    {
+                                        addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                    }
+                                    break;
+
+                                case 6: // Set each serial number for each row.
+                                    addRow.Parameters.AddWithValue(placeholders[j], num);
+                                    break;
+
+                                default:
+                                    addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                    break;
+                            }
+                        }
+                        addRow.ExecuteNonQuery();
+                        addRow.Parameters.Clear();
+
+                    }
+                    connection.Close();
+
                 }
 
-                connection.Open();
-                addRow.ExecuteNonQuery();
-                connection.Close();
             }
 
             AddNewArea();
