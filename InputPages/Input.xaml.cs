@@ -60,8 +60,12 @@ namespace InventorySystem
 
                     connection.Open();
                     MySqlDataReader reader1 = autoFillDescLoc.ExecuteReader();
+
+                    // PartNum exists in current inventory
                     if (reader1.HasRows)
                     {
+                        PartNumWarning.Text = "Part Number exists in inventory. Please register for the missing fields.";
+
                         while (reader1.Read())
                         {
                             Description.Text = reader1.GetString(0);
@@ -69,11 +73,13 @@ namespace InventorySystem
                             int batchId = reader1.GetInt32(2) + 1;
                             BatchID.Text = batchId.ToString();
                         }
-                        // PartNum does not exist in current inventory
 
                     }
+
+                    // PartNum does not exist in current inventory
                     else
                     {
+                        PartNumWarning.Text = "Part Number does not exist in inventory. Please register for all fields.";
                         BatchID.Text = "1";
                     }
                     connection.Close();
@@ -102,6 +108,11 @@ namespace InventorySystem
                     }
                     connection.Close();
                 }
+            }
+            else
+            {
+                PartNumWarning.Text = "";
+                ClearAll();
             }
         }
         
@@ -216,6 +227,21 @@ namespace InventorySystem
             }
         }
 
+        private void ClearAll()
+        {
+            // Clear textboxes, reset checkboxes to default
+            for (int i = 0; i < inputBoxes.Count; i++)
+            {
+                inputBoxes[i].Text = String.Empty;
+            }
+            Location.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
+            ModelNumCheckbox.IsChecked = false;
+            SerialNumsCheckbox.IsChecked = false;
+
+            // Send caret position back to PartNum textbox.
+            PartNum.Focus();
+        }
+
 
         // Buttons
         private void addItem_Click(object sender, RoutedEventArgs e)
@@ -274,32 +300,15 @@ namespace InventorySystem
                 connection.Close();
             }
 
-            // Clear textboxes so they can be reused, reset checkboxes to default
-            for (int i = 0; i < inputBoxes.Count; i++)
-            {
-                inputBoxes[i].Text = String.Empty;
-            }
-            Location.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
-            ModelNumCheckbox.IsChecked = false;
-            SerialNumsCheckbox.IsChecked = false;
-
-            // Send caret position back to PartNum textbox.
-            PartNum.Focus();
+            ClearAll();
 
         }
         private void clearAll_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < inputBoxes.Count; i++)
-            {
-                inputBoxes[i].Text = String.Empty;
-            }
-            Location.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
-            ModelNumCheckbox.IsChecked = false;
-            SerialNumsCheckbox.IsChecked = false;
-            PartNum.Focus();
+            ClearAll();
         }
 
-        
+
         // User input validation
         private void Qty_CheckIfInt(object sender, TextChangedEventArgs e)
         {
