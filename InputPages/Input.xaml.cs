@@ -124,13 +124,13 @@ namespace InventorySystem
                         if (reader.Read())
                         {
                             int BatchByDay = reader.GetInt32(0) + 1;
-                            BatchID.Text = todayDate + "_" + BatchByDay.ToString();
+                            BatchID.Text = todayDate + "_" + BatchByDay.ToString("00");
                         }
 
                         // If this is the first record of the day (hence query gives null results)
                         else
                         {
-                            BatchID.Text = todayDate + "_" + "1";
+                            BatchID.Text = todayDate + "_" + "01";
                         }
                     }
 

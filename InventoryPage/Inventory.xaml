@@ -95,12 +95,12 @@
             <ComboBox Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}" x:Name="LocSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged" DisplayMemberPath="Area">
             </ComboBox>
             <TextBox Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" x:Name="ModelNumSearch" TextChanged="Search_TextChanged"/>
-            <TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
+            <!--<TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
             <DatePicker Width="{Binding ActualWidth, ElementName=DateHeader}"
                         Background="#ededed"
                         x:Name="DateSearch"
                         TextBoxBase.TextChanged="Search_TextChanged"
-                        SelectedDate="{Binding MyDate, StringFormat=dd-mm-yyyy}" />
+                        SelectedDate="{Binding MyDate, StringFormat=dd-mm-yyyy}" />-->
         </StackPanel>
 
         <DataGrid x:Name="inventoryGrid"
@@ -112,7 +112,6 @@
                   RowStyle="{StaticResource dataGridRowStyle}"
                   CellStyle="{StaticResource dataGridCellStyle}"
                   ColumnHeaderStyle="{StaticResource dataGridHeaderStyle}">
-            <!-- Consider adding search functionality: https://www.codeproject.com/Articles/42227/Automatic-WPF-Toolkit-DataGrid-Filtering -->
 
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Part Number" Width="95" x:Name="PartNumHeader">
@@ -123,7 +122,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Batch" Width="40" x:Name="BatchHeader">
+                <DataGridTemplateColumn Header="BatchID" Width="40" x:Name="BatchHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding BatchID}" TextWrapping="Wrap"/>
@@ -155,7 +154,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Model Number" Width="92" x:Name="ModelNumHeader">
+                <DataGridTemplateColumn Header="Model Number" Width="*" x:Name="ModelNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ModelNum}" TextWrapping="Wrap"/>
@@ -163,21 +162,21 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Serial Numbers" Width="100" x:Name="SerialNumsHeader">
+                <!--<DataGridTemplateColumn Header="Serial Numbers" Width="100" x:Name="SerialNumsHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding SerialNums}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
 
-                <DataGridTemplateColumn Header="Date" Width="*" x:Name="DateHeader">
+                <!--<DataGridTemplateColumn Header="Date" Width="*" x:Name="DateHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Time}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
 
             </DataGrid.Columns>
         </DataGrid>

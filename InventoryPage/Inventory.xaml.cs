@@ -37,19 +37,34 @@ namespace InventorySystem.InventoryPage
             UpdateLocationComboBox();
         }
 
+        private List<Item> GetItem()
+        {
+            List<Item> data = new List<Item>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum FROM inputs ORDER BY PartNum, BatchID";
+                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
+                connection.Open();
+                MySqlDataReader reader = loadInventory.ExecuteReader();
+                while (reader.Read())
+                {
+                    var type = typeof(Item);
+                    Item obj = (Item)Activator.CreateInstance(type);
+                    foreach(var prop in type.GetProperties())
+                    {
+                        var propType = prop.PropertyType;
+                        prop.SetValue(obj, Convert.ChangeType(reader[prop.Name].ToString(), propType));
+                    }
+                    data.Add(obj);
+                }
+                connection.Close();
+            }
+            return data;
+        }
 
         private void LoadIntoDataGrid()
         {
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                string commandText = "SELECT PartNum, CAST(BatchID AS CHAR) AS BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums, DATE_FORMAT(Time, '%e/%c/%Y %H:%i:%s') AS Time FROM inputs ORDER BY PartNum, BatchID";
-                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
-                connection.Open();
-                DataTable dt = new DataTable();
-                dt.Load(loadInventory.ExecuteReader());
-                connection.Close();
-                inventoryGrid.DataContext = dt;
-            }
+            inventoryGrid.ItemsSource = GetItem();
         }
 
         private List<string> GetColumnNames()
@@ -74,22 +89,41 @@ namespace InventorySystem.InventoryPage
 
         private void UpdateLocationComboBox()
         {
-            DataTable dt = new DataTable();
+            List<Location> locations = new List<Location>();
+
+
+            // DataTable dt = new DataTable();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
                 connection.Open();
-
-                // Load into dt, bind dt to Location ComboBox.
-                using (var reader = getArea.ExecuteReader())
+                MySqlDataReader reader = getArea.ExecuteReader();
+                while (reader.Read())
                 {
-                    dt.Load(reader);
-                    LocSearch.ItemsSource = dt.DefaultView;
+                    var type = typeof(Location);
+                    Location obj = (Location)Activator.CreateInstance(type);
+                    foreach (var prop in type.GetProperties())
+                    {
+                        var propType = prop.PropertyType;
+                        prop.SetValue(obj, Convert.ChangeType(reader[prop.Name].ToString(), propType));
+                    }
+                    locations.Add(obj);
                 }
 
                 connection.Close();
+
+
+                // Load into dt, bind dt to Location ComboBox.
+                //using (var reader = getArea.ExecuteReader())
+                //{
+                //    //dt.Load(reader);
+                //    //LocSearch.ItemsSource = dt.DefaultView;
+
+                //}
+
             }
+            LocSearch.ItemsSource = locations;
         }
 
         private void ApplyFilter()
@@ -98,7 +132,7 @@ namespace InventorySystem.InventoryPage
 
             DataView? dataView = inventoryGrid.ItemsSource as DataView; 
 
-            List<string> searchTexts = new List<string> { PartNumSearch.Text, BatchSearch.Text, DescSearch.Text, QtySearch.Text, LocSearch.Text, ModelNumSearch.Text, SerialNumSearch.Text, DateSearch.Text };
+            List<string> searchTexts = new List<string> { PartNumSearch.Text, BatchSearch.Text, DescSearch.Text, QtySearch.Text, LocSearch.Text, ModelNumSearch.Text };
             StringBuilder filter = new StringBuilder();
             for (int i = 0; i < searchTexts.Count; i++)
             {
@@ -123,6 +157,24 @@ namespace InventorySystem.InventoryPage
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             ApplyFilter();
+        }
+
+
+
+
+        // Old code :(
+        private void LoadIntoDataGrid2()
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText = "SELECT PartNum, CAST(BatchID AS CHAR) AS BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums, DATE_FORMAT(Time, '%e/%c/%Y %H:%i:%s') AS Time FROM inputs ORDER BY BatchID";
+                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
+                connection.Open();
+                DataTable dt = new DataTable();
+                dt.Load(loadInventory.ExecuteReader());
+                connection.Close();
+                inventoryGrid.DataContext = dt;
+            }
         }
 
     }
