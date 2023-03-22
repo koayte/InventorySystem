@@ -349,21 +349,22 @@ namespace InventorySystem
                 if (string.IsNullOrEmpty(SerialNums.Text))
                 {
                     connection.Open();
-                    addRow.Parameters.AddWithValue("@serialNums", DBNull.Value);
+                    //addRow.Parameters.AddWithValue("@serialNums", DBNull.Value);
+                    addRow.Parameters.AddWithValue("@serialNums", "");
                     for (int j = 0; j < placeholders.Count - 1; j++)
                     {
                         switch (j)
                         {
-                            case 5: // Set NULL value if model number is empty.
-                                if (string.IsNullOrEmpty(inputs[j]))
-                                {
-                                    addRow.Parameters.AddWithValue(placeholders[j], DBNull.Value);
-                                }
-                                else
-                                {
-                                    addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
-                                }
-                                break;
+                            //case 5: // Set NULL value if model number is empty.
+                            //    if (string.IsNullOrEmpty(inputs[j]))
+                            //    {
+                            //        addRow.Parameters.AddWithValue(placeholders[j], DBNull.Value);
+                            //    }
+                            //    else
+                            //    {
+                            //        addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                            //    }
+                            //    break;
 
                             default:
                                 addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
@@ -387,16 +388,16 @@ namespace InventorySystem
                                     addRow.Parameters.AddWithValue(placeholders[j], "1");
                                     break;
 
-                                case 5: // Set NULL value if model number is empty.
-                                    if (string.IsNullOrEmpty(inputs[j]))
-                                    {
-                                        addRow.Parameters.AddWithValue(placeholders[j], DBNull.Value);
-                                    }
-                                    else
-                                    {
-                                        addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
-                                    }
-                                    break;
+                                //case 5: // Set NULL value if model number is empty.
+                                //    if (string.IsNullOrEmpty(inputs[j]))
+                                //    {
+                                //        addRow.Parameters.AddWithValue(placeholders[j], DBNull.Value);
+                                //    }
+                                //    else
+                                //    {
+                                //        addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                //    }
+                                //    break;
 
                                 case 6: // Set each serial number for each row.
                                     addRow.Parameters.AddWithValue(placeholders[j], num);
@@ -412,9 +413,7 @@ namespace InventorySystem
 
                     }
                     connection.Close();
-
                 }
-
             }
 
             AddNewArea();

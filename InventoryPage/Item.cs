@@ -1,19 +1,188 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace InventorySystem.InventoryPage
 {
-    public class Item
+
+    public class Item : INotifyPropertyChanged, IEditableObject
     {
-        public string PartNum {  get; set; }
-        public string BatchID { get; set; }
-        public string Description { get; set; } 
-        public string Qty { get; set; }
-        public string Location { get; set; }
-        public string? ModelNum { get; set; }
+
+        // Private item data. 
+        private string _PartNum = string.Empty;
+        private string _BatchID = string.Empty;
+        private string _Description = string.Empty;
+        private string _Qty = string.Empty;
+        private string _Location = string.Empty;
+        private string _ModelNum = string.Empty;
+
+        // Data for undoing canceled edits.
+        private Item temp_Item = null;
+        private bool _Editing = false;
+
+        // Public item data.
+        public string PartNum
+        {
+            get { return this._PartNum; }
+            set
+            {
+                if (value != this._PartNum)
+                {
+                    this._PartNum = value;
+                    NotifyPropertyChanged("PartNum");
+                }
+            }
+        }
+
+        public string BatchID
+        {
+            get { return this._BatchID; }
+            set
+            {
+                if (value != this._BatchID)
+                {
+                    this._BatchID = value;
+                    NotifyPropertyChanged("BatchID");
+                }
+            }
+        }
+
+        public string Description
+        {
+            get { return this._Description; }
+            set
+            {
+                if (value != this._Description)
+                {
+                    this._Description = value;
+                    NotifyPropertyChanged("Description");
+                }
+            }
+        }
+
+        public string Qty
+        {
+            get { return this._Qty; }
+            set
+            {
+                if (value != this._Qty)
+                {
+                    this._Qty = value;
+                    NotifyPropertyChanged("Qty");
+                }
+            }
+        }
+
+        public string Location
+        {
+            get { return this._Location; }
+            set
+            {
+                if (value != this._Location)
+                {
+                    this._Location = value;
+                    NotifyPropertyChanged("Location");
+                }
+            }
+        }
+
+        public string ModelNum
+        {
+            get { return this._ModelNum; }
+            set
+            {
+                if (value != this._ModelNum)
+                {
+                    this._ModelNum = value;
+                    NotifyPropertyChanged("ModelNum");
+                }
+            }
+        }
+
+        // Implement INotifyPropertyChanged interface.
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+
+        // Implement IEditableObject interface.
+        public void BeginEdit()
+        {
+            if (_Editing == false)
+            {
+                temp_Item = this.MemberwiseClone() as Item;
+                _Editing = true;
+            }
+        }
+
+        public void CancelEdit()
+        {
+            if (_Editing == true)
+            {
+                this.PartNum = temp_Item.PartNum;
+                this.BatchID = temp_Item.BatchID;
+                this.Description = temp_Item.Description;
+                this.Qty = temp_Item.Qty;
+                this.Location = temp_Item.Location;
+                this.ModelNum = temp_Item.ModelNum;
+                _Editing = false;
+            }
+        }
+
+        public void EndEdit()
+        {
+            if (_Editing == true)
+            {
+                temp_Item = null;
+                _Editing = false;
+            }
+        }
+
+    }
+
+    public class Items : ObservableCollection<Item>
+    {
+        public Items() : base()
+        {
+            using (MySqlConnection connection = new MySqlConnection("SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;"))
+            {
+                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum FROM inputs ORDER BY PartNum, BatchID";
+                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
+                connection.Open();
+                MySqlDataReader reader = loadInventory.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    string partNum = reader.GetString("PartNum");
+                    string batchID = reader.GetString("BatchID");
+                    string description = reader.GetString("Description");
+                    string qty = reader.GetString("Qty");
+                    string location = reader.GetString("Location");
+                    string modelNum = reader.GetString("ModelNum");
+                    Add(new Item()
+                    {
+                        PartNum = partNum,
+                        BatchID = batchID,
+                        Description = description,
+                        Qty = qty,
+                        Location = location,
+                        ModelNum = modelNum
+                    });
+
+                }
+            }
+        }
     }
 
     public class Location

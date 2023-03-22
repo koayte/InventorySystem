@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Linq;
@@ -33,9 +34,11 @@ namespace InventorySystem.InventoryPage
         public Inventory()
         {
             InitializeComponent();
-            LoadIntoDataGrid();
             UpdateLocationComboBox();
+
+            List<Item> items = GetItem();
         }
+
 
         private List<Item> GetItem()
         {
@@ -62,30 +65,8 @@ namespace InventorySystem.InventoryPage
             return data;
         }
 
-        private void LoadIntoDataGrid()
-        {
-            inventoryGrid.ItemsSource = GetItem();
-        }
 
-        private List<string> GetColumnNames()
-        {
-            List<string> columnNames = new List<string>();
 
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                string commandText = "DESCRIBE inputs";
-                MySqlCommand getColumnNames = new MySqlCommand(commandText, connection);
-                connection.Open();
-                MySqlDataReader reader = getColumnNames.ExecuteReader();
-                while (reader.Read())
-                {
-                    var columnName = reader.GetString(0);
-                    columnNames.Add(columnName.ToString());
-                }
-                connection.Close();
-            }
-            return columnNames;
-        }
 
         private void UpdateLocationComboBox()
         {
@@ -126,11 +107,50 @@ namespace InventorySystem.InventoryPage
             LocSearch.ItemsSource = locations;
         }
 
-        private void ApplyFilter()
+
+        // Filter functions
+        private void cvs_Filter(object sender, FilterEventArgs e)
+        {
+            Item item = e.Item as Item;
+            if (item != null)
+            {
+                bool PartNumFilter = string.IsNullOrEmpty(PartNumSearch.Text) || item.PartNum.Contains(PartNumSearch.Text);
+                bool BatchIDFilter = string.IsNullOrEmpty(BatchSearch.Text) || item.BatchID.Contains(BatchSearch.Text);
+                bool DescFilter = string.IsNullOrEmpty(DescSearch.Text) || item.Description.Contains(DescSearch.Text);
+                bool QtyFilter = string.IsNullOrEmpty(QtySearch.Text) || item.Qty.Contains(QtySearch.Text);
+                bool LocFilter = string.IsNullOrEmpty(LocSearch.Text) || item.Location.Contains(LocSearch.Text);
+                bool ModelNumFilter = string.IsNullOrEmpty(ModelNumSearch.Text) || item.ModelNum.Contains(ModelNumSearch.Text);
+                e.Accepted = PartNumFilter && BatchIDFilter && DescFilter && QtyFilter && LocFilter && ModelNumFilter;
+            }
+        }
+
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(inventoryGrid.ItemsSource).Refresh();
+        }
+
+
+
+        // Old code :(
+        private void LoadIntoDataGrid2()
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText = "SELECT PartNum, CAST(BatchID AS CHAR) AS BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums, DATE_FORMAT(Time, '%e/%c/%Y %H:%i:%s') AS Time FROM inputs ORDER BY BatchID";
+                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
+                connection.Open();
+                DataTable dt = new DataTable();
+                dt.Load(loadInventory.ExecuteReader());
+                connection.Close();
+                inventoryGrid.DataContext = dt;
+            }
+        }
+
+        private void ApplyFilter2()
         {
             List<string> columnNames = GetColumnNames();
 
-            DataView? dataView = inventoryGrid.ItemsSource as DataView; 
+            DataView? dataView = inventoryGrid.ItemsSource as DataView;
 
             List<string> searchTexts = new List<string> { PartNumSearch.Text, BatchSearch.Text, DescSearch.Text, QtySearch.Text, LocSearch.Text, ModelNumSearch.Text };
             StringBuilder filter = new StringBuilder();
@@ -154,28 +174,26 @@ namespace InventorySystem.InventoryPage
             dataView.RowFilter = filter.ToString();
         }
 
-        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        private List<string> GetColumnNames()
         {
-            ApplyFilter();
-        }
+            List<string> columnNames = new List<string>();
 
-
-
-
-        // Old code :(
-        private void LoadIntoDataGrid2()
-        {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT PartNum, CAST(BatchID AS CHAR) AS BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums, DATE_FORMAT(Time, '%e/%c/%Y %H:%i:%s') AS Time FROM inputs ORDER BY BatchID";
-                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
+                string commandText = "DESCRIBE inputs";
+                MySqlCommand getColumnNames = new MySqlCommand(commandText, connection);
                 connection.Open();
-                DataTable dt = new DataTable();
-                dt.Load(loadInventory.ExecuteReader());
+                MySqlDataReader reader = getColumnNames.ExecuteReader();
+                while (reader.Read())
+                {
+                    var columnName = reader.GetString(0);
+                    columnNames.Add(columnName.ToString());
+                }
                 connection.Close();
-                inventoryGrid.DataContext = dt;
             }
+            return columnNames;
         }
+
 
     }
 
