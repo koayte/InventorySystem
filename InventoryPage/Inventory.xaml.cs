@@ -36,16 +36,16 @@ namespace InventorySystem.InventoryPage
             InitializeComponent();
             UpdateLocationComboBox();
 
-            List<Item> items = GetItem();
+            List<Item> items = GetFullItem();
         }
 
 
-        private List<Item> GetItem()
+        private List<Item> GetFullItem()
         {
             List<Item> data = new List<Item>();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum FROM inputs ORDER BY PartNum, BatchID";
+                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums FROM inputs ORDER BY PartNum, BatchID";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();
@@ -116,7 +116,7 @@ namespace InventorySystem.InventoryPage
             {
                 bool PartNumFilter = string.IsNullOrEmpty(PartNumSearch.Text) || item.PartNum.Contains(PartNumSearch.Text);
                 bool BatchIDFilter = string.IsNullOrEmpty(BatchSearch.Text) || item.BatchID.Contains(BatchSearch.Text);
-                bool DescFilter = string.IsNullOrEmpty(DescSearch.Text) || item.Description.Contains(DescSearch.Text);
+                bool DescFilter = string.IsNullOrEmpty(DescSearch.Text) || item.Description.ToLower().Contains(DescSearch.Text.ToLower());
                 bool QtyFilter = string.IsNullOrEmpty(QtySearch.Text) || item.Qty.Contains(QtySearch.Text);
                 bool LocFilter = string.IsNullOrEmpty(LocSearch.Text) || item.Location.Contains(LocSearch.Text);
                 bool ModelNumFilter = string.IsNullOrEmpty(ModelNumSearch.Text) || item.ModelNum.Contains(ModelNumSearch.Text);
@@ -129,7 +129,10 @@ namespace InventorySystem.InventoryPage
             CollectionViewSource.GetDefaultView(inventoryGrid.ItemsSource).Refresh();
         }
 
+        private void Update_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
 
         // Old code :(
         private void LoadIntoDataGrid2()

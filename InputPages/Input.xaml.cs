@@ -424,10 +424,6 @@ namespace InventorySystem
         {
             ClearAll();
         }
-        private void updateItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
 
 

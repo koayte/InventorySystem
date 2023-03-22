@@ -11,6 +11,7 @@
 
     <Page.Resources>
         <local:WidthConverter x:Key="WidthConverter"/>
+        <local:GroupHeaderWidthConverter x:Key="GroupHeaderWidthConverter"/>
         <local:Items x:Key="items" />
 
         <Style x:Key="dataGridStyle" TargetType="DataGrid">
@@ -28,6 +29,17 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="3,0,3,0"/>
             <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="{x:Null}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="Foreground" Value="Black" />
+
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{x:Null}" />
+                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="dataGridHeaderStyle" TargetType="DataGridColumnHeader">
@@ -37,9 +49,9 @@
             <Setter Property="Height" Value="27"/>
         </Style>
 
-        <CollectionViewSource x:Key="cvsItems" Source="{StaticResource items}" Filter="csv_Filter">
+        <CollectionViewSource x:Key="cvsItems" Source="{StaticResource items}" Filter="cvs_Filter">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="BatchID"/>
+                <PropertyGroupDescription PropertyName="PartNum"/>
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
 
@@ -120,7 +132,54 @@
                   CellStyle="{StaticResource dataGridCellStyle}"
                   ColumnHeaderStyle="{StaticResource dataGridHeaderStyle}"
                   ItemsSource="{Binding Source={StaticResource cvsItems}}">
-
+            <DataGrid.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Margin" Value="0,0,0,5"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander IsExpanded="True" Background="#131b4f" BorderBrush="#FF002255" Foreground="#FFEEEEEE" BorderThickness="0">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Path=Name}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}"/>
+                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=BatchID}" Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock DataContext="{Binding Items}"  Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock Text="{Binding Path=ItemCount}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Location}" Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}"/>
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <Expander.Content>
+                                                <ItemsPresenter />
+                                            </Expander.Content>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
+            
+            <DataGrid.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Width" Value="45"/>
+                    <Setter Property="FontSize" Value="10"/>
+                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                    <Setter Property="Padding" Value="1"/>
+                    <Style.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="3"/>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+                
+                
+                
+            </DataGrid.Resources>
+            
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Part Number" Width="95" x:Name="PartNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
@@ -130,7 +189,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="BatchID" Width="40" x:Name="BatchHeader">
+                <DataGridTemplateColumn Header="BatchID" Width="90" x:Name="BatchHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding BatchID}" TextWrapping="Wrap"/>
@@ -138,7 +197,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Description" Width="100" x:Name="DescHeader">
+                <DataGridTemplateColumn Header="Description" Width="130" x:Name="DescHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
@@ -146,7 +205,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Quantity" Width="30" x:Name="QtyHeader">
+                <DataGridTemplateColumn Header="Qty" Width="40" x:Name="QtyHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Qty}" TextWrapping="Wrap"/>
@@ -154,7 +213,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Location" Width="65" x:Name="LocHeader">
+                <DataGridTemplateColumn Header="Location" Width="90" x:Name="LocHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock x:Name="LocData"  Text="{Binding Location}" TextWrapping="Wrap"/>
@@ -162,10 +221,18 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Model Number" Width="*" x:Name="ModelNumHeader">
+                <DataGridTemplateColumn Header="Model Number" Width="130" x:Name="ModelNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ModelNum}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Action" Width="*" x:Name="ActionHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Update" Click="Update_Click"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
