@@ -20,6 +20,10 @@ namespace InventorySystem.InventoryPage
         private string _Qty = string.Empty;
         private string _Location = string.Empty;
         private string _ModelNum = string.Empty;
+        private string _SerialNums = string.Empty;
+
+
+
 
         // Data for undoing canceled edits.
         private Item temp_Item = null;
@@ -104,6 +108,19 @@ namespace InventorySystem.InventoryPage
             }
         }
 
+        public string SerialNums
+        {
+            get { return _SerialNums; }
+            set
+            {
+                if (value != this._SerialNums)
+                {
+                    this._SerialNums = value;
+                    NotifyPropertyChanged("SerialNums");
+                }
+            }
+        }
+
         // Implement INotifyPropertyChanged interface.
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -157,7 +174,7 @@ namespace InventorySystem.InventoryPage
         {
             using (MySqlConnection connection = new MySqlConnection("SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;"))
             {
-                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum FROM inputs ORDER BY PartNum, BatchID";
+                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums FROM inputs ORDER BY PartNum, BatchID";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();
@@ -170,6 +187,7 @@ namespace InventorySystem.InventoryPage
                     string qty = reader.GetString("Qty");
                     string location = reader.GetString("Location");
                     string modelNum = reader.GetString("ModelNum");
+                    string serialNum = reader.GetString("SerialNums");
                     Add(new Item()
                     {
                         PartNum = partNum,
@@ -177,8 +195,9 @@ namespace InventorySystem.InventoryPage
                         Description = description,
                         Qty = qty,
                         Location = location,
-                        ModelNum = modelNum
-                    });
+                        ModelNum = modelNum,
+                        SerialNums = serialNum
+                    }); 
 
                 }
             }

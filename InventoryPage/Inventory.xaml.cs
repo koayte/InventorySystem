@@ -120,7 +120,8 @@ namespace InventorySystem.InventoryPage
                 bool QtyFilter = string.IsNullOrEmpty(QtySearch.Text) || item.Qty.Contains(QtySearch.Text);
                 bool LocFilter = string.IsNullOrEmpty(LocSearch.Text) || item.Location.Contains(LocSearch.Text);
                 bool ModelNumFilter = string.IsNullOrEmpty(ModelNumSearch.Text) || item.ModelNum.Contains(ModelNumSearch.Text);
-                e.Accepted = PartNumFilter && BatchIDFilter && DescFilter && QtyFilter && LocFilter && ModelNumFilter;
+                bool SerialNumFilter = string.IsNullOrEmpty(SerialNumSearch.Text) || item.SerialNums.Contains(SerialNumSearch.Text);
+                e.Accepted = PartNumFilter && BatchIDFilter && DescFilter && QtyFilter && LocFilter && ModelNumFilter && SerialNumFilter;
             }
         }
 

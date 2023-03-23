@@ -115,8 +115,8 @@
             <ComboBox Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}" x:Name="LocSearch" IsEditable="True" DisplayMemberPath="Area" TextBoxBase.TextChanged="Search_TextChanged">  
             </ComboBox>
             <TextBox Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" x:Name="ModelNumSearch" TextChanged="Search_TextChanged"/>
-            <!--<TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
-            <DatePicker Width="{Binding ActualWidth, ElementName=DateHeader}"
+            <TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
+            <!--<DatePicker Width="{Binding ActualWidth, ElementName=DateHeader}"
                         Background="#ededed"
                         x:Name="DateSearch"
                         TextBoxBase.TextChanged="Search_TextChanged"
@@ -197,7 +197,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Description" Width="130" x:Name="DescHeader">
+                <DataGridTemplateColumn Header="Description" Width="100" x:Name="DescHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
@@ -205,7 +205,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Qty" Width="40" x:Name="QtyHeader">
+                <DataGridTemplateColumn Header="Qty" Width="30" x:Name="QtyHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Qty}" TextWrapping="Wrap"/>
@@ -221,10 +221,18 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Model Number" Width="130" x:Name="ModelNumHeader">
+                <DataGridTemplateColumn Header="Model Number" Width="100" x:Name="ModelNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ModelNum}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Serial Numbers" Width="100" x:Name="SerialNumsHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SerialNums}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -237,13 +245,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!--<DataGridTemplateColumn Header="Serial Numbers" Width="100" x:Name="SerialNumsHeader">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding SerialNums}" TextWrapping="Wrap"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>-->
+
 
                 <!--<DataGridTemplateColumn Header="Date" Width="*" x:Name="DateHeader">
                     <DataGridTemplateColumn.CellTemplate>
