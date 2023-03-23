@@ -118,15 +118,16 @@ namespace InventorySystem.InventoryPage
             var description = ((Item)group.Items[0]).Description;
             var location = ((Item)group.Items[0]).Location;
             var modelNum = ((Item)group.Items[0]).ModelNum;
-
-            // MessageBox.Show(batchID);
-            inventoryFrame.Navigate(new Uri("/InputPages/Update.xaml", UriKind.Relative));
-
             SharedData.BatchID = batchID;
             SharedData.PartNum = partNum;
             SharedData.Description = description;
             SharedData.Location = location;
             SharedData.ModelNum = modelNum;
+
+            // MessageBox.Show(batchID);
+            inventoryFrame.Navigate(new Uri("/InputPages/Update.xaml", UriKind.Relative));
+
+
         }
 
         private static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject

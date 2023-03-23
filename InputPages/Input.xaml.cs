@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using InventorySystem.InventoryPage;
+using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Crypto.Tls;
 using System;
 using System.Collections.Generic;
@@ -53,17 +54,17 @@ namespace InventorySystem
                     autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
 
                     // Autocheck ModelNum checkboxes based on PartNum
-                    string commandText2 = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND ModelNum IS NOT NULL";
+                    string commandText2 = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND (ModelNum = '' IS FALSE)";
                     MySqlCommand autoCheckModelNum = new MySqlCommand(commandText2, connection);
                     autoCheckModelNum.Parameters.AddWithValue("@PartNum", partNum);
 
                     // Autocheck SerialNums checkboxes based on PartNum
-                    string commandText3 = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND SerialNums IS NOT NULL";
+                    string commandText3 = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND (SerialNums = '' IS FALSE)";
                     MySqlCommand autoCheckSerialNums = new MySqlCommand(commandText3, connection);
                     autoCheckSerialNums.Parameters.AddWithValue("@PartNum", partNum);
 
                     // Get BatchByDay regardless of PartNum for that date
-                    string commandText4 = "SELECT row_number() OVER (PARTITION BY Date ORDER BY Time) BatchByDay FROM inputs " +
+                    string commandText4 = "SELECT dense_rank() OVER (PARTITION BY Date ORDER BY PartNum) BatchByDay FROM inputs " +
                         "WHERE Date = @Date " +
                         "ORDER BY BatchByDay DESC";
                     MySqlCommand getBatchByDay = new MySqlCommand(commandText4, connection);
@@ -88,7 +89,7 @@ namespace InventorySystem
                         // PartNum does not exist in current inventory
                         else
                         {
-                            PartNumWarning.Text = "Part Number does not exist in inventory. Please register for all fields.";
+                            PartNumWarning.Text = "Part Number does not exist in inventory. Please register for ALL fields.";
                             // BatchID.Text = "1";
                         }
                     }

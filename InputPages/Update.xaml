@@ -86,7 +86,7 @@
                 <!-- Batch ID -->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Batch ID" Style="{StaticResource TextLabels}"/>
-                    <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
+                    <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True"/>
                     <TextBlock x:Name="BatchIDWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=BatchID}"/>
                 </StackPanel>
             </StackPanel>
@@ -131,7 +131,8 @@
             <TextBox x:Name="SerialNums" IsReadOnly="True" Height="252"
                      TextChanged="SerialNum_Entered"
                      VerticalScrollBarVisibility="Auto"
-                     VerticalContentAlignment="Top"/>
+                     VerticalContentAlignment="Top"
+                     AcceptsReturn="True"/>
 
             <TextBlock x:Name="SerialNumsWarning" Height="Auto"
                        Style="{StaticResource WarningLabels}"
@@ -141,6 +142,10 @@
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
             <Button x:Name="UpdateItem" Content="Update" Width="80" Click="UpdateItem_Click"/>
         </StackPanel>
+        <Frame x:Name="updateFrame" Grid.ColumnSpan="2"/>
+
     </Grid>
+
+
 
 </Page>

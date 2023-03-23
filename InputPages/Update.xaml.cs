@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,13 +25,15 @@ namespace InventorySystem.InputPages
     public partial class Update : Page
     {
         public string connectionString = "SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;";
-
-        public bool InvokeRequired { get; private set; }
+        private List<string> areas = new List<string>();
+        private List<TextBox> inputBoxes;
 
         public Update()
         {
             InitializeComponent();
             SetTextBoxesFromUpdate();
+            UpdateLocationComboBox();
+            inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums };
         }
 
         private void SetTextBoxesFromUpdate() 
@@ -105,7 +108,62 @@ namespace InventorySystem.InputPages
 
         private void UpdateItem_Click(object sender, RoutedEventArgs e)
         {
+            List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@modelNum", "@serialNums" };
+            List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Location.Text, ModelNum.Text, SerialNums.Text };
+            var serialNumberList = SerialNums.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText = "DELETE FROM inputs WHERE BatchID = @batchId; " +
+                    "INSERT INTO inputs (PartNum, Qty, Description, Location, ModelNum, SerialNums) VALUE (@partNum, @qty, @description, @location, @modelNum, @serialNums)";
+                MySqlCommand updateRow = new MySqlCommand(commandText, connection);
 
+                if (string.IsNullOrEmpty(SerialNums.Text))
+                {
+                    connection.Open();
+                    updateRow.Parameters.AddWithValue("@batchId", BatchID.Text);
+                    updateRow.Parameters.AddWithValue("@serialNums", "");
+                    for (int j = 0; j < placeholders.Count - 1; j++)
+                    {
+                        updateRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                    }
+                    updateRow.ExecuteNonQuery();
+                    connection.Close();
+                }
+
+                // Create separate rows for each serial number.
+                else
+                {
+                    connection.Open();
+                    foreach (var num in serialNumberList)
+                    {
+                        updateRow.Parameters.AddWithValue("@batchId", BatchID.Text);
+                        for (int j = 0; j < placeholders.Count; j++)
+                        {
+                            switch (j)
+                            {
+                                case 1:
+                                    updateRow.Parameters.AddWithValue(placeholders[j], "1");
+                                    break;
+
+                                case 5:
+                                    updateRow.Parameters.AddWithValue(placeholders[j], num);
+                                    break;
+
+                                default:
+                                    updateRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                    break;
+                            }
+                        }
+                        updateRow.ExecuteNonQuery();
+                        updateRow.Parameters.Clear();
+                    }
+                    connection.Close();
+                }
+
+            }
+            AddNewArea();
+            ClearAll();
+            updateFrame.Navigate(new Uri("/InventoryPage/Inventory.xaml", UriKind.Relative));
         }
 
         private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
@@ -114,10 +172,68 @@ namespace InventorySystem.InputPages
         }
 
 
+        // ------------------------------------------------------ Areas and locations 
+        private List<string> AddLocationsIntoString()
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
+                connection.Open();
+                using (var reader = getArea.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var area = reader.GetString(0);
+                        areas.Add(area);
+                    }
+                }
+                connection.Close();
+            }
+            return (areas);
+        }
 
-        
+        private void AddNewArea()
+        {
+            areas = AddLocationsIntoString();
 
-        // Making ModelNum and SerialNums non-editable if checkboxes are unchecked.
+            // If user inputs a new area that is not in the current database, add to db.
+            if (!areas.Contains(Location.Text))
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    string commandText = "INSERT INTO locations (Area) VALUE (@Area)";
+                    MySqlCommand addNewArea = new MySqlCommand(commandText, connection);
+                    addNewArea.Parameters.AddWithValue("@Area", Location.Text);
+
+                    connection.Open();
+                    addNewArea.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
+
+        private void UpdateLocationComboBox()
+        {
+            DataTable dt = new DataTable();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
+                connection.Open();
+
+                // Load into dt, bind dt to Location ComboBox.
+                using (var reader = getArea.ExecuteReader())
+                {
+                    dt.Load(reader);
+                    Location.ItemsSource = dt.DefaultView;
+                }
+
+                connection.Close();
+            }
+        }
+
+
+        // ------------------------------------------------------ Making ModelNum and SerialNums non-editable if checkboxes are unchecked.
         private void Model_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             ModelNum.IsReadOnly = false;
@@ -159,8 +275,8 @@ namespace InventorySystem.InputPages
 
             SerialNumbers.Foreground = Brushes.Gray;
         }
-        
-        // Navigation around UI
+
+        // ------------------------------------------------------ Navigation around UI
         private void Control_Enter(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -177,8 +293,22 @@ namespace InventorySystem.InputPages
                 textBox.SelectAll();
             }
         }
+        private void ClearAll()
+        {
+            // Clear textboxes, reset checkboxes to default
+            for (int i = 0; i < inputBoxes.Count; i++)
+            {
+                inputBoxes[i].Text = String.Empty;
+            }
+            Location.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
+            ModelNumCheckbox.IsChecked = false;
+            SerialNumsCheckbox.IsChecked = false;
 
-        // User input validation
+            // Send caret position back to PartNum textbox.
+            PartNum.Focus();
+        }
+
+        // ------------------------------------------------------ User input validation
         private void Qty_CheckIfInt(object sender, TextChangedEventArgs e)
         {
             TextBox Qty = sender as TextBox;
