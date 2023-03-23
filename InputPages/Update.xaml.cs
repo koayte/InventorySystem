@@ -38,6 +38,15 @@ namespace InventorySystem.InputPages
             // Get BatchID
             string batchID = SharedData.BatchID;
             BatchID.Text = batchID;
+            //List<Item> items = GetFullItem();
+
+            //int index = items.FindIndex(a => a.BatchID == batchID);
+
+            PartNum.Text = SharedData.PartNum;
+            Description.Text = SharedData.Description;
+            Location.Text = SharedData.Location;
+            ModelNum.Text = SharedData.ModelNum;
+
         }
 
 
