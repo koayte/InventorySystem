@@ -38,29 +38,45 @@ namespace InventorySystem.InputPages
             // Get BatchID
             string batchID = SharedData.BatchID;
             BatchID.Text = batchID;
-            //List<Item> items = GetFullItem();
 
-            //int index = items.FindIndex(a => a.BatchID == batchID);
+            List<Item> items = GetFullItem();
+            int firstIndex = items.FindIndex(a => a.BatchID == batchID);
+            int lastIndex = items.FindLastIndex(a => a.BatchID == batchID);
 
             PartNum.Text = SharedData.PartNum;
             Description.Text = SharedData.Description;
             Location.Text = SharedData.Location;
-            ModelNum.Text = SharedData.ModelNum;
+            if (!string.IsNullOrEmpty(SharedData.ModelNum))
+            {
+                ModelNum.Text = SharedData.ModelNum;
+                ModelNumCheckbox.IsChecked = true;
+            }
+
+            if (firstIndex == lastIndex)
+            {
+                // get quantity from item directly
+                Qty.Text = items[firstIndex].Qty;
+            }
+
+            // Serial Numbers entered on separate lines 
+            else
+            {
+                int count = lastIndex - firstIndex + 1;
+                Qty.Text = count.ToString();
+
+                SerialNumsCheckbox.IsChecked = true;
+                StringBuilder serialNums = new StringBuilder();
+                for (int i = firstIndex; i <= lastIndex; i++)
+                {
+                    string serialNum = items[i].SerialNums;
+                    serialNums.Append(serialNum + '\n');
+                }
+                SerialNums.Text = serialNums.ToString();
+
+                SerialNums.CaretIndex = SerialNums.Text.Length;
+            }
 
         }
-
-
-        private void UpdateItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-
 
         private List<Item> GetFullItem()
         {
@@ -86,6 +102,20 @@ namespace InventorySystem.InputPages
             }
             return data;
         }
+
+        private void UpdateItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+
+
+        
 
         // Making ModelNum and SerialNums non-editable if checkboxes are unchecked.
         private void Model_CheckBox_Checked(object sender, RoutedEventArgs e)

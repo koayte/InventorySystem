@@ -12,8 +12,8 @@
     <Page.Resources>
         <local:WidthConverter x:Key="WidthConverter"/>
         <local:GroupHeaderWidthConverter x:Key="GroupHeaderWidthConverter"/>
-        <local:groupConverter x:Key="groupConverter" />
-        <local:Items x:Key="items" />
+        <local:groupSumConverter x:Key="groupSumConverter" />
+        <local:ItemCollection x:Key="items" />
 
         <Style x:Key="dataGridStyle" TargetType="DataGrid">
             <Setter Property="GridLinesVisibility" Value="None" />
@@ -146,7 +146,7 @@
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=PartNum}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=BatchID}" Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}"/>
-                                                    <TextBlock Text="{Binding Path=Items, Converter={StaticResource groupConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock Text="{Binding Path=Items, Converter={StaticResource groupSumConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Location}" Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <TextBlock Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}"/>

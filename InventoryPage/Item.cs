@@ -168,9 +168,9 @@ namespace InventorySystem.InventoryPage
 
     }
 
-    public class Items : ObservableCollection<Item>
+    public class ItemCollection : ObservableCollection<Item>
     {
-        public Items() : base()
+        public ItemCollection() : base()
         {
             using (MySqlConnection connection = new MySqlConnection("SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;"))
             {

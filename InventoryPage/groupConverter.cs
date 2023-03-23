@@ -1,34 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Quic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace InventorySystem.InventoryPage
 {
-    public class groupConverter : IValueConverter
+    public class groupSumConverter : IValueConverter
     {
+
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var group = value as CollectionViewGroup;
-            if (group == null)
+            if (value is not ReadOnlyObservableCollection<Item> collection)
             {
+                Debug.WriteLine($"Value is not a ObservableCollection. Value type: {value?.GetType().Name}");
                 return "0";
             }
 
-            int sum = 0;
-            var items = group.Items;
-
-            foreach (var item in items)
+            else
             {
-                int qty = int.Parse(((Item)item).Qty);
-                sum += qty;
+                var groups = CollectionViewSource.GetDefaultView(collection).Groups;
+                Debug.WriteLine($"Value is an ObservableCollection. Value type: {value?.GetType().Name}");
+                MessageBox.Show("help");
+                return "1";
+
+                //var items = (ReadOnlyObservableCollection<Item>)value;
+                //int sum = 0;
+                //foreach (GroupItem gi in items)
+                //{
+                //    int qty = Int32.Parse(gi.Qty);
+                //    sum += qty;
+                //}
             }
 
-            return sum.ToString();
+            
+
+
 
             //if (value is ObservableCollection<Item>)
             //{
@@ -47,7 +63,8 @@ namespace InventorySystem.InventoryPage
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return value;
+            throw new NotImplementedException();
         }
+
     }
 }
