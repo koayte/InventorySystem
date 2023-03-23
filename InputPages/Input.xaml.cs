@@ -209,7 +209,7 @@ namespace InventorySystem
                     timer.Interval = TimeSpan.FromSeconds(0.5);
                     timer.Tick += (s, args) =>
                     {
-                        SerialNums.Text += '\n';
+                        SerialNums.Text += Environment.NewLine;
                         SerialNums.CaretIndex = SerialNums.Text.Length;
                         
                         // Count number of serial numbers and compare against Qty textbox.
@@ -217,7 +217,7 @@ namespace InventorySystem
                         {
                             int quantity = Convert.ToInt32(Qty.Text);
                             string serialNums = SerialNums.Text;
-                            int serialNumsCount = serialNums.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length;
+                            int serialNumsCount = serialNums.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Length;
                             if (serialNumsCount != quantity)
                             {
                                 SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
@@ -338,7 +338,8 @@ namespace InventorySystem
         {
             List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@batchID", "@modelNum", "@serialNums" };
             List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Location.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
-            var serialNumberList = SerialNums.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            // String[] newLineDelimiters = { Environment.NewLine, '\n'.ToString() };
+            var serialNumberList = SerialNums.Text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {

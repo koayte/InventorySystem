@@ -63,7 +63,7 @@
             <!-- First row, Part Number -->
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Part Number" Style="{StaticResource TextLabels}"/>
-                <TextBox x:Name="PartNum" Width="423" TextChanged="PartNum_TextChanged" TabIndex="0" KeyUp="Control_Enter"/>
+                <TextBox x:Name="PartNum" Width="423" TabIndex="0" KeyUp="Control_Enter"/>
                 <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}"/>
             </StackPanel>
 
