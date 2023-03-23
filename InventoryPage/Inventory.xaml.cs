@@ -35,35 +35,10 @@ namespace InventorySystem.InventoryPage
         {
             InitializeComponent();
             UpdateLocationComboBox();
-
-            List<Item> items = GetFullItem();
         }
 
 
-        private List<Item> GetFullItem()
-        {
-            List<Item> data = new List<Item>();
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums FROM inputs ORDER BY PartNum, BatchID";
-                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
-                connection.Open();
-                MySqlDataReader reader = loadInventory.ExecuteReader();
-                while (reader.Read())
-                {
-                    var type = typeof(Item);
-                    Item obj = (Item)Activator.CreateInstance(type);
-                    foreach(var prop in type.GetProperties())
-                    {
-                        var propType = prop.PropertyType;
-                        prop.SetValue(obj, Convert.ChangeType(reader[prop.Name].ToString(), propType));
-                    }
-                    data.Add(obj);
-                }
-                connection.Close();
-            }
-            return data;
-        }
+
 
 
 
@@ -132,9 +107,34 @@ namespace InventorySystem.InventoryPage
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
+            var button = (Button)sender;
 
+            var groupItem = FindVisualParent<GroupItem>(button);
+
+            var group = groupItem.Content as CollectionViewGroup;
+
+            var batchID = ((Item)group.Items[0]).BatchID;
+
+            // MessageBox.Show(batchID);
+            inventoryFrame.Navigate(new Uri("/InputPages/Update.xaml", UriKind.Relative));
+
+            SharedData.BatchID = batchID;
         }
 
+        private static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            var parentObject = VisualTreeHelper.GetParent(child);
+
+            if (parentObject == null)
+                return null;
+
+            var parent = parentObject as T;
+            return parent ?? FindVisualParent<T>(parentObject);
+        }
+
+
+
+        // ------------------------------------------------------------------------------------------------
         // Old code :(
         private void LoadIntoDataGrid2()
         {

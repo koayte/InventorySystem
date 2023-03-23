@@ -12,12 +12,12 @@
     <Page.Resources>
         <local:WidthConverter x:Key="WidthConverter"/>
         <local:GroupHeaderWidthConverter x:Key="GroupHeaderWidthConverter"/>
+        <local:groupConverter x:Key="groupConverter" />
         <local:Items x:Key="items" />
 
         <Style x:Key="dataGridStyle" TargetType="DataGrid">
             <Setter Property="GridLinesVisibility" Value="None" />
             <Setter Property="HeadersVisibility" Value="Column" />
-            <Setter Property="AlternatingRowBackground" Value="AliceBlue" />
             <Setter Property="CanUserResizeColumns" Value="True"/>
         </Style>
 
@@ -49,9 +49,9 @@
             <Setter Property="Height" Value="27"/>
         </Style>
 
-        <CollectionViewSource x:Key="cvsItems" Source="{StaticResource items}" Filter="cvs_Filter">
+        <CollectionViewSource x:Name="cvItems" x:Key="cvsItems" Source="{StaticResource items}" Filter="cvs_Filter">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="PartNum"/>
+                <PropertyGroupDescription PropertyName="BatchID"/>
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
 
@@ -140,15 +140,17 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="True" Background="#131b4f" BorderBrush="#FF002255" Foreground="#FFEEEEEE" BorderThickness="0">
+                                        <Expander IsExpanded="True" Background="AliceBlue" Foreground="Black" BorderThickness="0">
                                             <Expander.Header>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Path=Name}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}"/>
+                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=PartNum}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=BatchID}" Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}"/>
-                                                    <TextBlock DataContext="{Binding Items}"  Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}"/>
-                                                    <TextBlock Text="{Binding Path=ItemCount}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock Text="{Binding Path=Items, Converter={StaticResource groupConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Location}" Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <Button Content="Update" Click="Update_Click" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                             </Expander.Header>
                                             <Expander.Content>
@@ -181,7 +183,7 @@
             </DataGrid.Resources>
             
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Part Number" Width="95" x:Name="PartNumHeader">
+                <DataGridTemplateColumn Header="Part Number" Width="85" x:Name="PartNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding PartNum}" TextWrapping="Wrap"/>
@@ -238,11 +240,11 @@
                 </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Header="Action" Width="*" x:Name="ActionHeader">
-                    <DataGridTemplateColumn.CellTemplate>
+                    <!--<DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Update" Click="Update_Click"/>
                         </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn.CellTemplate>-->
                 </DataGridTemplateColumn>
 
 
@@ -257,5 +259,7 @@
 
             </DataGrid.Columns>
         </DataGrid>
+        <Frame x:Name="inventoryFrame"/>
     </Grid>
+    
 </Page>
