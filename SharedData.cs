@@ -11,6 +11,7 @@ namespace InventorySystem
 {
     public static class SharedData
     {
+        // Set when update button in Inventory is clicked, get at the Update page. 
         public static string BatchID { get; set; }
         public static string PartNum { get; set; }
         public static string Description { get; set; }

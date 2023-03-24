@@ -57,6 +57,7 @@
 
         <CollectionViewSource x:Name="cvItems" x:Key="cvsItems" Source="{Binding Source={StaticResource myData}, Path=items}"  Filter="cvs_Filter">
             <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="PartNum"/>
                 <PropertyGroupDescription PropertyName="BatchID"/>
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
@@ -147,6 +148,18 @@
                   ColumnHeaderStyle="{StaticResource dataGridHeaderStyle}"
                   ItemsSource="{Binding Source={StaticResource cvsItems}}">
             <DataGrid.GroupStyle>
+                <!-- Top level grouping by PartNum -->
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Background="LightGray" Height="20">
+                                <TextBlock FontWeight="Bold" Margin="3,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+                
+                <!-- 2nd level grouping by PartNum -->
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
                         <Style TargetType="{x:Type GroupItem}">
@@ -154,7 +167,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="True" Background="LightGray" Foreground="Black" BorderThickness="0">
+                                        <Expander IsExpanded="False" Background="#f0f0f0" Foreground="Black" BorderThickness="0">
                                             <Expander.Header>
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=PartNum}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}"/>
@@ -163,7 +176,7 @@
                                                     <TextBlock Text="{Binding Path=Items, Converter={StaticResource groupSumConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Location}" Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}"/>
-                                                    <TextBlock Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}"/>
+                                                    <TextBlock Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}"/>
                                                     <Button Content="Update" Click="Update_Click" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                             </Expander.Header>
@@ -177,6 +190,8 @@
                         </Style>
                     </GroupStyle.ContainerStyle>
                 </GroupStyle>
+                
+                
             </DataGrid.GroupStyle>
             
             <DataGrid.Resources>
@@ -202,7 +217,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="BatchID" Width="90" x:Name="BatchHeader">
+                <DataGridTemplateColumn Header="BatchID" Width="95" x:Name="BatchHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding BatchID}" TextWrapping="Wrap"/>
@@ -242,7 +257,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Serial Numbers" Width="100" x:Name="SerialNumsHeader">
+                <DataGridTemplateColumn Header="Serial Numbers" Width="90" x:Name="SerialNumsHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding SerialNums}" TextWrapping="Wrap"/>

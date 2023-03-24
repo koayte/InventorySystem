@@ -92,8 +92,8 @@
 
                 <!-- Batch ID -->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Batch ID" Style="{StaticResource TextLabels}"/>
-                    <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
+                    <TextBlock Text="Batch ID" Style="{StaticResource TextLabels}" Foreground="Gray"/>
+                    <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True"/>
                     <TextBlock x:Name="BatchIDWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=BatchID}"/>
                 </StackPanel>
             </StackPanel>
