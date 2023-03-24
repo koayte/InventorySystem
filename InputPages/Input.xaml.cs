@@ -63,12 +63,10 @@ namespace InventorySystem
                     MySqlCommand autoCheckSerialNums = new MySqlCommand(commandText3, connection);
                     autoCheckSerialNums.Parameters.AddWithValue("@PartNum", partNum);
 
-                    // Get BatchByDay regardless of PartNum for that date
-                    string commandText4 = "SELECT dense_rank() OVER (PARTITION BY Date ORDER BY PartNum) BatchByDay FROM inputs " +
-                        "WHERE Date = @Date " +
-                        "ORDER BY BatchByDay DESC";
-                    MySqlCommand getBatchByDay = new MySqlCommand(commandText4, connection);
-                    getBatchByDay.Parameters.AddWithValue("@Date", todayDate);
+                    // Get Batch for that date
+                    string commandText4 = "SELECT Batch FROM batchNumbers WHERE Date = @Date";
+                    MySqlCommand getBatch = new MySqlCommand(commandText4, connection);
+                    getBatch.Parameters.AddWithValue("@Date", todayDate);
 
                     connection.Open();
 
@@ -90,7 +88,6 @@ namespace InventorySystem
                         else
                         {
                             PartNumWarning.Text = "Part Number does not exist in inventory. Please register for ALL fields.";
-                            // BatchID.Text = "1";
                         }
                     }
 
@@ -118,20 +115,20 @@ namespace InventorySystem
                         }
                     }
 
-                    // Set BatchID as YYYY-mm-dd_BatchByDay. E.g. 2023-03-20_3
-                    using (var reader = getBatchByDay.ExecuteReader())
+                    // Set BatchID as YYYY-mm-dd_BatchByDay. E.g. 2023-03-20_003
+                    using (var reader = getBatch.ExecuteReader())
                     {
                         // If the first record of the day has already been input into db.
                         if (reader.Read())
                         {
-                            int BatchByDay = reader.GetInt32(0) + 1;
-                            BatchID.Text = todayDate + "_" + BatchByDay.ToString("00");
+                            int Batch = reader.GetInt32(0) + 1;
+                            BatchID.Text = todayDate + "_" + Batch.ToString("000");
                         }
 
                         // If this is the first record of the day (hence query gives null results)
                         else
                         {
-                            BatchID.Text = todayDate + "_" + "01";
+                            BatchID.Text = todayDate + "_" + "001";
                         }
                     }
 
@@ -196,43 +193,38 @@ namespace InventorySystem
             // Add new line after every serial number if there is no automatic new line while scanning.
             if (SerialNums.Text.Length > 0)
             {
-                char lastChar = SerialNums.Text[SerialNums.Text.Length - 1];
-
-                if (lastChar != '\n')
+                if (timer != null)
                 {
-                    if (timer != null)
-                    {
-                        timer.Stop();
-                    }
-
-                    timer = new DispatcherTimer();
-                    timer.Interval = TimeSpan.FromSeconds(0.5);
-                    timer.Tick += (s, args) =>
-                    {
-                        SerialNums.Text += Environment.NewLine;
-                        SerialNums.CaretIndex = SerialNums.Text.Length;
-                        
-                        // Count number of serial numbers and compare against Qty textbox.
-                        if (Qty.Text.Length > 0 && Qty.Text.Any(x => char.IsDigit(x)))
-                        {
-                            int quantity = Convert.ToInt32(Qty.Text);
-                            string serialNums = SerialNums.Text;
-                            int serialNumsCount = serialNums.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Length;
-                            if (serialNumsCount != quantity)
-                            {
-                                SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
-                            }
-                            else
-                            {
-                                SerialNumsWarning.Text = "";
-                            }
-
-                        }
-                        timer.Stop();
-                    };
-                    timer.Start();
-
+                    timer.Stop();
                 }
+
+                timer = new DispatcherTimer();
+                timer.Interval = TimeSpan.FromSeconds(0.5);
+                timer.Tick += (s, args) =>
+                {
+                    SerialNums.Text += Environment.NewLine;
+                    SerialNums.CaretIndex = SerialNums.Text.Length;
+                        
+                    // Count number of serial numbers and compare against Qty textbox.
+                    if (Qty.Text.Length > 0 && Qty.Text.Any(x => char.IsDigit(x)))
+                    {
+                        int quantity = Convert.ToInt32(Qty.Text);
+                        string serialNums = SerialNums.Text;
+                        int serialNumsCount = serialNums.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Length;
+                        if (serialNumsCount != quantity)
+                        {
+                            SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
+                        }
+                        else
+                        {
+                            SerialNumsWarning.Text = "";
+                        }
+
+                    }
+                    timer.Stop();
+                };
+                timer.Start();
+
             }
 
         }
@@ -343,31 +335,19 @@ namespace InventorySystem
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "INSERT INTO inputs (PartNum, Qty, Description, Location, BatchID, ModelNum, SerialNums) VALUE (@partNum, @qty, @description, @location, @batchId, @modelNum, @serialNums)";
-                MySqlCommand addRow = new MySqlCommand(commandText, connection);
-
+                // ADD INTO INVENTORY REAL-TIME INPUTS DATABASE TABLE.
+                string commandText1 = "INSERT INTO inputs (PartNum, Qty, Description, Location, BatchID, ModelNum, SerialNums) VALUE (@partNum, @qty, @description, @location, @batchId, @modelNum, @serialNums)";
+                MySqlCommand addRow = new MySqlCommand(commandText1, connection);
 
                 // If serial numbers are not entered, enter NULL value. Else, split into multiple db entries.
                 if (string.IsNullOrEmpty(SerialNums.Text))
                 {
                     connection.Open();
-                    //addRow.Parameters.AddWithValue("@serialNums", DBNull.Value);
                     addRow.Parameters.AddWithValue("@serialNums", "");
                     for (int j = 0; j < placeholders.Count - 1; j++)
                     {
                         switch (j)
                         {
-                            //case 5: // Set NULL value if model number is empty.
-                            //    if (string.IsNullOrEmpty(inputs[j]))
-                            //    {
-                            //        addRow.Parameters.AddWithValue(placeholders[j], DBNull.Value);
-                            //    }
-                            //    else
-                            //    {
-                            //        addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
-                            //    }
-                            //    break;
-
                             default:
                                 addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
                                 break;
@@ -390,17 +370,6 @@ namespace InventorySystem
                                     addRow.Parameters.AddWithValue(placeholders[j], "1");
                                     break;
 
-                                //case 5: // Set NULL value if model number is empty.
-                                //    if (string.IsNullOrEmpty(inputs[j]))
-                                //    {
-                                //        addRow.Parameters.AddWithValue(placeholders[j], DBNull.Value);
-                                //    }
-                                //    else
-                                //    {
-                                //        addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
-                                //    }
-                                //    break;
-
                                 case 6: // Set each serial number for each row.
                                     addRow.Parameters.AddWithValue(placeholders[j], num);
                                     break;
@@ -416,6 +385,16 @@ namespace InventorySystem
                     }
                     connection.Close();
                 }
+
+                // ADD INTO BATCHNUMBERS DATABASE TABLE.
+                string commandText2 = "INSERT INTO batchNumbers (Batch) VALUES (@Batch) " +
+                    "ON DUPLICATE KEY UPDATE Batch = @Batch";
+                MySqlCommand addDateBatch = new MySqlCommand(commandText2, connection);
+                List<string> DateBatch = BatchID.Text.Split('_').ToList(); // E.g. split 2023-03-24_001 into ("2023-03-24", "001")
+                addDateBatch.Parameters.AddWithValue("@Batch", DateBatch[1]);
+                connection.Open();
+                addDateBatch.ExecuteNonQuery();
+                connection.Close();
             }
 
             AddNewArea();
