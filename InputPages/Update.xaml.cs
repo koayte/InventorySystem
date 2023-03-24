@@ -35,7 +35,7 @@ namespace InventorySystem.InputPages
         {
             InitializeComponent();
             SetTextBoxesFromUpdate();
-            UpdateLocationComboBox();
+            // UpdateLocationComboBox();
             inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums };
         }
 
@@ -51,7 +51,7 @@ namespace InventorySystem.InputPages
 
             PartNum.Text = SharedData.PartNum;
             Description.Text = SharedData.Description;
-            Location.Text = SharedData.Location;
+            Area.Text = SharedData.Area;
             if (!string.IsNullOrEmpty(SharedData.ModelNum))
             {
                 ModelNum.Text = SharedData.ModelNum;
@@ -96,7 +96,7 @@ namespace InventorySystem.InputPages
             List<Item> data = new List<Item>();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums FROM Rtable ORDER BY PartNum, BatchID";
+                string commandText = "SELECT UserName, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums FROM Rtable ORDER BY PartNum, BatchID";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();
@@ -167,8 +167,8 @@ namespace InventorySystem.InputPages
 
         private void UpdateItem_Click(object sender, RoutedEventArgs e)
         {
-            List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@batchId", "@modelNum", "@serialNums" };
-            List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Location.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
+            List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@area", "@batchId", "@modelNum", "@serialNums" };
+            List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Area.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
             var serialNumberList = SerialNums.Text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             // Get indexes for batchID to be updated, so that oldSerialNum(s) can be accessed.
@@ -180,7 +180,7 @@ namespace InventorySystem.InputPages
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "UPDATE Rtable SET PartNum = @partNum, Qty = @qty, Description = @description, Location = @location, ModelNum = @modelNum, SerialNums = @serialNums " +
+                string commandText = "UPDATE Rtable SET PartNum = @partNum, Qty = @qty, Description = @description, Area = @area, ModelNum = @modelNum, SerialNums = @serialNums " +
                     "WHERE BatchID = @batchId && SerialNums = @oldSerialNum";
                 MySqlCommand updateRow = new MySqlCommand(commandText, connection);
 
@@ -248,7 +248,7 @@ namespace InventorySystem.InputPages
                 }
 
             }
-            AddNewArea();
+            // AddNewArea();
             ClearAll();
             updateFrame.Navigate(new Uri("/InventoryPage/Inventory.xaml", UriKind.Relative));
         }
@@ -274,45 +274,45 @@ namespace InventorySystem.InputPages
             return (areas);
         }
 
-        private void AddNewArea()
-        {
-            areas = AddLocationsIntoString();
+        //private void AddNewArea()
+        //{
+        //    areas = AddLocationsIntoString();
 
-            // If user inputs a new area that is not in the current database, add to db.
-            if (!areas.Contains(Location.Text))
-            {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    string commandText = "INSERT INTO locations (Area) VALUE (@Area)";
-                    MySqlCommand addNewArea = new MySqlCommand(commandText, connection);
-                    addNewArea.Parameters.AddWithValue("@Area", Location.Text);
+        //    // If user inputs a new area that is not in the current database, add to db.
+        //    if (!areas.Contains(Location.Text))
+        //    {
+        //        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        //        {
+        //            string commandText = "INSERT INTO locations (Area) VALUE (@Area)";
+        //            MySqlCommand addNewArea = new MySqlCommand(commandText, connection);
+        //            addNewArea.Parameters.AddWithValue("@Area", Location.Text);
 
-                    connection.Open();
-                    addNewArea.ExecuteNonQuery();
-                    connection.Close();
-                }
-            }
-        }
+        //            connection.Open();
+        //            addNewArea.ExecuteNonQuery();
+        //            connection.Close();
+        //        }
+        //    }
+        //}
 
-        private void UpdateLocationComboBox()
-        {
-            DataTable dt = new DataTable();
+        //private void UpdateLocationComboBox()
+        //{
+        //    DataTable dt = new DataTable();
 
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
-                connection.Open();
+        //    using (MySqlConnection connection = new MySqlConnection(connectionString))
+        //    {
+        //        MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
+        //        connection.Open();
 
-                // Load into dt, bind dt to Location ComboBox.
-                using (var reader = getArea.ExecuteReader())
-                {
-                    dt.Load(reader);
-                    Location.ItemsSource = dt.DefaultView;
-                }
+        //        // Load into dt, bind dt to Location ComboBox.
+        //        using (var reader = getArea.ExecuteReader())
+        //        {
+        //            dt.Load(reader);
+        //            Location.ItemsSource = dt.DefaultView;
+        //        }
 
-                connection.Close();
-            }
-        }
+        //        connection.Close();
+        //    }
+        //}
 
 
         // ------------------------------------------------------ Making ModelNum and SerialNums non-editable if checkboxes are unchecked.
@@ -382,7 +382,8 @@ namespace InventorySystem.InputPages
             {
                 inputBoxes[i].Text = String.Empty;
             }
-            Location.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
+            Area.Text = String.Empty; // Area is a ComboBox and cannot be part of the inputBoxes TextBox list.
+            Section.Text = String.Empty;
             ModelNumCheckbox.IsChecked = false;
             SerialNumsCheckbox.IsChecked = false;
 

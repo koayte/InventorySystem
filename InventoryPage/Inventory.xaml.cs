@@ -34,48 +34,10 @@ namespace InventorySystem.InventoryPage
         public Inventory()
         {
             InitializeComponent();
-            UpdateLocationComboBox();
         }
 
 
-        private void UpdateLocationComboBox()
-        {
-            List<Location> locations = new List<Location>();
-
-
-            // DataTable dt = new DataTable();
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
-                connection.Open();
-                MySqlDataReader reader = getArea.ExecuteReader();
-                while (reader.Read())
-                {
-                    var type = typeof(Location);
-                    Location obj = (Location)Activator.CreateInstance(type);
-                    foreach (var prop in type.GetProperties())
-                    {
-                        var propType = prop.PropertyType;
-                        prop.SetValue(obj, Convert.ChangeType(reader[prop.Name].ToString(), propType));
-                    }
-                    locations.Add(obj);
-                }
-
-                connection.Close();
-
-
-                // Load into dt, bind dt to Location ComboBox.
-                //using (var reader = getArea.ExecuteReader())
-                //{
-                //    //dt.Load(reader);
-                //    //LocSearch.ItemsSource = dt.DefaultView;
-
-                //}
-
-            }
-            LocSearch.ItemsSource = locations;
-        }
+        
 
 
         // ------------------------------------------------------------ Filter functions
@@ -88,10 +50,11 @@ namespace InventorySystem.InventoryPage
                 bool BatchIDFilter = string.IsNullOrEmpty(BatchSearch.Text) || item.BatchID.Contains(BatchSearch.Text);
                 bool DescFilter = string.IsNullOrEmpty(DescSearch.Text) || item.Description.ToLower().Contains(DescSearch.Text.ToLower());
                 bool QtyFilter = string.IsNullOrEmpty(QtySearch.Text) || item.Qty.Contains(QtySearch.Text);
-                bool LocFilter = string.IsNullOrEmpty(LocSearch.Text) || item.Location.Contains(LocSearch.Text);
+                bool AreaFilter = string.IsNullOrEmpty(AreaSearch.Text) || item.Area.Contains(AreaSearch.Text);
+                bool SecFilter = string.IsNullOrEmpty(SecSearch.Text) || item.Section.Contains(SecSearch.Text);
                 bool ModelNumFilter = string.IsNullOrEmpty(ModelNumSearch.Text) || item.ModelNum.Contains(ModelNumSearch.Text);
                 bool SerialNumFilter = string.IsNullOrEmpty(SerialNumSearch.Text) || item.SerialNums.Contains(SerialNumSearch.Text);
-                e.Accepted = PartNumFilter && BatchIDFilter && DescFilter && QtyFilter && LocFilter && ModelNumFilter && SerialNumFilter;
+                e.Accepted = PartNumFilter && BatchIDFilter && DescFilter && QtyFilter && AreaFilter && SecFilter && ModelNumFilter && SerialNumFilter;
             }
         }
 
@@ -112,12 +75,14 @@ namespace InventorySystem.InventoryPage
             var batchID = ((Item)group.Items[0]).BatchID;
             var partNum = ((Item)group.Items[0]).PartNum;
             var description = ((Item)group.Items[0]).Description;
-            var location = ((Item)group.Items[0]).Location;
+            var area = ((Item)group.Items[0]).Area;
+            var section = ((Item)group.Items[0]).Section;
             var modelNum = ((Item)group.Items[0]).ModelNum;
             SharedData.BatchID = batchID;
             SharedData.PartNum = partNum;
             SharedData.Description = description;
-            SharedData.Location = location;
+            SharedData.Area = area;
+            SharedData.Section = section;
             SharedData.ModelNum = modelNum;
 
             // MessageBox.Show(batchID);
@@ -161,7 +126,7 @@ namespace InventorySystem.InventoryPage
 
             DataView? dataView = inventoryGrid.ItemsSource as DataView;
 
-            List<string> searchTexts = new List<string> { PartNumSearch.Text, BatchSearch.Text, DescSearch.Text, QtySearch.Text, LocSearch.Text, ModelNumSearch.Text };
+            List<string> searchTexts = new List<string> { PartNumSearch.Text, BatchSearch.Text, DescSearch.Text, QtySearch.Text, AreaSearch.Text, ModelNumSearch.Text };
             StringBuilder filter = new StringBuilder();
             for (int i = 0; i < searchTexts.Count; i++)
             {

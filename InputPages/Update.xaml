@@ -4,11 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:InventorySystem.InputPages"
+      xmlns:inventory="clr-namespace:InventorySystem.InventoryPage"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Update"
       Background="White">
     <Page.Resources>
+        <inventory:DataSource x:Key="myData" />
+
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="25"/>
             <Setter Property="Margin" Value="19,5,0,0"/>
@@ -73,7 +76,9 @@
             <!-- First row, User -->
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="User" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
-                <ComboBox x:Name="User" Width="423" KeyUp="Control_Enter" TabIndex="0"/>
+                <ComboBox x:Name="User" Width="423" KeyUp="Control_Enter" TabIndex="0"
+                          ItemsSource="{Binding Source={StaticResource myData}, Path=users}"
+                          DisplayMemberPath="Name"/>
                 <TextBlock x:Name="UserWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}"/>
             </StackPanel>
 
@@ -103,7 +108,7 @@
                 <!-- Batch ID -->
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Batch ID" Style="{StaticResource TextLabels}" Foreground="Gray"/>
-                    <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True"/>
+                    <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True" Foreground="Gray"/>
                     <TextBlock x:Name="BatchIDWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=BatchID}"/>
                 </StackPanel>
             </StackPanel>
@@ -112,13 +117,13 @@
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Area -->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Location" Style="{StaticResource TextLabels}"/>
-                    <ComboBox x:Name="Location"
+                    <TextBlock Text="Area" Style="{StaticResource TextLabels}"/>
+                    <ComboBox x:Name="Area"
                               Width="202"
                               KeyUp="Control_Enter"
-                              DisplayMemberPath="Area">
+                              ItemsSource="{Binding Source={StaticResource myData}, Path=areas}">
                     </ComboBox>
-                    <TextBlock x:Name="LocationWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Location}"/>
+                    <TextBlock x:Name="AreaWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Area}"/>
                 </StackPanel>
 
                 <!-- Section -->
@@ -126,9 +131,10 @@
                     <TextBlock Text="Section" Style="{StaticResource TextLabels}"/>
                     <ComboBox x:Name="Section"
                               Width="202"
-                              KeyUp="Control_Enter">
+                              KeyUp="Control_Enter"
+                              ItemsSource="{Binding Source={StaticResource myData}, Path=sections}">
                     </ComboBox>
-                    <TextBlock x:Name="SectionWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Location}"/>
+                    <TextBlock x:Name="SectionWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Section}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

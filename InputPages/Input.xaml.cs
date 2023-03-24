@@ -35,7 +35,6 @@ namespace InventorySystem
         {
             InitializeComponent();
             inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums };
-            UpdateLocationComboBox();
         }
 
         // Checking PartNum against database
@@ -49,7 +48,7 @@ namespace InventorySystem
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     // Autofill Description and Location based on PartNum 
-                    string commandText1 = "SELECT Description, Location FROM Rtable WHERE PartNum = @PartNum";
+                    string commandText1 = "SELECT Description, Area, Section FROM Rtable WHERE PartNum = @PartNum";
                     MySqlCommand autoFillDescLoc = new MySqlCommand(commandText1, connection);
                     autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
 
@@ -80,7 +79,8 @@ namespace InventorySystem
                             while (reader.Read())
                             {
                                 Description.Text = reader.GetString(0);
-                                Location.Text = reader.GetString(1);
+                                Area.Text = reader.GetString(1);
+                                Section.Text = reader.GetString(2);
                             }
                         }
 
@@ -255,7 +255,8 @@ namespace InventorySystem
             {
                 inputBoxes[i].Text = String.Empty;
             }
-            Location.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
+            Area.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
+            Section.Text = String.Empty;
             ModelNumCheckbox.IsChecked = false;
             SerialNumsCheckbox.IsChecked = false;
 
@@ -265,78 +266,59 @@ namespace InventorySystem
 
 
         // Locations
-        private void UpdateLocationComboBox()
-        {
-            DataTable dt = new DataTable();
+        //private List<string> AddLocationsIntoString()
+        //{
+        //    using (MySqlConnection connection = new MySqlConnection(connectionString))
+        //    {
+        //        MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
+        //        connection.Open();
+        //        using (var reader = getArea.ExecuteReader())
+        //        {
+        //            while (reader.Read())
+        //            {
+        //                var area = reader.GetString(0);
+        //                areas.Add(area);
+        //            }
+        //        }
+        //        connection.Close();
+        //    }
+        //    return (areas);
+        //}
 
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
-                connection.Open();
+        //private void AddNewArea()
+        //{
+        //    DataSource dataSource = new DataSource();
+        //    List<string> areas = dataSource.locations.Select(x => x.Area).ToList();
 
-                // Load into dt, bind dt to Location ComboBox.
-                using (var reader = getArea.ExecuteReader())
-                {
-                    dt.Load(reader);
-                    Location.ItemsSource = dt.DefaultView;
-                }
-                
-                connection.Close();
-            }
-        }
+        //    // If user inputs a new area that is not in the current database, add to db.
+        //    if (!areas.Contains(Location.Text))
+        //    {
+        //        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        //        {
+        //            string commandText = "INSERT INTO locations (Area) VALUE (@Area)";
+        //            MySqlCommand addNewArea = new MySqlCommand(commandText, connection);
+        //            addNewArea.Parameters.AddWithValue("@Area", Location.Text);
 
-        private List<string> AddLocationsIntoString()
-        {
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
-                connection.Open();
-                using (var reader = getArea.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var area = reader.GetString(0);
-                        areas.Add(area);
-                    }
-                }
-                connection.Close();
-            }
-            return (areas);
-        }
-
-        private void AddNewArea()
-        {
-            areas = AddLocationsIntoString();
-
-            // If user inputs a new area that is not in the current database, add to db.
-            if (!areas.Contains(Location.Text))
-            {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    string commandText = "INSERT INTO locations (Area) VALUE (@Area)";
-                    MySqlCommand addNewArea = new MySqlCommand(commandText, connection);
-                    addNewArea.Parameters.AddWithValue("@Area", Location.Text);
-
-                    connection.Open();
-                    addNewArea.ExecuteNonQuery();
-                    connection.Close();
-                }
-            }
-        }
+        //            connection.Open();
+        //            addNewArea.ExecuteNonQuery();
+        //            connection.Close();
+        //        }
+        //    }
+        //}
 
 
         // Buttons
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
-            List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@location", "@batchID", "@modelNum", "@serialNums" };
-            List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Location.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
+            List<string> placeholders = new List<string> { "@userName", "@partNum", "@qty", "@description", "@area", "@section", "@batchID", "@modelNum", "@serialNums" };
+            List<string> inputs = new List<string> { User.Text, PartNum.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
             // String[] newLineDelimiters = { Environment.NewLine, '\n'.ToString() };
             var serialNumberList = SerialNums.Text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                // ADD INTO INVENTORY REAL-TIME INPUTS DATABASE TABLE.
-                string commandText1 = "INSERT INTO Rtable (PartNum, Qty, Description, Location, BatchID, ModelNum, SerialNums) VALUE (@partNum, @qty, @description, @location, @batchId, @modelNum, @serialNums)";
+                // ADD INTO REAL-TIME INVENTORY DATABASE TABLE.
+                string commandText1 = "INSERT INTO Rtable (UserName, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) VALUE (@userName, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
                 MySqlCommand addRow = new MySqlCommand(commandText1, connection);
 
                 // If serial numbers are not entered, enter NULL value. Else, split into multiple db entries.
@@ -366,11 +348,11 @@ namespace InventorySystem
                         {
                             switch (j)
                             {
-                                case 1: // Set quantity = 1 for each row.
+                                case 2: // Set quantity = 1 for each row.
                                     addRow.Parameters.AddWithValue(placeholders[j], "1");
                                     break;
 
-                                case 6: // Set each serial number for each row.
+                                case 8: // Set each serial number for each row.
                                     addRow.Parameters.AddWithValue(placeholders[j], num);
                                     break;
 
@@ -397,7 +379,7 @@ namespace InventorySystem
                 connection.Close();
             }
 
-            AddNewArea();
+            // AddNewArea();
             ClearAll();
 
         }

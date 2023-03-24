@@ -14,15 +14,15 @@ namespace InventorySystem.InventoryPage
     {
 
         // Private item data. 
+        private string _UserName = string.Empty;
         private string _PartNum = string.Empty;
         private string _BatchID = string.Empty;
         private string _Description = string.Empty;
         private string _Qty = string.Empty;
-        private string _Location = string.Empty;
+        private string _Area = string.Empty;
+        private string _Section = string.Empty;
         private string _ModelNum = string.Empty;
         private string _SerialNums = string.Empty;
-
-
 
 
         // Data for undoing canceled edits.
@@ -30,6 +30,19 @@ namespace InventorySystem.InventoryPage
         private bool _Editing = false;
 
         // Public item data.
+        public string UserName
+        {
+            get { return this._UserName; }
+            set
+            {
+                if (value != this._UserName)
+                {
+                    this._UserName = value;
+                    NotifyPropertyChanged("UserName");
+                }
+            }
+        }
+
         public string PartNum
         {
             get { return this._PartNum; }
@@ -82,15 +95,28 @@ namespace InventorySystem.InventoryPage
             }
         }
 
-        public string Location
+        public string Area
         {
-            get { return this._Location; }
+            get { return this._Area; }
             set
             {
-                if (value != this._Location)
+                if (value != this._Area)
                 {
-                    this._Location = value;
-                    NotifyPropertyChanged("Location");
+                    this._Area = value;
+                    NotifyPropertyChanged("Area");
+                }
+            }
+        }
+
+        public string Section
+        {
+            get { return this._Section; }
+            set
+            {
+                if (value != this._Section)
+                {
+                    this._Section = value;
+                    NotifyPropertyChanged("Section");
                 }
             }
         }
@@ -147,11 +173,13 @@ namespace InventorySystem.InventoryPage
         {
             if (_Editing == true)
             {
+                this.UserName = temp_Item.UserName;
                 this.PartNum = temp_Item.PartNum;
                 this.BatchID = temp_Item.BatchID;
                 this.Description = temp_Item.Description;
                 this.Qty = temp_Item.Qty;
-                this.Location = temp_Item.Location;
+                this.Area = temp_Item.Area;
+                this.Section = temp_Item.Section;
                 this.ModelNum = temp_Item.ModelNum;
                 _Editing = false;
             }
@@ -168,9 +196,5 @@ namespace InventorySystem.InventoryPage
 
     }
 
-    public class Location
-    {
-        public string Area { get; set; }
-    }
 
 }

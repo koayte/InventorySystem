@@ -15,7 +15,8 @@ namespace InventorySystem
         public static string BatchID { get; set; }
         public static string PartNum { get; set; }
         public static string Description { get; set; }
-        public static string Location { get; set; }
+        public static string Area { get; set; }
+        public static string Section { get; set; }
         public static string? ModelNum { get; set; }
 
     }

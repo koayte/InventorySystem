@@ -14,7 +14,6 @@
         <local:GroupHeaderWidthConverter x:Key="GroupHeaderWidthConverter"/>
         <local:groupSumConverter x:Key="groupSumConverter" />
         <local:DataSource x:Key="myData" />
-        <!--<local:ItemCollection x:Key="items" />-->
 
         <Style x:Key="dataGridStyle" TargetType="DataGrid">
             <Setter Property="GridLinesVisibility" Value="None" />
@@ -124,8 +123,10 @@
             <TextBox Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" x:Name="BatchSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" x:Name="DescSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" x:Name="QtySearch" TextChanged="Search_TextChanged"/>
-            <ComboBox Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}" x:Name="LocSearch" IsEditable="True" DisplayMemberPath="Area" TextBoxBase.TextChanged="Search_TextChanged">
-            </ComboBox>
+            <ComboBox Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" x:Name="AreaSearch" IsEditable="True" DisplayMemberPath="Area" TextBoxBase.TextChanged="Search_TextChanged" 
+                      ItemsSource="{Binding Source={StaticResource myData}, Path=areas}"/>
+            <ComboBox Width="{Binding ActualWidth, ElementName=SecHeader, Converter={StaticResource WidthConverter}}" x:Name="SecSearch" IsEditable="True" DisplayMemberPath="Section" TextBoxBase.TextChanged="Search_TextChanged"
+                      ItemsSource="{Binding Source={StaticResource myData}, Path=sections}"/>
             <TextBox Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" x:Name="ModelNumSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
             <!--<DatePicker Width="{Binding ActualWidth, ElementName=DateHeader}"
@@ -171,7 +172,8 @@
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=BatchID}" Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock Text="{Binding Path=Items, Converter={StaticResource groupSumConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Location}" Width="{Binding ActualWidth, ElementName=LocHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Area}" Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Section}" Width="{Binding ActualWidth, ElementName=SecHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <Button Content="Update" Click="Update_Click" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
@@ -222,7 +224,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Description" Width="100" x:Name="DescHeader">
+                <DataGridTemplateColumn Header="Description" Width="80" x:Name="DescHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
@@ -238,10 +240,18 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Location" Width="90" x:Name="LocHeader">
+                <DataGridTemplateColumn Header="Area" Width="70" x:Name="AreaHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock x:Name="LocData"  Text="{Binding Location}" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="LocData" Text="{Binding Area}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Section" Width="50" x:Name="SecHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock x:Name="SecData"  Text="{Binding Section}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
