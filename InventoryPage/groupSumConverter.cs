@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -20,27 +21,33 @@ namespace InventorySystem.InventoryPage
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is not ReadOnlyObservableCollection<Item> collection)
+            var items = value as IEnumerable<Item>;
+            if (items == null)
             {
-                Debug.WriteLine($"Value is not a ObservableCollection. Value type: {value?.GetType().Name}");
                 return "0";
             }
-
-            else
+            int sum = 0;
+            foreach (var item in items)
             {
-                var groups = CollectionViewSource.GetDefaultView(collection).Groups;
-                Debug.WriteLine($"Value is an ObservableCollection. Value type: {value?.GetType().Name}");
-                MessageBox.Show("help");
-                return "1";
-
-                //var items = (ReadOnlyObservableCollection<Item>)value;
-                //int sum = 0;
-                //foreach (GroupItem gi in items)
-                //{
-                //    int qty = Int32.Parse(gi.Qty);
-                //    sum += qty;
-                //}
+                int qty = Int32.Parse(((Item)item).Qty);
+                sum += qty;
             }
+            return sum.ToString();
+
+
+            //var groups = CollectionViewSource.GetDefaultView(collection).Groups;
+            //Debug.WriteLine($"Value is an ObservableCollection. Value type: {value?.GetType().Name}");
+            //MessageBox.Show("help");
+            //return "1";
+
+            //var items = (ReadOnlyObservableCollection<Item>)value;
+            //int sum = 0;
+            //foreach (GroupItem gi in items)
+            //{
+            //    int qty = Int32.Parse(gi.Qty);
+            //    sum += qty;
+            //}
+  
 
             
 
@@ -65,6 +72,5 @@ namespace InventorySystem.InventoryPage
         {
             throw new NotImplementedException();
         }
-
     }
 }

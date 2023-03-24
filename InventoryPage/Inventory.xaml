@@ -13,7 +13,8 @@
         <local:WidthConverter x:Key="WidthConverter"/>
         <local:GroupHeaderWidthConverter x:Key="GroupHeaderWidthConverter"/>
         <local:groupSumConverter x:Key="groupSumConverter" />
-        <local:ItemCollection x:Key="items" />
+        <local:DataSource x:Key="myData" />
+        <!--<local:ItemCollection x:Key="items" />-->
 
         <Style x:Key="dataGridStyle" TargetType="DataGrid">
             <Setter Property="GridLinesVisibility" Value="None" />
@@ -54,7 +55,7 @@
             <Setter Property="Margin" Value="7,0,0,0"/>
         </Style>
 
-        <CollectionViewSource x:Name="cvItems" x:Key="cvsItems" Source="{StaticResource items}" Filter="cvs_Filter">
+        <CollectionViewSource x:Name="cvItems" x:Key="cvsItems" Source="{Binding Source={StaticResource myData}, Path=items}"  Filter="cvs_Filter">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="BatchID"/>
             </CollectionViewSource.GroupDescriptions>
