@@ -65,13 +65,6 @@
     </Page.Resources>
 
     <Grid>
-        
-        <!-- Checkboxes -->
-        <StackPanel Margin="19" Orientation="Horizontal">
-            <CheckBox x:Name="GroupingCheck" Checked="GroupingCheck_Checked" Unchecked="GroupingCheck_Unchecked"/>
-            <TextBlock Text="Show grouping" Style="{StaticResource textBlock}"/>
-        </StackPanel>
-        
         <!-- Search boxes -->
         <StackPanel Margin="20,40,20,20" Orientation="Horizontal">
             <StackPanel.Resources>
