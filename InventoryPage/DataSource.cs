@@ -21,7 +21,7 @@ namespace InventorySystem.InventoryPage
         {
             using (MySqlConnection connection = new MySqlConnection("SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;"))
             {
-                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums FROM inputs ORDER BY PartNum, BatchID";
+                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums FROM Rtable ORDER BY PartNum, BatchID";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();

@@ -49,17 +49,17 @@ namespace InventorySystem
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     // Autofill Description and Location based on PartNum 
-                    string commandText1 = "SELECT Description, Location FROM inputs WHERE PartNum = @PartNum";
+                    string commandText1 = "SELECT Description, Location FROM Rtable WHERE PartNum = @PartNum";
                     MySqlCommand autoFillDescLoc = new MySqlCommand(commandText1, connection);
                     autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
 
                     // Autocheck ModelNum checkboxes based on PartNum
-                    string commandText2 = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND (ModelNum = '' IS FALSE)";
+                    string commandText2 = "SELECT COUNT(1) FROM Rtable WHERE PartNum = @PartNum AND (ModelNum = '' IS FALSE)";
                     MySqlCommand autoCheckModelNum = new MySqlCommand(commandText2, connection);
                     autoCheckModelNum.Parameters.AddWithValue("@PartNum", partNum);
 
                     // Autocheck SerialNums checkboxes based on PartNum
-                    string commandText3 = "SELECT COUNT(1) FROM inputs WHERE PartNum = @PartNum AND (SerialNums = '' IS FALSE)";
+                    string commandText3 = "SELECT COUNT(1) FROM Rtable WHERE PartNum = @PartNum AND (SerialNums = '' IS FALSE)";
                     MySqlCommand autoCheckSerialNums = new MySqlCommand(commandText3, connection);
                     autoCheckSerialNums.Parameters.AddWithValue("@PartNum", partNum);
 
@@ -336,7 +336,7 @@ namespace InventorySystem
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 // ADD INTO INVENTORY REAL-TIME INPUTS DATABASE TABLE.
-                string commandText1 = "INSERT INTO inputs (PartNum, Qty, Description, Location, BatchID, ModelNum, SerialNums) VALUE (@partNum, @qty, @description, @location, @batchId, @modelNum, @serialNums)";
+                string commandText1 = "INSERT INTO Rtable (PartNum, Qty, Description, Location, BatchID, ModelNum, SerialNums) VALUE (@partNum, @qty, @description, @location, @batchId, @modelNum, @serialNums)";
                 MySqlCommand addRow = new MySqlCommand(commandText1, connection);
 
                 // If serial numbers are not entered, enter NULL value. Else, split into multiple db entries.

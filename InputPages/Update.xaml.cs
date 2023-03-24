@@ -96,7 +96,7 @@ namespace InventorySystem.InputPages
             List<Item> data = new List<Item>();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums FROM inputs ORDER BY PartNum, BatchID";
+                string commandText = "SELECT PartNum, BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums FROM Rtable ORDER BY PartNum, BatchID";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();
@@ -180,7 +180,7 @@ namespace InventorySystem.InputPages
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "UPDATE inputs SET PartNum = @partNum, Qty = @qty, Description = @description, Location = @location, ModelNum = @modelNum, SerialNums = @serialNums " +
+                string commandText = "UPDATE Rtable SET PartNum = @partNum, Qty = @qty, Description = @description, Location = @location, ModelNum = @modelNum, SerialNums = @serialNums " +
                     "WHERE BatchID = @batchId && SerialNums = @oldSerialNum";
                 MySqlCommand updateRow = new MySqlCommand(commandText, connection);
 

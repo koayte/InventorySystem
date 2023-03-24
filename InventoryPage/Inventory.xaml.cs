@@ -100,26 +100,6 @@ namespace InventorySystem.InventoryPage
             CollectionViewSource.GetDefaultView(inventoryGrid.ItemsSource).Refresh();
         }
 
-        // ------------------------------------------------------------ Grouping
-        private void GroupingCheck_Checked(object sender, RoutedEventArgs e)
-        {
-            ICollectionView collectionView = CollectionViewSource.GetDefaultView(inventoryGrid.ItemsSource);
-            if (collectionView != null && collectionView.CanGroup == true)
-            {
-                collectionView.GroupDescriptions.Clear();
-                collectionView.GroupDescriptions.Add(new PropertyGroupDescription("BatchID"));
-            }
-        }
-
-        private void GroupingCheck_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ICollectionView collectionView = CollectionViewSource.GetDefaultView(inventoryGrid.ItemsSource);
-            if (collectionView != null)
-            {
-                collectionView.GroupDescriptions.Clear();
-            }
-        }
-
         // ------------------------------------------------------------ Update
         private void Update_Click(object sender, RoutedEventArgs e)
         {
