@@ -38,11 +38,6 @@ namespace InventorySystem.InventoryPage
         }
 
 
-
-
-
-
-
         private void UpdateLocationComboBox()
         {
             List<Location> locations = new List<Location>();
@@ -83,7 +78,7 @@ namespace InventorySystem.InventoryPage
         }
 
 
-        // Filter functions
+        // ------------------------------------------------------------ Filter functions
         private void cvs_Filter(object sender, FilterEventArgs e)
         {
             Item item = e.Item as Item;
@@ -105,6 +100,27 @@ namespace InventorySystem.InventoryPage
             CollectionViewSource.GetDefaultView(inventoryGrid.ItemsSource).Refresh();
         }
 
+        // ------------------------------------------------------------ Grouping
+        private void GroupingCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            ICollectionView collectionView = CollectionViewSource.GetDefaultView(inventoryGrid.ItemsSource);
+            if (collectionView != null && collectionView.CanGroup == true)
+            {
+                collectionView.GroupDescriptions.Clear();
+                collectionView.GroupDescriptions.Add(new PropertyGroupDescription("BatchID"));
+            }
+        }
+
+        private void GroupingCheck_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ICollectionView collectionView = CollectionViewSource.GetDefaultView(inventoryGrid.ItemsSource);
+            if (collectionView != null)
+            {
+                collectionView.GroupDescriptions.Clear();
+            }
+        }
+
+        // ------------------------------------------------------------ Update
         private void Update_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
@@ -127,7 +143,6 @@ namespace InventorySystem.InventoryPage
             // MessageBox.Show(batchID);
             inventoryFrame.Navigate(new Uri("/InputPages/Update.xaml", UriKind.Relative));
 
-
         }
 
         private static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
@@ -143,8 +158,9 @@ namespace InventorySystem.InventoryPage
 
 
 
-        // ------------------------------------------------------------------------------------------------
-        // Old code :(
+
+
+        // ------------------------------------------------------------ Old code :(
         private void LoadIntoDataGrid2()
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))

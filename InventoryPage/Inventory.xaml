@@ -49,6 +49,11 @@
             <Setter Property="Height" Value="27"/>
         </Style>
 
+        <Style x:Key="textBlock" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="7,0,0,0"/>
+        </Style>
+
         <CollectionViewSource x:Name="cvItems" x:Key="cvsItems" Source="{StaticResource items}" Filter="cvs_Filter">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="BatchID"/>
@@ -58,7 +63,15 @@
     </Page.Resources>
 
     <Grid>
-        <StackPanel Margin="20,20,20,20" Orientation="Horizontal">
+        
+        <!-- Checkboxes -->
+        <StackPanel Margin="19" Orientation="Horizontal">
+            <CheckBox x:Name="GroupingCheck" Checked="GroupingCheck_Checked" Unchecked="GroupingCheck_Unchecked"/>
+            <TextBlock Text="Show grouping" Style="{StaticResource textBlock}"/>
+        </StackPanel>
+        
+        <!-- Search boxes -->
+        <StackPanel Margin="20,40,20,20" Orientation="Horizontal">
             <StackPanel.Resources>
                 <Style TargetType="TextBox">
                     <Setter Property="Height" Value="23"/>
@@ -124,7 +137,7 @@
         </StackPanel>
 
         <DataGrid x:Name="inventoryGrid"
-                  Margin="20,50,20,20"
+                  Margin="20,70,20,20"
                   AutoGenerateColumns="False"
                   BorderThickness="0"
                   Style="{StaticResource dataGridStyle}"
@@ -177,9 +190,6 @@
                         </Style>
                     </Style.Resources>
                 </Style>
-                
-                
-                
             </DataGrid.Resources>
             
             <DataGrid.Columns>
