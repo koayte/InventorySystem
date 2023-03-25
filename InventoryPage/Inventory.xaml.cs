@@ -25,7 +25,6 @@ namespace InventorySystem.InventoryPage
     /// </summary>
     
     
-    
     public partial class Inventory : Page
     {
 
@@ -168,7 +167,10 @@ namespace InventorySystem.InventoryPage
             return columnNames;
         }
 
+        private void inventoryFrame_Navigated(object sender, NavigationEventArgs e)
+        {
 
+        }
     }
 
 

@@ -193,38 +193,41 @@ namespace InventorySystem
             // Add new line after every serial number if there is no automatic new line while scanning.
             if (SerialNums.Text.Length > 0)
             {
-                if (timer != null)
+                char lastChar = SerialNums.Text[SerialNums.Text.Length - 1];
+                if (lastChar != '\n')
                 {
-                    timer.Stop();
-                }
-
-                timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(0.5);
-                timer.Tick += (s, args) =>
-                {
-                    SerialNums.Text += Environment.NewLine;
-                    SerialNums.CaretIndex = SerialNums.Text.Length;
-                        
-                    // Count number of serial numbers and compare against Qty textbox.
-                    if (Qty.Text.Length > 0 && Qty.Text.Any(x => char.IsDigit(x)))
+                    if (timer != null)
                     {
-                        int quantity = Convert.ToInt32(Qty.Text);
-                        string serialNums = SerialNums.Text;
-                        int serialNumsCount = serialNums.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Length;
-                        if (serialNumsCount != quantity)
-                        {
-                            SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
-                        }
-                        else
-                        {
-                            SerialNumsWarning.Text = "";
-                        }
-
+                        timer.Stop();
                     }
-                    timer.Stop();
-                };
-                timer.Start();
 
+                    timer = new DispatcherTimer();
+                    timer.Interval = TimeSpan.FromSeconds(0.5);
+                    timer.Tick += (s, args) =>
+                    {
+                        SerialNums.Text += '\n';
+                        SerialNums.CaretIndex = SerialNums.Text.Length;
+
+                        // Count number of serial numbers and compare against Qty textbox.
+                        if (Qty.Text.Length > 0 && Qty.Text.Any(x => char.IsDigit(x)))
+                        {
+                            int quantity = Convert.ToInt32(Qty.Text);
+                            string serialNumsReplaced = SerialNums.Text.Replace("\r\n", "\n");
+                            int serialNumsCount = serialNumsReplaced.Split("\n", StringSplitOptions.RemoveEmptyEntries).Length;
+                            if (serialNumsCount != quantity)
+                            {
+                                SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
+                            }
+                            else
+                            {
+                                SerialNumsWarning.Text = "";
+                            }
+
+                        }
+                        timer.Stop();
+                    };
+                    timer.Start();
+                }
             }
 
         }

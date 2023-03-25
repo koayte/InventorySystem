@@ -12,7 +12,7 @@
     <Page.Resources>
         <local:WidthConverter x:Key="WidthConverter"/>
         <local:GroupHeaderWidthConverter x:Key="GroupHeaderWidthConverter"/>
-        <local:groupSumConverter x:Key="groupSumConverter" />
+        <local:VisibleBatchIDConverter x:Key="VisibleBatchIDConverter" />
         <local:DataSource x:Key="myData" />
 
         <Style x:Key="dataGridStyle" TargetType="DataGrid">
@@ -57,7 +57,7 @@
         <CollectionViewSource x:Name="cvItems" x:Key="cvsItems" Source="{Binding Source={StaticResource myData}, Path=items}"  Filter="cvs_Filter">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="PartNum"/>
-                <PropertyGroupDescription PropertyName="BatchID"/>
+                <PropertyGroupDescription PropertyName="BatchID" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
 
@@ -123,9 +123,9 @@
             <TextBox Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" x:Name="BatchSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" x:Name="DescSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" x:Name="QtySearch" TextChanged="Search_TextChanged"/>
-            <ComboBox Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" x:Name="AreaSearch" IsEditable="True" DisplayMemberPath="Area" TextBoxBase.TextChanged="Search_TextChanged" 
+            <ComboBox Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" x:Name="AreaSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged" 
                       ItemsSource="{Binding Source={StaticResource myData}, Path=areas}"/>
-            <ComboBox Width="{Binding ActualWidth, ElementName=SecHeader, Converter={StaticResource WidthConverter}}" x:Name="SecSearch" IsEditable="True" DisplayMemberPath="Section" TextBoxBase.TextChanged="Search_TextChanged"
+            <ComboBox Width="{Binding ActualWidth, ElementName=SecHeader, Converter={StaticResource WidthConverter}}" x:Name="SecSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged"
                       ItemsSource="{Binding Source={StaticResource myData}, Path=sections}"/>
             <TextBox Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" x:Name="ModelNumSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
@@ -157,7 +157,29 @@
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
 
+                
                 <!-- 2nd level grouping by PartNum -->
+                <!--<GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <Expander>
+                                <Expander.Header>
+                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=PartNum}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}" VerticalAlignment="Center"/>
+                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=BatchID}" Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Items, Converter={StaticResource groupSumConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Area}" Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Section}" Width="{Binding ActualWidth, ElementName=SecHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                    <TextBlock Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                    <Button Content="Update" Click="Update_Click" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                                </Expander.Header>
+                            </Expander>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>-->
+                
+                
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
                         <Style TargetType="{x:Type GroupItem}">
@@ -167,11 +189,11 @@
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
                                         <Expander IsExpanded="False" Background="#f0f0f0" Foreground="Black" BorderThickness="0">
                                             <Expander.Header>
-                                                <StackPanel Orientation="Horizontal" Height="Auto">
+                                                <StackPanel Orientation="Horizontal" Height="Auto" >
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=PartNum}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=BatchID}" Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="{Binding Path=Items, Converter={StaticResource groupSumConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding ItemCount}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center" />
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Area}" Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Section}" Width="{Binding ActualWidth, ElementName=SecHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>

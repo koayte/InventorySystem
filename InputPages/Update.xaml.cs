@@ -35,7 +35,6 @@ namespace InventorySystem.InputPages
         {
             InitializeComponent();
             SetTextBoxesFromUpdate();
-            // UpdateLocationComboBox();
             inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums };
         }
 
@@ -52,6 +51,7 @@ namespace InventorySystem.InputPages
             PartNum.Text = SharedData.PartNum;
             Description.Text = SharedData.Description;
             Area.Text = SharedData.Area;
+            Section.Text = SharedData.Section;
             if (!string.IsNullOrEmpty(SharedData.ModelNum))
             {
                 ModelNum.Text = SharedData.ModelNum;
@@ -135,15 +135,15 @@ namespace InventorySystem.InputPages
                     timer.Interval = TimeSpan.FromSeconds(0.5);
                     timer.Tick += (s, args) =>
                     {
-                        SerialNums.Text += Environment.NewLine;
+                        SerialNums.Text += '\n';
                         SerialNums.CaretIndex = SerialNums.Text.Length;
 
                         // Count number of serial numbers and compare against Qty textbox.
                         if (Qty.Text.Length > 0 && Qty.Text.Any(x => char.IsDigit(x)))
                         {
                             int quantity = Convert.ToInt32(Qty.Text);
-                            string serialNums = SerialNums.Text;
-                            int serialNumsCount = serialNums.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Length;
+                            string serialNumsReplaced = SerialNums.Text.Replace("\r\n", "\n");
+                            int serialNumsCount = serialNumsReplaced.Split("\n", StringSplitOptions.RemoveEmptyEntries).Length;
                             if (serialNumsCount != quantity)
                             {
                                 SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
@@ -167,85 +167,66 @@ namespace InventorySystem.InputPages
 
         private void UpdateItem_Click(object sender, RoutedEventArgs e)
         {
-            List<string> placeholders = new List<string> { "@partNum", "@qty", "@description", "@area", "@batchId", "@modelNum", "@serialNums" };
-            List<string> inputs = new List<string> { PartNum.Text, Qty.Text, Description.Text, Area.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
-            var serialNumberList = SerialNums.Text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string> placeholders = new List<string> { "@userName", "@partNum", "@qty", "@description", "@area", "@section", "@batchId", "@modelNum", "@serialNums" };
+            List<string> inputs = new List<string> { User.Text, PartNum.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
+            string serialNumsReplaced = SerialNums.Text.Replace("\r\n", "\n");
+            var serialNumberList = serialNumsReplaced.Split("\n", StringSplitOptions.RemoveEmptyEntries).ToList();
 
             // Get indexes for batchID to be updated, so that oldSerialNum(s) can be accessed.
             List<Item> items = GetFullItem();
             string batchID = SharedData.BatchID;
-            List<string> oldSerialNumList = new List<string>();
-            int firstIndex = items.FindIndex(a => a.BatchID == batchID);
-            int lastIndex = items.FindLastIndex(a => a.BatchID == batchID);
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "UPDATE Rtable SET PartNum = @partNum, Qty = @qty, Description = @description, Area = @area, ModelNum = @modelNum, SerialNums = @serialNums " +
-                    "WHERE BatchID = @batchId && SerialNums = @oldSerialNum";
-                MySqlCommand updateRow = new MySqlCommand(commandText, connection);
+                // Delete rows with this BatchID
+                string commandText = "DELETE FROM Rtable WHERE BatchID = @batchId;";
+                MySqlCommand cmd = new MySqlCommand(commandText, connection);
+                cmd.Parameters.AddWithValue("@batchId", BatchID.Text);
+                connection.Open();
+                cmd.ExecuteNonQuery();
 
-                if (serialNumberList.Count == 0)
+                // Insert updated rows for this BatchID.
+                commandText = "INSERT INTO Rtable (UserName, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums) VALUE " +
+                    "(@userName, @partNum, @batchId, @description, @qty, @area, @section, @modelNum, @serialNums)";
+                cmd.CommandText = commandText;
+                cmd.Parameters.Clear();
+                if (serialNumberList.Count <= 1)
                 {
-                    connection.Open();
-                    updateRow.Parameters.AddWithValue("@oldSerialNum", "");
                     for (int j = 0; j < placeholders.Count; j++)
                     {
-                        updateRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                        cmd.Parameters.AddWithValue(placeholders[j], inputs[j]);
                     }
-                    updateRow.ExecuteNonQuery();
-                    connection.Close();
-                }
-
-                else if (serialNumberList.Count == 1)
-                {
-                    connection.Open();
-                    updateRow.Parameters.AddWithValue("oldSerialNum", items[firstIndex].SerialNums.ToString());
-                    for (int j = 0; j < placeholders.Count; j++)
-                    {
-                        updateRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
-                    }
-                    updateRow.ExecuteNonQuery();
-                    connection.Close();
+                    cmd.ExecuteNonQuery();
                 }
 
                 // Create separate rows for each serial number.
                 else
                 {
-                    for (int i = firstIndex; i <= lastIndex; i++)
+                    foreach (var num in serialNumberList) 
                     {
-                        oldSerialNumList.Add(items[i].SerialNums);
-                    }
-
-                    if (serialNumberList.Count == oldSerialNumList.Count)
-                    {
-                        connection.Open();
-                        for (int i = 0; i < serialNumberList.Count; i++)
+                        for (int j = 0; j < placeholders.Count; j++)
                         {
-                            updateRow.Parameters.AddWithValue("@oldSerialNum", oldSerialNumList[i]);
-                            for (int j = 0; j < placeholders.Count; j++)
+                            switch (j)
                             {
-                                switch (j)
-                                {
-                                    case 1:
-                                        updateRow.Parameters.AddWithValue(placeholders[j], "1");
-                                        break;
+                                case 2:
+                                    cmd.Parameters.AddWithValue(placeholders[j], "1");
+                                    break;
 
-                                    case 6:
-                                        updateRow.Parameters.AddWithValue(placeholders[j], serialNumberList[i]);
-                                        break;
+                                case 8:
+                                    cmd.Parameters.AddWithValue(placeholders[j], num);
+                                    break;
 
-                                    default:
-                                        updateRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
-                                        break;
-                                }
+                                default:
+                                    cmd.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                    break;
                             }
-                            updateRow.ExecuteNonQuery();
-                            updateRow.Parameters.Clear();
                         }
-                        connection.Close();
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
                     }
                     
                 }
+                connection.Close();
 
             }
             // AddNewArea();
@@ -294,25 +275,6 @@ namespace InventorySystem.InputPages
         //    }
         //}
 
-        //private void UpdateLocationComboBox()
-        //{
-        //    DataTable dt = new DataTable();
-
-        //    using (MySqlConnection connection = new MySqlConnection(connectionString))
-        //    {
-        //        MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
-        //        connection.Open();
-
-        //        // Load into dt, bind dt to Location ComboBox.
-        //        using (var reader = getArea.ExecuteReader())
-        //        {
-        //            dt.Load(reader);
-        //            Location.ItemsSource = dt.DefaultView;
-        //        }
-
-        //        connection.Close();
-        //    }
-        //}
 
 
         // ------------------------------------------------------ Making ModelNum and SerialNums non-editable if checkboxes are unchecked.
@@ -382,7 +344,7 @@ namespace InventorySystem.InputPages
             {
                 inputBoxes[i].Text = String.Empty;
             }
-            Area.Text = String.Empty; // Area is a ComboBox and cannot be part of the inputBoxes TextBox list.
+            Area.Text = String.Empty; 
             Section.Text = String.Empty;
             ModelNumCheckbox.IsChecked = false;
             SerialNumsCheckbox.IsChecked = false;

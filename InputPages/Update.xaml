@@ -161,7 +161,8 @@
                 <TextBox x:Name="SerialNums" IsReadOnly="True" Height="252"
                      TextChanged="SerialNum_Entered"
                      VerticalScrollBarVisibility="Auto"
-                     VerticalContentAlignment="Top"/>
+                     VerticalContentAlignment="Top"
+                     AcceptsReturn="True"/>
 
                 <TextBlock x:Name="SerialNumsWarning" Height="Auto"
                        Style="{StaticResource WarningLabels}"
