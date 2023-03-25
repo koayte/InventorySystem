@@ -8,8 +8,140 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="History"
       Background="White">
+    <Page.Resources>
+        <local:DataSource x:Key="myData" />
+        <Style x:Key="dataGridStyle" TargetType="DataGrid">
+            <Setter Property="GridLinesVisibility" Value="None" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+        </Style>
 
+        <Style x:Key="dataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <Style x:Key="dataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="3,0,3,0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="{x:Null}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="Foreground" Value="Black" />
+
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{x:Null}" />
+                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="dataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#131b4f" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Height" Value="27"/>
+        </Style>
+
+        <Style x:Key="textBlock" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="7,0,0,0"/>
+        </Style>
+
+        <CollectionViewSource x:Name="cvActions" x:Key="cvsActions" Source="{Binding Source={StaticResource myData}, Path=itemActions}">
+        </CollectionViewSource>
+    </Page.Resources>
     <Grid>
-        <TextBlock> Test </TextBlock>
+        <DataGrid Margin="20,70,20,20"
+                  AutoGenerateColumns="False"
+                  BorderThickness="0"
+                  Style="{StaticResource dataGridStyle}"
+                  RowStyle="{StaticResource dataGridRowStyle}"
+                  CellStyle="{StaticResource dataGridCellStyle}"
+                  ColumnHeaderStyle="{StaticResource dataGridHeaderStyle}"
+                  ItemsSource="{Binding Source={StaticResource cvsActions}}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Part Number" Width="85" x:Name="PartNumHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding PartNum}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Status" Width="50" x:Name="StatusHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Status}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="BatchID" Width="95" x:Name="BatchHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding BatchID}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Description" Width="80" x:Name="DescHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Qty" Width="30" x:Name="QtyHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Qty}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Area" Width="70" x:Name="AreaHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock x:Name="LocData" Text="{Binding Area}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Section" Width="50" x:Name="SecHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock x:Name="SecData"  Text="{Binding Section}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Model Number" Width="100" x:Name="ModelNumHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ModelNum}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Serial Numbers" Width="90" x:Name="SerialNumsHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SerialNums}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Time" Width="90" x:Name="TimeHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Time}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Page>

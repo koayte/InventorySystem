@@ -64,10 +64,6 @@
     </Page.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="56*"/>
-            <RowDefinition Height="169*"/>
-        </Grid.RowDefinitions>
         <!-- Search boxes -->
         <StackPanel Margin="20,40,20,20" Orientation="Horizontal" Grid.RowSpan="2">
             <StackPanel.Resources>
@@ -211,8 +207,6 @@
                         </Style>
                     </GroupStyle.ContainerStyle>
                 </GroupStyle>
-
-
             </DataGrid.GroupStyle>
 
             <DataGrid.Resources>
