@@ -62,6 +62,14 @@
                   ColumnHeaderStyle="{StaticResource dataGridHeaderStyle}"
                   ItemsSource="{Binding Source={StaticResource cvsActions}}">
             <DataGrid.Columns>
+                <DataGridTemplateColumn Header="User" Width="40" x:Name="UserHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding UserName}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
                 <DataGridTemplateColumn Header="Part Number" Width="85" x:Name="PartNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
