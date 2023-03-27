@@ -131,7 +131,6 @@ namespace InventorySystem
                             BatchID.Text = todayDate + "_" + "001";
                         }
                     }
-
                     connection.Close();
                 }
             }
@@ -315,7 +314,8 @@ namespace InventorySystem
         {
             List<string> placeholders = new List<string> { "@userName", "@partNum", "@qty", "@description", "@area", "@section", "@batchID", "@modelNum", "@serialNums" };
             List<string> inputs = new List<string> { User.Text, PartNum.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
-            var serialNumberList = SerialNums.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            string serialNumsReplaced = SerialNums.Text.Replace("\r\n", "\n");
+            var serialNumberList = serialNumsReplaced.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -330,12 +330,7 @@ namespace InventorySystem
                     addRow.Parameters.AddWithValue("@serialNums", "");
                     for (int j = 0; j < placeholders.Count - 1; j++)
                     {
-                        switch (j)
-                        {
-                            default:
-                                addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
-                                break;
-                        }
+                        addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
                     }
                     addRow.ExecuteNonQuery();
                     connection.Close();
@@ -384,15 +379,46 @@ namespace InventorySystem
                 string commandText3 = "INSERT INTO Htable (UserName, Status, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
                     "VALUE (@userName, @status, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
                 MySqlCommand addRecord = new MySqlCommand(commandText3, connection);
-                addRecord.Parameters.AddWithValue("@status", "Check in");
-
-                for (int j = 0; j < placeholders.Count; j++)
+                if (serialNumberList.Count <= 1)
                 {
-                    addRecord.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                    connection.Open();
+                    addRecord.Parameters.AddWithValue("@status", "Check in");
+                    for (int j = 0; j < placeholders.Count; j++)
+                    {
+                        addRecord.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                    }
+                    addRecord.ExecuteNonQuery();
+                    connection.Close();
                 }
-                connection.Open();
-                addRecord.ExecuteNonQuery();
-                connection.Close();
+                else
+                {
+                    connection.Open();
+                    // Create separate rows for each serial number.
+                    foreach (var num in serialNumberList)
+                    {
+                        addRecord.Parameters.AddWithValue("@status", "Check in");
+                        for (int j = 0; j < placeholders.Count; j++)
+                        {
+                            switch (j)
+                            {
+                                case 2: // Set quantity = 1 for each row.
+                                    addRecord.Parameters.AddWithValue(placeholders[j], "1");
+                                    break;
+
+                                case 8: // Set each serial number for each row.
+                                    addRecord.Parameters.AddWithValue(placeholders[j], num);
+                                    break;
+
+                                default:
+                                    addRecord.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                    break;
+                            }
+                        }
+                        addRecord.ExecuteNonQuery();
+                        addRecord.Parameters.Clear();
+                    }
+                    connection.Close();
+                }
             }
 
             // AddNewArea();

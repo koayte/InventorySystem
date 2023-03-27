@@ -16,9 +16,12 @@ namespace InventorySystem.InventoryPage
         public ObservableCollection<string> sections { get; set; }
         public ObservableCollection<User> users { get; set; }
         public ObservableCollection<ItemAction> itemActions { get; set; }
+        public List<string> partNums { get; set; }
+
         public DataSource()
         {
             items = new ObservableCollection<Item>();
+            partNums = new List<string>(); // unique list of part numbers 
             LoadInventoryData();
             areas = new ObservableCollection<string>();
             sections = new ObservableCollection<string>();
@@ -61,6 +64,11 @@ namespace InventorySystem.InventoryPage
                         ModelNum = modelNum,
                         SerialNums = serialNum
                     });
+
+                    if (!partNums.Contains(partNum))
+                    {
+                        partNums.Add(partNum);
+                    }
                 }
             }
         }

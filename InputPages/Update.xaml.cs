@@ -232,14 +232,45 @@ namespace InventorySystem.InputPages
                 commandText = "INSERT INTO Htable (UserName, Status, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
                     "VALUE (@userName, @status, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
                 cmd.CommandText = commandText;
-                cmd.Parameters.AddWithValue("@status", "Update");
 
-                for (int j = 0; j < placeholders.Count; j++)
+                if (serialNumberList.Count <= 1)
                 {
-                    cmd.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                    cmd.Parameters.AddWithValue("@status", "Update");
+                    for (int j = 0; j < placeholders.Count; j++)
+                    {
+                        cmd.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                    }
+                    cmd.ExecuteNonQuery();
                 }
-                cmd.ExecuteNonQuery();
-                connection.Close();
+
+                // CREATE SEPARATE ROWS FOR EACH SERIAL NUMBER
+                else
+                {
+                    foreach (var num in serialNumberList)
+                    {
+                        cmd.Parameters.AddWithValue("@status", "Update");
+                        for (int j = 0; j < placeholders.Count; j++)
+                        {
+                            switch (j)
+                            {
+                                case 2:
+                                    cmd.Parameters.AddWithValue(placeholders[j], "1");
+                                    break;
+
+                                case 8:
+                                    cmd.Parameters.AddWithValue(placeholders[j], num);
+                                    break;
+
+                                default:
+                                    cmd.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                                    break;
+                            }
+                        }
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+                    }
+
+                }
             }
 
             // AddNewArea();

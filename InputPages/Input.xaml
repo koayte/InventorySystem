@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:InventorySystem"
       xmlns:sidebar="clr-namespace:InventorySystem.SideBarNav"
       xmlns:inventory="clr-namespace:InventorySystem.InventoryPage"
-      FocusManager.FocusedElement="{Binding ElementName=PartNum}"
+      FocusManager.FocusedElement="{Binding ElementName=User}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="700"
       Title="Input"
