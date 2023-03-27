@@ -178,14 +178,14 @@ namespace InventorySystem.InputPages
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                // Delete rows with this BatchID
+                // DELETE ROWS WITH THIS BATCHID
                 string commandText = "DELETE FROM Rtable WHERE BatchID = @batchId;";
                 MySqlCommand cmd = new MySqlCommand(commandText, connection);
                 cmd.Parameters.AddWithValue("@batchId", BatchID.Text);
                 connection.Open();
                 cmd.ExecuteNonQuery();
 
-                // Insert updated rows for this BatchID.
+                // INSERT UPDATED ROWS WITH THIS BATCHID
                 commandText = "INSERT INTO Rtable (UserName, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums) VALUE " +
                     "(@userName, @partNum, @batchId, @description, @qty, @area, @section, @modelNum, @serialNums)";
                 cmd.CommandText = commandText;
@@ -199,7 +199,7 @@ namespace InventorySystem.InputPages
                     cmd.ExecuteNonQuery();
                 }
 
-                // Create separate rows for each serial number.
+                // CREATE SEPARATE ROWS FOR EACH SERIAL NUMBER
                 else
                 {
                     foreach (var num in serialNumberList) 
@@ -226,9 +226,22 @@ namespace InventorySystem.InputPages
                     }
                     
                 }
-                connection.Close();
 
+                // ADD INTO HISTORY DATABASE TABLE
+                cmd.Parameters.Clear();
+                commandText = "INSERT INTO Htable (UserName, Status, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
+                    "VALUE (@userName, @status, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
+                cmd.CommandText = commandText;
+                cmd.Parameters.AddWithValue("@status", "Update");
+
+                for (int j = 0; j < placeholders.Count; j++)
+                {
+                    cmd.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                }
+                cmd.ExecuteNonQuery();
+                connection.Close();
             }
+
             // AddNewArea();
             ClearAll();
             updateFrame.Navigate(new Uri("/InventoryPage/Inventory.xaml", UriKind.Relative));
