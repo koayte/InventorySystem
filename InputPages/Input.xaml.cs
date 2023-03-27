@@ -315,8 +315,7 @@ namespace InventorySystem
         {
             List<string> placeholders = new List<string> { "@userName", "@partNum", "@qty", "@description", "@area", "@section", "@batchID", "@modelNum", "@serialNums" };
             List<string> inputs = new List<string> { User.Text, PartNum.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
-            // String[] newLineDelimiters = { Environment.NewLine, '\n'.ToString() };
-            var serialNumberList = SerialNums.Text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var serialNumberList = SerialNums.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -324,7 +323,7 @@ namespace InventorySystem
                 string commandText1 = "INSERT INTO Rtable (UserName, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) VALUE (@userName, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
                 MySqlCommand addRow = new MySqlCommand(commandText1, connection);
 
-                // If serial numbers are not entered, enter NULL value. Else, split into multiple db entries.
+                // If serial numbers are not entered, enter "" value. Else, split into multiple db entries.
                 if (string.IsNullOrEmpty(SerialNums.Text))
                 {
                     connection.Open();
@@ -379,6 +378,20 @@ namespace InventorySystem
                 addDateBatch.Parameters.AddWithValue("@Batch", DateBatch[1]);
                 connection.Open();
                 addDateBatch.ExecuteNonQuery();
+                connection.Close();
+
+                // ADD INTO HISTORY DATABASE TABLE.
+                string commandText3 = "INSERT INTO Htable (UserName, Status, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
+                    "VALUE (@userName, @status, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
+                MySqlCommand addRecord = new MySqlCommand(commandText3, connection);
+                addRecord.Parameters.AddWithValue("@status", "Check in");
+
+                for (int j = 0; j < placeholders.Count; j++)
+                {
+                    addRecord.Parameters.AddWithValue(placeholders[j], inputs[j]);
+                }
+                connection.Open();
+                addRecord.ExecuteNonQuery();
                 connection.Close();
             }
 
