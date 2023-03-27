@@ -181,6 +181,7 @@ namespace InventorySystem.InventoryPage
                 this.Area = temp_Item.Area;
                 this.Section = temp_Item.Section;
                 this.ModelNum = temp_Item.ModelNum;
+                this.SerialNums = temp_Item.SerialNums;
                 _Editing = false;
             }
         }
