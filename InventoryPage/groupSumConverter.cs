@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -17,15 +18,22 @@ using System.Windows.Media;
 
 namespace InventorySystem.InventoryPage
 {
-    public class VisibleBatchIDConverter : IValueConverter
+    public class GroupSumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Item item && Int32.Parse(item.Qty) == 1)
+            if (!(value is ReadOnlyObservableCollection<Object>))
             {
-                return item.BatchID;
+                Debug.WriteLine("{0}", value.GetType().ToString());
+                return "0";
             }
-            return "";
+            ReadOnlyObservableCollection<Object> items = (ReadOnlyObservableCollection<Object>)value;
+            int sum = 0;
+            foreach (Object o in items)
+            {
+                sum += System.Convert.ToInt32(o.GetType().GetProperty("Qty").GetValue(o));
+            }
+            return sum.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
