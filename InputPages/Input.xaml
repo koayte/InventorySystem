@@ -173,7 +173,7 @@
         </StackPanel>
 
         <!-- Buttons -->
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="46" Margin="0,404,0,0">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Height="46" >
             <Button x:Name="addItem" Content="Add Item" Width="80" Click="addItem_Click"/>
             <Button x:Name="clearAll" Content="Clear" Width="60" Click="clearAll_Click"/>
         </StackPanel>

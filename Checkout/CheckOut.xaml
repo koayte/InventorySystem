@@ -167,6 +167,12 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Height="46">
+            <Button x:Name="checkOut" Content="Check Out" Width="80" Click="checkOut_Click"/>
+            <Button x:Name="clearAll" Content="Clear" Width="60" Click="clearAll_Click"/>
+        </StackPanel>
+
     </Grid>
 </Page>

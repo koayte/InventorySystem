@@ -266,48 +266,6 @@ namespace InventorySystem
         }
 
 
-        // Locations
-        //private List<string> AddLocationsIntoString()
-        //{
-        //    using (MySqlConnection connection = new MySqlConnection(connectionString))
-        //    {
-        //        MySqlCommand getArea = new MySqlCommand("SELECT Area FROM locations", connection);
-        //        connection.Open();
-        //        using (var reader = getArea.ExecuteReader())
-        //        {
-        //            while (reader.Read())
-        //            {
-        //                var area = reader.GetString(0);
-        //                areas.Add(area);
-        //            }
-        //        }
-        //        connection.Close();
-        //    }
-        //    return (areas);
-        //}
-
-        //private void AddNewArea()
-        //{
-        //    DataSource dataSource = new DataSource();
-        //    List<string> areas = dataSource.locations.Select(x => x.Area).ToList();
-
-        //    // If user inputs a new area that is not in the current database, add to db.
-        //    if (!areas.Contains(Location.Text))
-        //    {
-        //        using (MySqlConnection connection = new MySqlConnection(connectionString))
-        //        {
-        //            string commandText = "INSERT INTO locations (Area) VALUE (@Area)";
-        //            MySqlCommand addNewArea = new MySqlCommand(commandText, connection);
-        //            addNewArea.Parameters.AddWithValue("@Area", Location.Text);
-
-        //            connection.Open();
-        //            addNewArea.ExecuteNonQuery();
-        //            connection.Close();
-        //        }
-        //    }
-        //}
-
-
         // Buttons
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
