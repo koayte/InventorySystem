@@ -21,9 +21,12 @@ namespace InventorySystem.Checkout
     /// </summary>
     public partial class CheckOut : Page
     {
+        private List<TextBox> inputBoxes;
+
         public CheckOut()
         {
             InitializeComponent();
+            inputBoxes = new List<TextBox> { BatchID, ModelNum, Description, Area, Section, Qty };
         }
 
         private void Control_Enter(object sender, KeyEventArgs e)
@@ -44,7 +47,6 @@ namespace InventorySystem.Checkout
         }
         private void Model_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            ModelNum.IsReadOnly = false;
             ModelNumber.Foreground = Brushes.Black;
             if (!string.IsNullOrEmpty(Qty.Text) && !string.IsNullOrEmpty(BatchID.Text) && !string.IsNullOrEmpty(Description.Text))
             {
@@ -90,6 +92,7 @@ namespace InventorySystem.Checkout
         {
             string partNumSelected = (sender as ComboBox).SelectedItem?.ToString() ?? "";
             List<string> serialNumList = new List<string>();
+            ClearAll();
             if (!string.IsNullOrEmpty(partNumSelected))
             {
                 DataSource dataSource = new DataSource();
@@ -100,18 +103,66 @@ namespace InventorySystem.Checkout
                     // Bind SerialNum combobox to serialNumList. 
                     SerialNums.ItemsSource = serialNumList;
                 }
-                else
+                else // If there are no SerialNums for this PartNum
                 {
                     SerialNumsCheckbox.IsChecked = false;
                     SerialNums.ItemsSource = null;
+                    var selectedItem = dataSource.items.Single(x => x.PartNum == partNumSelected);
+                    BatchID.Text = selectedItem.BatchID.ToString();
+                    Description.Text = selectedItem.Description.ToString();
+                    Area.Text = selectedItem.Area.ToString();
+                    Section.Text = selectedItem.Section.ToString();
+                    Qty.Text = "1";
+                    if (!string.IsNullOrEmpty(selectedItem.ModelNum.ToString()))
+                    {
+                        ModelNumCheckbox.IsChecked = true;
+                        ModelNum.Text = selectedItem.ModelNum.ToString();
+                    }
                 }
             }
-            else
+            else 
             {
                 SerialNumsCheckbox.IsChecked = false;
                 SerialNums.ItemsSource = null;
             }
         }
 
+        private void SerialNum_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string serialNumSelected = (sender as ComboBox).SelectedItem?.ToString() ?? "";
+            if (!string.IsNullOrEmpty(serialNumSelected))
+            {
+                DataSource dataSource = new DataSource();
+                var selectedItem = dataSource.items.Single(x => (x.SerialNums == serialNumSelected) && (x.PartNum == PartNum.Text));
+                if (selectedItem != null)
+                {
+                    BatchID.Text = selectedItem.BatchID.ToString();
+                    Description.Text = selectedItem.Description.ToString();
+                    Area.Text = selectedItem.Area.ToString();
+                    Section.Text = selectedItem.Section.ToString();
+                    Qty.Text = "1";
+                    if (!string.IsNullOrEmpty(selectedItem.ModelNum.ToString()))
+                    {
+                        ModelNumCheckbox.IsChecked = true;
+                        ModelNum.Text = selectedItem.ModelNum.ToString();
+                    }
+                }
+            }
+        }
+
+        private void ClearAll()
+        {
+            // Clear textboxes, reset checkboxes to default
+            for (int i = 0; i < inputBoxes.Count; i++)
+            {
+                inputBoxes[i].Text = String.Empty;
+            }
+            SerialNums.Text = String.Empty;
+            ModelNumCheckbox.IsChecked = false;
+            SerialNumsCheckbox.IsChecked = false;
+
+            // Send caret position back to PartNum textbox.
+            PartNum.Focus();
+        }
     }
 }

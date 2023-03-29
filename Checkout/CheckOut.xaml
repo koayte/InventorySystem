@@ -93,7 +93,7 @@
                         <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Serial_CheckBox_Checked" Unchecked="Serial_CheckBox_Unchecked"/>
                     </WrapPanel>
 
-                    <ComboBox x:Name="SerialNums" IsReadOnly="True"/>
+                    <ComboBox x:Name="SerialNums" IsReadOnly="True" SelectionChanged="SerialNum_SelectionChanged"/>
 
                     <TextBlock x:Name="SerialNumsWarning" Height="Auto"
                        Style="{StaticResource WarningLabels}"

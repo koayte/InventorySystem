@@ -29,7 +29,6 @@ namespace InventorySystem
         public string connectionString = "SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;";
         private DispatcherTimer timer;
         private List<TextBox> inputBoxes;
-        private List<string> areas = new List<string>();
 
         public Input()
         {
