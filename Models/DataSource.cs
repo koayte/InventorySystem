@@ -130,7 +130,7 @@ namespace InventorySystem.InventoryPage
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT UserName, Status, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums, Time FROM Htable ORDER BY Time DESC";
+                string commandText = "SELECT UserName, Status, Purpose, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums, Time FROM Htable ORDER BY Time DESC";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();
@@ -139,6 +139,7 @@ namespace InventorySystem.InventoryPage
                 {
                     string userName = reader.GetString("UserName");
                     string status = reader.GetString("Status");
+                    string purpose = reader.GetString("Purpose");
                     string partNum = reader.GetString("PartNum");
                     string batchID = reader.GetString("BatchID");
                     string description = reader.GetString("Description");
@@ -152,6 +153,7 @@ namespace InventorySystem.InventoryPage
                     {
                         UserName = userName,
                         Status = status,
+                        Purpose = purpose,
                         PartNum = partNum,
                         BatchID = batchID,
                         Description = description,

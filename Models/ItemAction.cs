@@ -13,6 +13,7 @@ namespace InventorySystem.InventoryPage
         // Private item data. 
         private string _UserName = string.Empty;
         private string _Status = string.Empty;
+        private string _Purpose = string.Empty;
         private string _PartNum = string.Empty;
         private string _BatchID = string.Empty;
         private string _Description = string.Empty;
@@ -52,6 +53,19 @@ namespace InventorySystem.InventoryPage
                 {
                     this._Status = value;
                     NotifyPropertyChanged("Status");
+                }
+            }
+        }
+
+        public string Purpose
+        {
+            get { return this._Purpose; }
+            set
+            {
+                if (value != this._Purpose)
+                {
+                    this._Purpose = value;
+                    NotifyPropertyChanged("Purpose");
                 }
             }
         }
@@ -202,6 +216,7 @@ namespace InventorySystem.InventoryPage
             {
                 this.UserName = temp_ItemAction.UserName;
                 this.Status = temp_ItemAction.Status;
+                this.Purpose = temp_ItemAction.Purpose;
                 this.PartNum = temp_ItemAction.PartNum;
                 this.BatchID = temp_ItemAction.BatchID;
                 this.Description = temp_ItemAction.Description;

@@ -86,6 +86,15 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
+
+                <DataGridTemplateColumn Header="Purpose" Width="50" x:Name="PurposeHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Purpose}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
                 <DataGridTemplateColumn Header="BatchID" Width="95" x:Name="BatchHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
