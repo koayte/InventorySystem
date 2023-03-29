@@ -70,10 +70,10 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="442"/> 
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="442"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        
+
         <!-- 1st column in grid -->
         <StackPanel Orientation="Vertical" Grid.Column="0">
             <!-- First row, UserName -->
@@ -98,7 +98,7 @@
                 <TextBox x:Name="Description" Width="423" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus"/>
                 <TextBlock x:Name="DescriptionWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Description}"/>
             </StackPanel>
-            
+
             <!-- Fourth Row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Quantity -->
@@ -173,7 +173,7 @@
         </StackPanel>
 
         <!-- Buttons -->
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="46" Margin="0,404,0,0">
             <Button x:Name="addItem" Content="Add Item" Width="80" Click="addItem_Click"/>
             <Button x:Name="clearAll" Content="Clear" Width="60" Click="clearAll_Click"/>
         </StackPanel>
