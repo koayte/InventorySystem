@@ -229,13 +229,14 @@ namespace InventorySystem.InputPages
 
                 // ADD INTO HISTORY DATABASE TABLE
                 cmd.Parameters.Clear();
-                commandText = "INSERT INTO Htable (UserName, Status, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
-                    "VALUE (@userName, @status, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
+                commandText = "INSERT INTO Htable (UserName, Status, Purpose, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
+                    "VALUE (@userName, @status, @purpose, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
                 cmd.CommandText = commandText;
 
                 if (serialNumberList.Count <= 1)
                 {
                     cmd.Parameters.AddWithValue("@status", "Update");
+                    cmd.Parameters.AddWithValue("@purpose", "");
                     for (int j = 0; j < placeholders.Count; j++)
                     {
                         cmd.Parameters.AddWithValue(placeholders[j], inputs[j]);
@@ -249,6 +250,7 @@ namespace InventorySystem.InputPages
                     foreach (var num in serialNumberList)
                     {
                         cmd.Parameters.AddWithValue("@status", "Update");
+                        cmd.Parameters.AddWithValue("@purpose", "");
                         for (int j = 0; j < placeholders.Count; j++)
                         {
                             switch (j)

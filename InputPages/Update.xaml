@@ -11,6 +11,7 @@
       Background="White">
     <Page.Resources>
         <inventory:DataSource x:Key="myData" />
+        <local:ValidationConverter x:Key="allTextConverter"/>
 
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="25"/>
@@ -171,7 +172,19 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-            <Button x:Name="UpdateItem" Content="Update" Width="80" Click="UpdateItem_Click"/>
+            <Button x:Name="UpdateItem" Content="Update" Width="80" Click="UpdateItem_Click">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource allTextConverter}">
+                        <Binding ElementName="User" Path="Text" />
+                        <Binding ElementName="PartNum" Path="Text"/>
+                        <Binding ElementName="Description" Path="Text"/>
+                        <Binding ElementName="Qty" Path="Text"/>
+                        <Binding ElementName="BatchID" Path="Text"/>
+                        <Binding ElementName="Area" Path="Text"/>
+                        <Binding ElementName="Section" Path="Text"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
         </StackPanel>
         <Frame x:Name="updateFrame" Grid.ColumnSpan="2"/>
 

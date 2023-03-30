@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:InventorySystem.Checkout"
       xmlns:inventory="clr-namespace:InventorySystem.InventoryPage"
+      xmlns:input="clr-namespace:InventorySystem.InputPages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CheckOut"
@@ -12,6 +13,7 @@
 
     <Page.Resources>
         <inventory:DataSource x:Key="myData"/>
+        <input:ValidationConverter x:Key="allTextConverter"/>
 
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="25"/>
@@ -170,7 +172,20 @@
 
         <!-- Buttons -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Height="46">
-            <Button x:Name="checkOut" Content="Check Out" Width="80" Click="checkOut_Click"/>
+            <Button x:Name="checkOut" Content="Check Out" Width="80" Click="checkOut_Click">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource allTextConverter}">
+                        <Binding ElementName="User" Path="Text" />
+                        <Binding ElementName="Purpose" Path="Text"/>
+                        <Binding ElementName="PartNum" Path="Text"/>
+                        <Binding ElementName="Description" Path="Text"/>
+                        <Binding ElementName="Qty" Path="Text"/>
+                        <Binding ElementName="BatchID" Path="Text"/>
+                        <Binding ElementName="Area" Path="Text"/>
+                        <Binding ElementName="Section" Path="Text"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
             <Button x:Name="clearAll" Content="Clear" Width="60" Click="clearAll_Click"/>
         </StackPanel>
     </Grid>
