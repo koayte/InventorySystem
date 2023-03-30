@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:InventorySystem"
       xmlns:sidebar="clr-namespace:InventorySystem.SideBarNav"
       xmlns:inventory="clr-namespace:InventorySystem.InventoryPage"
+      xmlns:input="clr-namespace:InventorySystem.InputPages"
       FocusManager.FocusedElement="{Binding ElementName=User}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="700"
@@ -14,7 +15,8 @@
 
     <Page.Resources>
         <inventory:DataSource x:Key="myData" />
-
+        <input:ValidationConverter x:Key="allTextConverter"/>
+        
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="25"/>
             <Setter Property="Margin" Value="19,5,0,0"/>
@@ -43,6 +45,7 @@
             <Setter Property="Margin" Value="19,0,0,19"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Height" Value="27"/>
+
             <Style.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="3"/>
@@ -174,7 +177,19 @@
 
         <!-- Buttons -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Height="46" >
-            <Button x:Name="addItem" Content="Add Item" Width="80" Click="addItem_Click"/>
+            <Button x:Name="addItem" Content="Add Item" Width="80" Click="addItem_Click">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource allTextConverter}">
+                        <Binding ElementName="User" Path="Text" />
+                        <Binding ElementName="PartNum" Path="Text"/>
+                        <Binding ElementName="Description" Path="Text"/>
+                        <Binding ElementName="Qty" Path="Text"/>
+                        <Binding ElementName="BatchID" Path="Text"/>
+                        <Binding ElementName="Area" Path="Text"/>
+                        <Binding ElementName="Section" Path="Text"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
             <Button x:Name="clearAll" Content="Clear" Width="60" Click="clearAll_Click"/>
         </StackPanel>
     </Grid>

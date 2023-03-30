@@ -333,13 +333,14 @@ namespace InventorySystem
                 connection.Close();
 
                 // ADD INTO HISTORY DATABASE TABLE.
-                string commandText3 = "INSERT INTO Htable (UserName, Status, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
-                    "VALUE (@userName, @status, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
+                string commandText3 = "INSERT INTO Htable (UserName, Status, Purpose, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
+                    "VALUE (@userName, @status, @purpose, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
                 MySqlCommand addRecord = new MySqlCommand(commandText3, connection);
                 if (serialNumberList.Count <= 1)
                 {
                     connection.Open();
                     addRecord.Parameters.AddWithValue("@status", "Check in");
+                    addRecord.Parameters.AddWithValue("@purpose", "");
                     for (int j = 0; j < placeholders.Count; j++)
                     {
                         addRecord.Parameters.AddWithValue(placeholders[j], inputs[j]);
@@ -354,6 +355,7 @@ namespace InventorySystem
                     foreach (var num in serialNumberList)
                     {
                         addRecord.Parameters.AddWithValue("@status", "Check in");
+                        addRecord.Parameters.AddWithValue("@purpose", "");
                         for (int j = 0; j < placeholders.Count; j++)
                         {
                             switch (j)
@@ -405,6 +407,7 @@ namespace InventorySystem
                 }
             }
         }
+
 
     }
 }
