@@ -46,6 +46,12 @@ namespace InventorySystem
 
             if (!string.IsNullOrEmpty(partNum))
             {
+                // Autofill ModelNum, Description, Area, Section, Supplier based on PartNum, from Ptable. 
+            }
+
+
+            if (!string.IsNullOrEmpty(partNum))
+            {
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     // Autofill Description and Location based on PartNum 
@@ -268,6 +274,21 @@ namespace InventorySystem
             PartNum.Focus();
         }
 
+        // Add user input in Supplier ComboBox to Suppliers table in db.
+        private void AddSupplierDB()
+        {
+            string supplier = Supplier.Text;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText = "INSERT INTO suppliers (Supplier) VALUE (@supplier)" +
+                    " ON DUPLICATE KEY UPDATE Supplier = @supplier";
+                MySqlCommand addSupplier = new MySqlCommand(commandText, connection);
+                addSupplier.Parameters.AddWithValue("@supplier", supplier);
+                connection.Open();
+                addSupplier.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
 
         // Buttons
         private void addItem_Click(object sender, RoutedEventArgs e)
@@ -288,8 +309,7 @@ namespace InventorySystem
                 if (string.IsNullOrEmpty(SerialNums.Text))
                 {
                     connection.Open();
-                    addRow.Parameters.AddWithValue("@serialNums", "");
-                    for (int j = 0; j < placeholders.Count - 1; j++)
+                    for (int j = 0; j < placeholders.Count; j++)
                     {
                         addRow.Parameters.AddWithValue(placeholders[j], inputs[j]);
                     }
@@ -382,15 +402,16 @@ namespace InventorySystem
                 }
 
                 // ADD INTO UNIQUE PRODUCT TABLE.
-                string commandText4 = "INSERT INTO ptable (PartNum, ModelNum, Description, Area, Section, SerialNumsExist) " +
-                    "VALUES (@partNum, @modelNum, @description, @area, @section, @serialNumsExist) " +
-                    "ON DUPLICATE KEY UPDATE ModelNum = @modelNum, Description = @description, Area = @area, Section = @section, SerialNumsExist = @serialNumsExist";
+                string commandText4 = "INSERT INTO ptable (PartNum, ModelNum, Description, Area, Section, SerialNumsExist, Supplier) " +
+                    "VALUES (@partNum, @modelNum, @description, @area, @section, @serialNumsExist, @supplier) " +
+                    "ON DUPLICATE KEY UPDATE ModelNum = @modelNum, Description = @description, Area = @area, Section = @section, SerialNumsExist = @serialNumsExist, Supplier = @supplier";
                 MySqlCommand addProduct = new MySqlCommand(commandText4, connection);
                 addProduct.Parameters.AddWithValue("@partNum", PartNum.Text);
                 addProduct.Parameters.AddWithValue("@modelNum", ModelNum.Text);
                 addProduct.Parameters.AddWithValue("@description", Description.Text);
                 addProduct.Parameters.AddWithValue("@area", Area.Text);
                 addProduct.Parameters.AddWithValue("@section", Section.Text);
+                addProduct.Parameters.AddWithValue("@supplier", Supplier.Text);
                 if (string.IsNullOrEmpty(SerialNums.Text))
                 {
                     addProduct.Parameters.AddWithValue("@serialNumsExist", "No");
@@ -404,7 +425,7 @@ namespace InventorySystem
                 connection.Close();
             }
 
-            // AddNewArea();
+            AddSupplierDB();
             ClearAll();
 
         }

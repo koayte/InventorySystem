@@ -166,7 +166,7 @@
                 <ComboBox x:Name="Supplier"
                               Width="202"
                               KeyUp="Control_Enter"
-                              ItemsSource="{Binding Source={StaticResource myData}, Path=sources}">
+                              ItemsSource="{Binding Source={StaticResource myData}, Path=suppliers}">
                 </ComboBox>
                 <TextBlock x:Name="SupplierWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Supplier}"/>
             </StackPanel>

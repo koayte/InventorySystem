@@ -17,7 +17,7 @@ namespace InventorySystem.InventoryPage
         public ObservableCollection<User> users { get; set; }
         public ObservableCollection<ItemAction> itemActions { get; set; }
         public List<string> partNums { get; set; }
-        public List<string> sources { get; set; }
+        public List<string> suppliers { get; set; }
         public ObservableCollection<Product> products { get; set; }
 
         public DataSource()
@@ -32,8 +32,8 @@ namespace InventorySystem.InventoryPage
             LoadUserData();
             itemActions = new ObservableCollection<ItemAction>();
             LoadItemActionData();
-            sources = new List<string>();
-            LoadSourceData();
+            suppliers = new List<string>();
+            LoadSupplierData();
             products = new ObservableCollection<Product>();
             LoadProductData();
         }
@@ -180,7 +180,7 @@ namespace InventorySystem.InventoryPage
             }
         }
 
-        private void LoadSourceData() // Supplier
+        private void LoadSupplierData() // Supplier
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -190,7 +190,7 @@ namespace InventorySystem.InventoryPage
                 MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    sources.Add(reader.GetString("0"));
+                    suppliers.Add(reader.GetString("Supplier"));
                 }
                 connection.Close();
             }
@@ -212,6 +212,7 @@ namespace InventorySystem.InventoryPage
                     string area = reader.GetString("Area");
                     string section = reader.GetString("Section");
                     string serialNumsExist = reader.GetString("SerialNumsExist");
+                    string supplier = reader.GetString("Supplier");
                     products.Add(new Product()
                     {
                         PartNum = partNum,
@@ -219,7 +220,8 @@ namespace InventorySystem.InventoryPage
                         Description = description,
                         Area = area,
                         Section = section,
-                        SerialNumsExist = serialNumsExist
+                        SerialNumsExist = serialNumsExist,
+                        Supplier = supplier
                     });
                 }
                 connection.Close();
