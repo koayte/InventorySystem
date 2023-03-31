@@ -14,6 +14,7 @@ namespace InventorySystem.InventoryPage
         private string _ModelNum = string.Empty;
         private string _Area = string.Empty;
         private string _Section = string.Empty;
+        private string _SerialNumsExist = string.Empty;
 
         public string PartNum
         {
@@ -71,6 +72,18 @@ namespace InventorySystem.InventoryPage
                 if (value != this._Section)
                 {
                     this._Section = value;
+                }
+            }
+        }
+
+        public string SerialNumsExist
+        {
+            get { return this._SerialNumsExist; }
+            set
+            {
+                if (value != this._SerialNumsExist)
+                {
+                    this._SerialNumsExist = value;
                 }
             }
         }

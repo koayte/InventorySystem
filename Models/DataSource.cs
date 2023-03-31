@@ -42,7 +42,7 @@ namespace InventorySystem.InventoryPage
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT UserName, PartNum, Supplier, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks FROM Rtable ORDER BY PartNum, BatchID";
+                string commandText = "SELECT UserName, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks FROM Rtable ORDER BY PartNum, BatchID";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();
@@ -140,7 +140,7 @@ namespace InventorySystem.InventoryPage
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT UserName, Status, Purpose, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums, Time FROM Htable ORDER BY Time DESC";
+                string commandText = "SELECT UserName, Status, PartNum, Supplier, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks, Time FROM Htable ORDER BY Time DESC";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();
@@ -211,13 +211,15 @@ namespace InventorySystem.InventoryPage
                     string description = reader.GetString("Description");
                     string area = reader.GetString("Area");
                     string section = reader.GetString("Section");
+                    string serialNumsExist = reader.GetString("SerialNumsExist");
                     products.Add(new Product()
                     {
                         PartNum = partNum,
                         ModelNum = modelNum,
                         Description = description,
                         Area = area,
-                        Section = section
+                        Section = section,
+                        SerialNumsExist = serialNumsExist
                     });
                 }
                 connection.Close();
