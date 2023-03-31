@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using InventorySystem.InventoryPage;
 
 namespace InventorySystem
 {
@@ -33,7 +34,7 @@ namespace InventorySystem
         public Input()
         {
             InitializeComponent();
-            inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums };
+            inputBoxes = new List<TextBox> { PartNum, Qty, BatchID, Description, ModelNum, SerialNums, Remarks };
         }
 
         // Checking PartNum against database
@@ -42,6 +43,7 @@ namespace InventorySystem
             DateTime dateTime = DateTime.Today;
             string todayDate = dateTime.ToString("yyyy-MM-dd");
             string partNum = PartNum.Text;
+
             if (!string.IsNullOrEmpty(partNum))
             {
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -258,6 +260,7 @@ namespace InventorySystem
             }
             Area.Text = String.Empty; // Location is a ComboBox and cannot be part of the inputBoxes TextBox list.
             Section.Text = String.Empty;
+            Supplier.Text = String.Empty;
             ModelNumCheckbox.IsChecked = false;
             SerialNumsCheckbox.IsChecked = false;
 
@@ -269,15 +272,16 @@ namespace InventorySystem
         // Buttons
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
-            List<string> placeholders = new List<string> { "@userName", "@partNum", "@qty", "@description", "@area", "@section", "@batchID", "@modelNum", "@serialNums" };
-            List<string> inputs = new List<string> { User.Text, PartNum.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
+            List<string> placeholders = new List<string> { "@userName", "@partNum", "@supplier", "@qty", "@description", "@area", "@section", "@batchID", "@modelNum", "@serialNums", "@remarks"};
+            List<string> inputs = new List<string> { User.Text, PartNum.Text, Supplier.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text, Remarks.Text };
             string serialNumsReplaced = SerialNums.Text.Replace("\r\n", "\n");
             var serialNumberList = serialNumsReplaced.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 // ADD INTO REAL-TIME INVENTORY DATABASE TABLE.
-                string commandText1 = "INSERT INTO Rtable (UserName, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) VALUE (@userName, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
+                string commandText1 = "INSERT INTO Rtable (UserName, PartNum, Supplier, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums, Remarks) " +
+                    "VALUE (@userName, @partNum, @supplier, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums, @remarks)";
                 MySqlCommand addRow = new MySqlCommand(commandText1, connection);
 
                 // If serial numbers are not entered, enter "" value. Else, split into multiple db entries.
@@ -302,11 +306,11 @@ namespace InventorySystem
                         {
                             switch (j)
                             {
-                                case 2: // Set quantity = 1 for each row.
+                                case 3: // Set quantity = 1 for each row.
                                     addRow.Parameters.AddWithValue(placeholders[j], "1");
                                     break;
 
-                                case 8: // Set each serial number for each row.
+                                case 9: // Set each serial number for each row.
                                     addRow.Parameters.AddWithValue(placeholders[j], num);
                                     break;
 
@@ -333,14 +337,13 @@ namespace InventorySystem
                 connection.Close();
 
                 // ADD INTO HISTORY DATABASE TABLE.
-                string commandText3 = "INSERT INTO Htable (UserName, Status, Purpose, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
-                    "VALUE (@userName, @status, @purpose, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
+                string commandText3 = "INSERT INTO Htable (UserName, Status, PartNum, Supplier, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums, Remarks) " +
+                    "VALUE (@userName, @status, @partNum, @supplier, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums, @remarks)";
                 MySqlCommand addRecord = new MySqlCommand(commandText3, connection);
                 if (serialNumberList.Count <= 1)
                 {
                     connection.Open();
                     addRecord.Parameters.AddWithValue("@status", "Check in");
-                    addRecord.Parameters.AddWithValue("@purpose", "");
                     for (int j = 0; j < placeholders.Count; j++)
                     {
                         addRecord.Parameters.AddWithValue(placeholders[j], inputs[j]);
@@ -355,16 +358,15 @@ namespace InventorySystem
                     foreach (var num in serialNumberList)
                     {
                         addRecord.Parameters.AddWithValue("@status", "Check in");
-                        addRecord.Parameters.AddWithValue("@purpose", "");
                         for (int j = 0; j < placeholders.Count; j++)
                         {
                             switch (j)
                             {
-                                case 2: // Set quantity = 1 for each row.
+                                case 3: // Set quantity = 1 for each row.
                                     addRecord.Parameters.AddWithValue(placeholders[j], "1");
                                     break;
 
-                                case 8: // Set each serial number for each row.
+                                case 9: // Set each serial number for each row.
                                     addRecord.Parameters.AddWithValue(placeholders[j], num);
                                     break;
 
@@ -378,6 +380,28 @@ namespace InventorySystem
                     }
                     connection.Close();
                 }
+
+                // ADD INTO UNIQUE PRODUCT TABLE.
+                string commandText4 = "INSERT INTO ptable (PartNum, ModelNum, Description, Area, Section, SerialNumsExist) " +
+                    "VALUES (@partNum, @modelNum, @description, @area, @section, @serialNumsExist) " +
+                    "ON DUPLICATE KEY UPDATE ModelNum = @modelNum, Description = @description, Area = @area, Section = @section, SerialNumsExist = @serialNumsExist";
+                MySqlCommand addProduct = new MySqlCommand(commandText4, connection);
+                addProduct.Parameters.AddWithValue("@partNum", PartNum.Text);
+                addProduct.Parameters.AddWithValue("@modelNum", ModelNum.Text);
+                addProduct.Parameters.AddWithValue("@description", Description.Text);
+                addProduct.Parameters.AddWithValue("@area", Area.Text);
+                addProduct.Parameters.AddWithValue("@section", Section.Text);
+                if (string.IsNullOrEmpty(SerialNums.Text))
+                {
+                    addProduct.Parameters.AddWithValue("@serialNumsExist", "No");
+                }
+                else
+                {
+                    addProduct.Parameters.AddWithValue("@serialNumsExist", "Yes");
+                }
+                connection.Open();
+                addProduct.ExecuteNonQuery();
+                connection.Close();
             }
 
             // AddNewArea();
