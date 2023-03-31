@@ -76,6 +76,17 @@ namespace InventorySystem
                 else
                 {
                     PartNumWarning.Text = "Part Number does not exist in product database.";
+                    // Clear other textboxes.
+                    Description.Text = String.Empty;
+                    Qty.Text = String.Empty;
+                    Area.Text = String.Empty;
+                    Section.Text = String.Empty;
+                    Remarks.Text = String.Empty;
+                    Supplier.Text = String.Empty;
+                    ModelNum.Text = String.Empty;
+                    SerialNums.Text = String.Empty;
+                    ModelNumCheckbox.IsChecked = false;
+                    SerialNumsCheckbox.IsChecked = false;
                 }
 
                 // Set BatchID as YYYY-mm-dd_BatchByDay. E.g. 2023-03-20_003
@@ -110,104 +121,6 @@ namespace InventorySystem
                 PartNumWarning.Text = "";
                 ClearAll();
             }
-
-
-            //if (!string.IsNullOrEmpty(partNum))
-            //{
-            //    using (MySqlConnection connection = new MySqlConnection(connectionString))
-            //    {
-            //        // Autofill Description and Location based on PartNum 
-            //        string commandText1 = "SELECT Description, Area, Section FROM Rtable WHERE PartNum = @PartNum";
-            //        MySqlCommand autoFillDescLoc = new MySqlCommand(commandText1, connection);
-            //        autoFillDescLoc.Parameters.AddWithValue("@PartNum", partNum);
-
-            //        // Autocheck ModelNum checkboxes based on PartNum
-            //        string commandText2 = "SELECT COUNT(1) FROM Rtable WHERE PartNum = @PartNum AND (ModelNum = '' IS FALSE)";
-            //        MySqlCommand autoCheckModelNum = new MySqlCommand(commandText2, connection);
-            //        autoCheckModelNum.Parameters.AddWithValue("@PartNum", partNum);
-
-            //        // Autocheck SerialNums checkboxes based on PartNum
-            //        string commandText3 = "SELECT COUNT(1) FROM Rtable WHERE PartNum = @PartNum AND (SerialNums = '' IS FALSE)";
-            //        MySqlCommand autoCheckSerialNums = new MySqlCommand(commandText3, connection);
-            //        autoCheckSerialNums.Parameters.AddWithValue("@PartNum", partNum);
-
-            //        // Get Batch for that date
-            //        string commandText4 = "SELECT Batch FROM batchNumbers WHERE Date = @Date";
-            //        MySqlCommand getBatch = new MySqlCommand(commandText4, connection);
-            //        getBatch.Parameters.AddWithValue("@Date", todayDate);
-
-            //        connection.Open();
-
-            //        using (var reader = autoFillDescLoc.ExecuteReader())
-            //        {
-            //            // PartNum exists in current inventory
-            //            if (reader.HasRows)
-            //            {
-            //                PartNumWarning.Text = "Part Number exists in inventory. Please register for the missing fields.";
-
-            //                while (reader.Read())
-            //                {
-            //                    Description.Text = reader.GetString(0);
-            //                    Area.Text = reader.GetString(1);
-            //                    Section.Text = reader.GetString(2);
-            //                }
-            //            }
-
-            //            // PartNum does not exist in current inventory
-            //            else
-            //            {
-            //                PartNumWarning.Text = "Part Number does not exist in inventory. Please register for ALL fields.";
-            //            }
-            //        }
-
-            //        using (var reader = autoCheckModelNum.ExecuteReader())
-            //        {
-            //            if (reader.Read())
-            //            {
-            //                int ModelNumExists = int.Parse(reader.GetString(0));
-            //                if (ModelNumExists > 0)
-            //                {
-            //                    ModelNumCheckbox.IsChecked = true;
-            //                }
-            //            }
-            //        }
-      
-            //        using (var reader = autoCheckSerialNums.ExecuteReader())
-            //        {
-            //            if (reader.Read())
-            //            {
-            //                int SerialNumExists = int.Parse(reader.GetString(0));
-            //                if (SerialNumExists > 0)
-            //                {
-            //                    SerialNumsCheckbox.IsChecked = true;
-            //                }
-            //            }
-            //        }
-
-            //        // Set BatchID as YYYY-mm-dd_BatchByDay. E.g. 2023-03-20_003
-            //        using (var reader = getBatch.ExecuteReader())
-            //        {
-            //            // If the first record of the day has already been input into db.
-            //            if (reader.Read())
-            //            {
-            //                int Batch = reader.GetInt32(0) + 1;
-            //                BatchID.Text = todayDate + "_" + Batch.ToString("000");
-            //            }
-
-            //            // If this is the first record of the day (hence query gives null results)
-            //            else
-            //            {
-            //                BatchID.Text = todayDate + "_" + "001";
-            //            }
-            //        }
-            //        connection.Close();
-            //    }
-            //}
-            //else
-            //{
-            //    PartNumWarning.Text = "";
-            //    ClearAll();
-            //}
         }
         
         // Making ModelNum and SerialNums non-editable if checkboxes are unchecked.
