@@ -17,6 +17,8 @@ namespace InventorySystem.InventoryPage
         public ObservableCollection<User> users { get; set; }
         public ObservableCollection<ItemAction> itemActions { get; set; }
         public List<string> partNums { get; set; }
+        public List<string> sources { get; set; }
+        public ObservableCollection<Product> products { get; set; }
 
         public DataSource()
         {
@@ -30,13 +32,17 @@ namespace InventorySystem.InventoryPage
             LoadUserData();
             itemActions = new ObservableCollection<ItemAction>();
             LoadItemActionData();
+            sources = new List<string>();
+            LoadSourceData();
+            products = new ObservableCollection<Product>();
+            LoadProductData();
         }
 
         private void LoadInventoryData()
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT UserName, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums FROM Rtable ORDER BY PartNum, BatchID";
+                string commandText = "SELECT UserName, PartNum, Supplier, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks FROM Rtable ORDER BY PartNum, BatchID";
                 MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
                 connection.Open();
                 MySqlDataReader reader = loadInventory.ExecuteReader();
@@ -45,6 +51,7 @@ namespace InventorySystem.InventoryPage
                 {
                     string userName = reader.GetString("UserName");
                     string partNum = reader.GetString("PartNum");
+                    string supplier = reader.GetString("Supplier");
                     string batchID = reader.GetString("BatchID");
                     string description = reader.GetString("Description");
                     string qty = reader.GetString("Qty");
@@ -52,17 +59,20 @@ namespace InventorySystem.InventoryPage
                     string section = reader.GetString("Section");
                     string modelNum = reader.GetString("ModelNum");
                     string serialNum = reader.GetString("SerialNums");
+                    string remarks = reader.GetString("Remarks");
                     items.Add(new Item()
                     {
                         UserName = userName,
                         PartNum = partNum,
+                        Supplier = supplier,
                         BatchID = batchID,
                         Description = description,
                         Qty = qty,
                         Area = area,
                         Section = section,
                         ModelNum = modelNum,
-                        SerialNums = serialNum
+                        SerialNums = serialNum,
+                        Remarks = remarks
                     });
 
                     if (!partNums.Contains(partNum))
@@ -139,8 +149,8 @@ namespace InventorySystem.InventoryPage
                 {
                     string userName = reader.GetString("UserName");
                     string status = reader.GetString("Status");
-                    string purpose = reader.GetString("Purpose");
                     string partNum = reader.GetString("PartNum");
+                    string supplier = reader.GetString("Supplier");
                     string batchID = reader.GetString("BatchID");
                     string description = reader.GetString("Description");
                     string qty = reader.GetString("Qty");
@@ -148,13 +158,14 @@ namespace InventorySystem.InventoryPage
                     string section = reader.GetString("Section");
                     string modelNum = reader.GetString("ModelNum");
                     string serialNum = reader.GetString("SerialNums");
+                    string remarks = reader.GetString("Remarks");
                     string time = reader.GetString("Time");
                     itemActions.Add(new ItemAction()
                     {
                         UserName = userName,
                         Status = status,
-                        Purpose = purpose,
                         PartNum = partNum,
+                        Supplier = supplier,
                         BatchID = batchID,
                         Description = description,
                         Qty = qty,
@@ -162,9 +173,54 @@ namespace InventorySystem.InventoryPage
                         Section = section,
                         ModelNum = modelNum,
                         SerialNums = serialNum,
+                        Remarks = remarks,
                         Time = time
                     });
                 }
+            }
+        }
+
+        private void LoadSourceData() // Supplier
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText = "SELECT Supplier FROM suppliers";
+                MySqlCommand cmd = new MySqlCommand(commandText, connection);
+                connection.Open();
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    sources.Add(reader.GetString("0"));
+                }
+                connection.Close();
+            }
+        }
+
+        private void LoadProductData() // Unique product 
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText = "SELECT * FROM ptable";
+                MySqlCommand cmd = new MySqlCommand(commandText, connection);
+                connection.Open();
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    string partNum = reader.GetString("PartNum");
+                    string modelNum = reader.GetString("ModelNum");
+                    string description = reader.GetString("Description");
+                    string area = reader.GetString("Area");
+                    string section = reader.GetString("Section");
+                    products.Add(new Product()
+                    {
+                        PartNum = partNum,
+                        ModelNum = modelNum,
+                        Description = description,
+                        Area = area,
+                        Section = section
+                    });
+                }
+                connection.Close();
             }
         }
     }

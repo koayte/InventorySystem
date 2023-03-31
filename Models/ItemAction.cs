@@ -13,8 +13,8 @@ namespace InventorySystem.InventoryPage
         // Private item data. 
         private string _UserName = string.Empty;
         private string _Status = string.Empty;
-        private string _Purpose = string.Empty;
         private string _PartNum = string.Empty;
+        private string _Supplier = string.Empty;
         private string _BatchID = string.Empty;
         private string _Description = string.Empty;
         private string _Qty = string.Empty;
@@ -23,6 +23,8 @@ namespace InventorySystem.InventoryPage
         private string _ModelNum = string.Empty;
         private string _SerialNums = string.Empty;
         private string _Time = string.Empty;
+        private string _Remarks = string.Empty;
+
 
 
         // Data for undoing canceled edits.
@@ -57,19 +59,6 @@ namespace InventorySystem.InventoryPage
             }
         }
 
-        public string Purpose
-        {
-            get { return this._Purpose; }
-            set
-            {
-                if (value != this._Purpose)
-                {
-                    this._Purpose = value;
-                    NotifyPropertyChanged("Purpose");
-                }
-            }
-        }
-
 
         public string PartNum
         {
@@ -80,6 +69,19 @@ namespace InventorySystem.InventoryPage
                 {
                     this._PartNum = value;
                     NotifyPropertyChanged("PartNum");
+                }
+            }
+        }
+
+        public string Supplier
+        {
+            get { return this._Supplier; }
+            set
+            {
+                if (value != this._Supplier)
+                {
+                    this._Supplier = value;
+                    NotifyPropertyChanged("Supplier");
                 }
             }
         }
@@ -188,6 +190,19 @@ namespace InventorySystem.InventoryPage
             }
         }
 
+        public string Remarks
+        {
+            get { return _Remarks; }
+            set
+            {
+                if (value != this._Remarks)
+                {
+                    this._Remarks = value;
+                    NotifyPropertyChanged("Remarks");
+                }
+            }
+        }
+
         // Implement INotifyPropertyChanged interface.
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -216,8 +231,8 @@ namespace InventorySystem.InventoryPage
             {
                 this.UserName = temp_ItemAction.UserName;
                 this.Status = temp_ItemAction.Status;
-                this.Purpose = temp_ItemAction.Purpose;
                 this.PartNum = temp_ItemAction.PartNum;
+                this.Supplier = temp_ItemAction.Supplier;
                 this.BatchID = temp_ItemAction.BatchID;
                 this.Description = temp_ItemAction.Description;
                 this.Qty = temp_ItemAction.Qty;
@@ -225,6 +240,7 @@ namespace InventorySystem.InventoryPage
                 this.Section = temp_ItemAction.Section;
                 this.ModelNum = temp_ItemAction.ModelNum;
                 this.SerialNums = temp_ItemAction.SerialNums;
+                this.Remarks = temp_ItemAction.Remarks;
                 this.Time = temp_ItemAction.Time;
                 _Editing = false;
             }

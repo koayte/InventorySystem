@@ -79,21 +79,28 @@
 
         <!-- 1st column in grid -->
         <StackPanel Orientation="Vertical" Grid.Column="0">
-            <!-- First row, UserName -->
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="User" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
-                <ComboBox x:Name="User" Width="423" KeyUp="Control_Enter" TabIndex="0" 
+            <!-- First row -->
+            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                <!-- UserName -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="User" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
+                    <ComboBox x:Name="User" KeyUp="Control_Enter" TabIndex="0" 
                           ItemsSource="{Binding Source={StaticResource myData}, Path=users}"
                           DisplayMemberPath="Name"/>
-                <TextBlock x:Name="UserWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}"/>
+                    <TextBlock x:Name="UserWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}"/>
+                </StackPanel>
+
+                <!-- Part Number -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Part Number" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
+                    <TextBox x:Name="PartNum" TextChanged="PartNum_TextChanged" KeyUp="Control_Enter"/>
+                    <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}"/>
+                </StackPanel>
             </StackPanel>
 
+
             <!-- Second row, Part Number -->
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Part Number" Style="{StaticResource TextLabels}"/>
-                <TextBox x:Name="PartNum" Width="423" TextChanged="PartNum_TextChanged" KeyUp="Control_Enter"/>
-                <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}"/>
-            </StackPanel>
+            
 
             <!-- Third Row, Description-->
             <StackPanel Orientation="Vertical">
@@ -143,14 +150,31 @@
                     <TextBlock x:Name="SectionWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Section}"/>
                 </StackPanel>
             </StackPanel>
+            
+            <!-- 6th row, Remarks -->
+            <StackPanel>
+                <TextBlock Text="Remarks" Style="{StaticResource TextLabels}"/>
+                <TextBox x:Name="Remarks" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" Width="423"/>
+            </StackPanel>
         </StackPanel>
 
         <!-- 2nd column in grid -->
         <StackPanel Orientation="Vertical" Grid.Column="1">
+            <!-- Supplier -->
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Supplier" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
+                <ComboBox x:Name="Supplier"
+                              Width="202"
+                              KeyUp="Control_Enter"
+                              ItemsSource="{Binding Source={StaticResource myData}, Path=sources}">
+                </ComboBox>
+                <TextBlock x:Name="SupplierWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Supplier}"/>
+            </StackPanel>
+
             <!-- Model Number -->
             <StackPanel Orientation="Vertical">
                 <WrapPanel>
-                    <TextBlock x:Name="ModelNumber" Text="Model Number" Foreground="Gray" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
+                    <TextBlock x:Name="ModelNumber" Text="Model Number" Foreground="Gray" Style="{StaticResource TextLabels}" />
                     <CheckBox x:Name="ModelNumCheckbox" VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Model_CheckBox_Checked" Unchecked="Model_CheckBox_Unchecked" KeyUp="Control_Enter"/>
                 </WrapPanel>
                 <TextBox x:Name="ModelNum" IsReadOnly="True" KeyUp="Control_Enter"/>
@@ -164,7 +188,7 @@
                     <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Serial_CheckBox_Checked" Unchecked="Serial_CheckBox_Unchecked"/>
                 </WrapPanel>
 
-                <TextBox x:Name="SerialNums" IsReadOnly="True" Height="252"
+                <TextBox x:Name="SerialNums" IsReadOnly="True" Height="163"
                      TextChanged="SerialNum_Entered"
                      VerticalScrollBarVisibility="Auto"
                      VerticalContentAlignment="Top"/>
@@ -182,6 +206,7 @@
                     <MultiBinding Converter="{StaticResource allTextConverter}">
                         <Binding ElementName="User" Path="Text" />
                         <Binding ElementName="PartNum" Path="Text"/>
+                        <Binding ElementName="Supplier" Path="Text"/>
                         <Binding ElementName="Description" Path="Text"/>
                         <Binding ElementName="Qty" Path="Text"/>
                         <Binding ElementName="BatchID" Path="Text"/>
