@@ -147,10 +147,12 @@ namespace InventorySystem.InputPages
                             if (serialNumsCount != quantity)
                             {
                                 SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
+                                SerialNums.BorderBrush = Brushes.Red;
                             }
                             else
                             {
                                 SerialNumsWarning.Text = "";
+                                SerialNums.ClearValue(TextBox.BorderBrushProperty);
                             }
 
                         }
@@ -408,10 +410,12 @@ namespace InventorySystem.InputPages
                 if (Qty.Text.Any(x => !char.IsDigit(x)))
                 {
                     QtyWarning.Text = "Please enter a number.";
+                    Qty.BorderBrush = Brushes.Red;
                 }
                 else
                 {
                     QtyWarning.Text = "";
+                    Qty.ClearValue(TextBox.BorderBrushProperty);
                 }
             }
         }

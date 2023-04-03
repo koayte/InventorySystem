@@ -190,7 +190,7 @@ namespace InventorySystem
                         SerialNums.CaretIndex = SerialNums.Text.Length;
 
                         // Count number of serial numbers and compare against Qty textbox.
-                        if (Qty.Text.Length > 0 && Qty.Text.Any(x => char.IsDigit(x)))
+                        if (Qty.Text.Length > 0 && Qty.Text.All(Char.IsDigit))
                         {
                             int quantity = Convert.ToInt32(Qty.Text);
                             string serialNumsReplaced = SerialNums.Text.Replace("\r\n", "\n");
@@ -198,10 +198,12 @@ namespace InventorySystem
                             if (serialNumsCount != quantity)
                             {
                                 SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
+                                SerialNums.BorderBrush = Brushes.Red;
                             }
                             else
                             {
                                 SerialNumsWarning.Text = "";
+                                SerialNums.ClearValue(TextBox.BorderBrushProperty);
                             }
 
                         }
@@ -419,11 +421,13 @@ namespace InventorySystem
             {
                 if (Qty.Text.Any(x => !char.IsDigit(x)))
                 {
-                    QtyWarning.Text = "Please enter a number.";
+                    QtyWarning.Text = "Please enter a number for quantity.";
+                    Qty.BorderBrush = Brushes.Red;
                 }
                 else
                 {
                     QtyWarning.Text = "";
+                    Qty.ClearValue(TextBox.BorderBrushProperty);
                 }
             }
         }
