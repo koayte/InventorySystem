@@ -135,7 +135,7 @@ namespace InventorySystem.Checkout
                 batchIDQtyList = items.Where(x => x.PartNum == partNumSelected).Select(x => x.BatchID).Distinct().ToList();
                 if (batchIDQtyList.Count == 0) // PartNum has run out of stock.
                 {
-                    PartNumWarning.Text = "Product is out of stock.";
+                    PartNumWarning.Text = "WARNING: Product is out of stock.";
                     BatchID.ItemsSource = null;
                 }
                 else // PartNum still has stock 
@@ -236,7 +236,7 @@ namespace InventorySystem.Checkout
             {
                 if (Qty.Text.Any(x => !char.IsDigit(x)))
                 {
-                    QtyWarning.Text = "Please enter a number for quantity.";
+                    QtyWarning.Text = "WARNING: Please enter a number for quantity.";
                 }
 
                 else
@@ -249,7 +249,7 @@ namespace InventorySystem.Checkout
                         int qtyCheckedOutInt = Int32.Parse(Qty.Text);
                         if (qtyCheckedOutInt > currentQtyInt)
                         {
-                            QtyWarning.Text = "Please enter a number smaller than the current inventory quantity.";
+                            QtyWarning.Text = "WARNING: Please enter a number smaller than the current inventory quantity.";
                         }
                     }
                 }

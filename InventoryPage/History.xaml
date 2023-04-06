@@ -14,6 +14,7 @@
             <Setter Property="GridLinesVisibility" Value="None" />
             <Setter Property="HeadersVisibility" Value="Column" />
             <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="AlternatingRowBackground" Value="AliceBlue"/>
         </Style>
 
         <Style x:Key="dataGridRowStyle" TargetType="DataGridRow">
@@ -86,15 +87,6 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-
-                <DataGridTemplateColumn Header="Purpose" Width="50" x:Name="PurposeHeader">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Purpose}" TextWrapping="Wrap"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
                 <DataGridTemplateColumn Header="BatchID" Width="95" x:Name="BatchHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -147,6 +139,14 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding SerialNums}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Remarks" Width="90" x:Name="RemarksHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Remarks}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

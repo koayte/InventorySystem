@@ -12,10 +12,21 @@ namespace InventorySystem.InputPages
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+
             bool filled = true;
-            foreach (object val in values)
+            for (int i = 0; i < values.Length - 2; i++)
             {
+                object val = values[i];
                 if (string.IsNullOrEmpty(val as string))
+                {
+                    filled = false;
+                }
+            }
+
+            for (int i = values.Length - 2; i < values.Length; i++)
+            {
+                object val = values[i];
+                if (!string.IsNullOrEmpty(val as string))
                 {
                     filled = false;
                 }

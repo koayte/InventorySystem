@@ -205,6 +205,8 @@
                         <Binding ElementName="BatchID" Path="Text"/>
                         <Binding ElementName="Area" Path="Text"/>
                         <Binding ElementName="Section" Path="Text"/>
+                        <Binding ElementName="SerialNumsWarning" Path="Text"/>
+                        <Binding ElementName="QtyWarning" Path="Text"/>
                     </MultiBinding>
                 </Button.IsEnabled>
             </Button>

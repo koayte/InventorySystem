@@ -99,7 +99,7 @@ namespace InventorySystem.InputPages
                             int serialNumsCount = serialNumsReplaced.Split("\n", StringSplitOptions.RemoveEmptyEntries).Length;
                             if (serialNumsCount != quantity)
                             {
-                                SerialNumsWarning.Text = "Number of Serial Numbers entered does not match Quantity.";
+                                SerialNumsWarning.Text = "WARNING: Number of Serial Numbers entered does not match Quantity.";
                                 SerialNums.BorderBrush = Brushes.Red;
                             }
                             else
@@ -357,7 +357,7 @@ namespace InventorySystem.InputPages
             {
                 if (Qty.Text.Any(x => !char.IsDigit(x)))
                 {
-                    QtyWarning.Text = "Please enter a number for quantity.";
+                    QtyWarning.Text = "WARNING: Please enter a number for quantity.";
                     Qty.BorderBrush = Brushes.Red;
                 }
                 else
