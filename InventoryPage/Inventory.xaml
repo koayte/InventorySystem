@@ -119,6 +119,7 @@
             <TextBox Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource WidthConverter}}" x:Name="PartNumSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" x:Name="BatchSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" x:Name="DescSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=SupplierHeader, Converter={StaticResource WidthConverter}}" x:Name="SupplierSearch" TextChanged="Search_TextChanged"/>
             <TextBox Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" x:Name="QtySearch" TextChanged="Search_TextChanged"/>
             <ComboBox Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" x:Name="AreaSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged" 
                       ItemsSource="{Binding Source={StaticResource myData}, Path=areas}"/>
@@ -190,11 +191,13 @@
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=PartNum}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=BatchID}" Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Supplier}" Width="{Binding ActualWidth, ElementName=SupplierHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock Text="{Binding Items, Converter={StaticResource GroupSumConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center" />
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Area}" Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Section}" Width="{Binding ActualWidth, ElementName=SecHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="{Binding Items, Converter={StaticResource SerialNumConverter}}" Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Items, Converter={StaticResource SerialNumConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
+                                                    <TextBlock DataContext="{Binding Items}" Text="{Binding Path=Remarks}" Width="{Binding ActualWidth, ElementName=RemarksHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
                                                     <Button Content="Update" Click="Update_Click" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
                                                 </StackPanel>
                                             </Expander.Header>
@@ -249,6 +252,14 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
+                <DataGridTemplateColumn Header="Supplier" Width="60" x:Name="SupplierHeader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Supplier}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
                 <DataGridTemplateColumn Header="Qty" Width="30" x:Name="QtyHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -289,12 +300,15 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Action" Width="*" x:Name="ActionHeader">
-                    <!--<DataGridTemplateColumn.CellTemplate>
+                <DataGridTemplateColumn Header="Remarks" Width="90" x:Name="RemarksHeader">
+                    <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Update" Click="Update_Click"/>
+                            <TextBlock Text="{Binding Remarks}" TextWrapping="Wrap"/>
                         </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>-->
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Action" Width="*" x:Name="ActionHeader">
                 </DataGridTemplateColumn>
 
 

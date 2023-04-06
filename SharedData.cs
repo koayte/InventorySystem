@@ -18,6 +18,10 @@ namespace InventorySystem
         public static string Area { get; set; }
         public static string Section { get; set; }
         public static string? ModelNum { get; set; }
+        public static string Supplier { get; set; }
+        public static string? Remarks { get; set; }
+        public static string Qty { get; set; }
+        public static string? SerialNums { get; set; }
 
     }
 }

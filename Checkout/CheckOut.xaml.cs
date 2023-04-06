@@ -1,6 +1,10 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,12 +28,22 @@ namespace InventorySystem.Checkout
     {
         private List<TextBox> inputBoxes;
         private string connectionString = "SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;";
+        private ObservableCollection<Product> products;
+        private ObservableCollection<Item> items;
+        public List<SerialNumber> serialNumObjList;
+        public List<string> serialNumsSelected;
+
 
         public CheckOut()
         {
             InitializeComponent();
-            inputBoxes = new List<TextBox> { Purpose, BatchID, ModelNum, Description, Area, Section, Qty };
+
+            inputBoxes = new List<TextBox> { Remarks, ModelNum, Area, Section, Qty };
             User.Focus();
+
+            DataSource dataSource = new DataSource();
+            products = dataSource.products;
+            items = dataSource.items;
         }
 
         private void Control_Enter(object sender, KeyEventArgs e)
@@ -50,7 +64,6 @@ namespace InventorySystem.Checkout
         }
         private void Model_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            ModelNumber.Foreground = Brushes.Black;
             if (!string.IsNullOrEmpty(Qty.Text) && !string.IsNullOrEmpty(BatchID.Text) && !string.IsNullOrEmpty(Description.Text))
             {
                 ModelNum.Focus();
@@ -88,68 +101,160 @@ namespace InventorySystem.Checkout
 
             SerialNumbers.Foreground = Brushes.Gray;
         }
-        
-        // ------------------------------------------------- PartNum Combobox
-        private void PartNum_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        // ------------------------------------------------- Description Combobox
+        //private void DescriptionBox_Bind()
+        //{
+        //    Description.ItemsSource = products.Select(x => x.Description).ToList();
+        //}
+        //private void Description_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    ClearAll();
+        //    Description.ItemsSource = products.Where(x => x.Description.ToLower().Contains(Description.Text.ToLower())).Select(x => x.Description).ToList();
+        //}
+        private void Description_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string partNumSelected = (sender as ComboBox).SelectedItem?.ToString() ?? "";
-            List<string> serialNumList = new List<string>();
+            var descSelected = (sender as ComboBox).SelectedValue?.ToString() ?? "";
+            ClearAll();
+            if (!string.IsNullOrEmpty(descSelected))
+            {
+                PartNum.Text = products.Single(x => x.Description == descSelected).PartNum.ToString();
+            }
+        }
+
+        private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string partNumSelected = PartNum.Text;
+            List<string> batchIDQtyList = new List<string>();
             ClearAll();
             if (!string.IsNullOrEmpty(partNumSelected))
             {
-                DataSource dataSource = new DataSource();
-                serialNumList = dataSource.items.Where(x => (x.PartNum == partNumSelected) && (x.SerialNums != "")).Select(x => x.SerialNums).ToList();
-                if (serialNumList.Count > 0)
+                
+                batchIDQtyList = items.Where(x => x.PartNum == partNumSelected).Select(x => x.BatchID).Distinct().ToList();
+                if (batchIDQtyList.Count == 0) // PartNum has run out of stock.
+                {
+                    PartNumWarning.Text = "Product is out of stock.";
+                    BatchID.ItemsSource = null;
+                }
+                else // PartNum still has stock 
+                {
+                    PartNumWarning.Text = "";
+                    // Autofill Area, Section, ModelNum, Supplier based on PartNum from Product Table
+                    var selectedProduct = products.Single(x => x.PartNum == partNumSelected);
+                    Area.Text = selectedProduct.Area.ToString();
+                    Section.Text = selectedProduct.Section.ToString();
+                    Supplier.Text = selectedProduct.Supplier.ToString();
+                    if (!string.IsNullOrEmpty(selectedProduct.ModelNum.ToString()))
+                    {
+                        ModelNumCheckbox.IsChecked = true;
+                        ModelNum.Text = selectedProduct.ModelNum.ToString();
+                    }
+
+                    // Bind relevant BatchID with remaining Qty to BatchID ComboBox.
+                    for (int i = 0; i < batchIDQtyList.Count; i++)
+                    {
+                        string batchID = batchIDQtyList[i];
+                        List<int> currentQtyList = items.Where(x => x.BatchID == batchID).Select(x => Int32.Parse(x.Qty)).ToList();
+                        string currentQty = currentQtyList.Sum().ToString();
+                        batchIDQtyList[i] += " : " + currentQty;
+                    }
+                    BatchID.ItemsSource = batchIDQtyList;
+                    if (batchIDQtyList.Count == 1)
+                    {
+                        BatchID.SelectedValue = batchIDQtyList[0];
+                    }
+                }
+            }
+        }
+
+        private void BatchID_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string batchIDQty = (sender as ComboBox).SelectedValue?.ToString() ?? "";
+            string batchID = "";
+            if (!string.IsNullOrEmpty(batchIDQty))
+            {
+                batchID = batchIDQty.Substring(0, 14);
+                string partNumSelected = PartNum.Text;
+                List<string> serialNumStrList = new List<string>();
+                serialNumStrList = items.Where(x => (x.BatchID == batchID) && (x.SerialNums != "")).Select(x => x.SerialNums).ToList();
+                serialNumObjList = new List<SerialNumber>();
+                foreach (var serialNumString in serialNumStrList)
+                {
+                    serialNumObjList.Add(new SerialNumber()
+                    {
+                        SerialNum = serialNumString
+                    });
+                }
+                // Bind SerialNum combobox to serialNumList. 
+                if (serialNumObjList.Count > 0)
                 {
                     SerialNumsCheckbox.IsChecked = true;
-                    // Bind SerialNum combobox to serialNumList. 
-                    SerialNums.ItemsSource = serialNumList;
+                    SerialNums.ItemsSource = serialNumObjList;
                 }
                 else // If there are no SerialNums for this PartNum
                 {
                     SerialNumsCheckbox.IsChecked = false;
                     SerialNums.ItemsSource = null;
-                    var selectedItem = dataSource.items.Single(x => x.PartNum == partNumSelected);
-                    BatchID.Text = selectedItem.BatchID.ToString();
-                    Description.Text = selectedItem.Description.ToString();
-                    Area.Text = selectedItem.Area.ToString();
-                    Section.Text = selectedItem.Section.ToString();
-                    Qty.Text = "1";
-                    if (!string.IsNullOrEmpty(selectedItem.ModelNum.ToString()))
-                    {
-                        ModelNumCheckbox.IsChecked = true;
-                        ModelNum.Text = selectedItem.ModelNum.ToString();
-                    }
                 }
-            }
-            else 
-            {
-                SerialNumsCheckbox.IsChecked = false;
-                SerialNums.ItemsSource = null;
             }
         }
 
-        // ------------------------------------------------- Autofill non-editable textbox information
-        private void SerialNum_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        // ------------------------------------------------- Serial Number multi-select 
+        private void checkSerialNum_CheckedandUnchecked(object sender, RoutedEventArgs e)
         {
-            string serialNumSelected = (sender as ComboBox).SelectedItem?.ToString() ?? "";
-            if (!string.IsNullOrEmpty(serialNumSelected))
+            serialNumsSelected = new List<string>();
+            foreach (var serialNumObj in serialNumObjList)
             {
-                DataSource dataSource = new DataSource();
-                var selectedItem = dataSource.items.Single(x => (x.SerialNums == serialNumSelected) && (x.PartNum == PartNum.Text));
-                if (selectedItem != null)
+                if (serialNumObj.CheckStatus == true)
                 {
-                    BatchID.Text = selectedItem.BatchID.ToString();
-                    Description.Text = selectedItem.Description.ToString();
-                    Area.Text = selectedItem.Area.ToString();
-                    Section.Text = selectedItem.Section.ToString();
-                    Qty.Text = "1";
-                    if (!string.IsNullOrEmpty(selectedItem.ModelNum.ToString()))
+                    serialNumsSelected.Add(serialNumObj.SerialNum);
+                }
+            }
+            SerialNums.Text = string.Join(",", serialNumsSelected.ToArray());
+
+            // Set Qty Checked Out for number of serialNums being selected
+            if (serialNumsSelected.Count > 0)
+            {
+                Qty.Text = serialNumsSelected.Count.ToString();
+            }
+            else
+            {
+                Qty.Text = "";
+            }
+        }
+
+        // ------------------------------------------------- Qty Checked Out
+
+        private void Qty_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string batchIDQty = BatchID.SelectedValue?.ToString() ?? "";
+            string currentQty = "";
+            if (Qty.Text.Length > 0)
+            {
+                if (Qty.Text.Any(x => !char.IsDigit(x)))
+                {
+                    QtyWarning.Text = "Please enter a number for quantity.";
+                }
+
+                else
+                {
+                    QtyWarning.Text = "";
+                    if (!string.IsNullOrEmpty(batchIDQty))
                     {
-                        ModelNumCheckbox.IsChecked = true;
-                        ModelNum.Text = selectedItem.ModelNum.ToString();
+                        currentQty = batchIDQty.Substring(17);
+                        int currentQtyInt = Int32.Parse(currentQty);
+                        int qtyCheckedOutInt = Int32.Parse(Qty.Text);
+                        if (qtyCheckedOutInt > currentQtyInt)
+                        {
+                            QtyWarning.Text = "Please enter a number smaller than the current inventory quantity.";
+                        }
                     }
                 }
+            }
+            else
+            {
+                QtyWarning.Text = "";
             }
         }
 
@@ -162,6 +267,7 @@ namespace InventorySystem.Checkout
                 inputBoxes[i].Text = String.Empty;
             }
             SerialNums.Text = String.Empty;
+            BatchID.SelectedValue = null;
             ModelNumCheckbox.IsChecked = false;
             SerialNumsCheckbox.IsChecked = false;
 
@@ -171,9 +277,8 @@ namespace InventorySystem.Checkout
 
         private void checkOut_Click(object sender, RoutedEventArgs e)
         {
-            List<string> placeholders = new List<string> { "@userName", "@partNum", "@purpose", "@qty", "@description", "@area", "@section", "@batchID", "@modelNum", "@serialNums" };
-            List<string> inputs = new List<string> { User.Text, PartNum.Text, Purpose.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
-
+            List<string> placeholders = new List<string> { "@userName", "@partNum", "@remarks", "@qty", "@description", "@area", "@section", "@batchID", "@modelNum", "@serialNums" };
+            List<string> inputs = new List<string> { User.Text, PartNum.Text, Remarks.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -197,10 +302,18 @@ namespace InventorySystem.Checkout
                     DataSource dataSource = new DataSource();
                     string currentQty = dataSource.items.Single(x => (x.PartNum == PartNum.Text) && (x.BatchID == BatchID.Text)).Qty;
 
-                    // Minus one from quantity in Rtable
-                    cmd.CommandText = "UPDATE Rtable SET Qty = @newQty WHERE PartNum = @partNum && BatchID = @batchID";
-                    int newQty = Int32.Parse(currentQty) - 1;
-                    cmd.Parameters.AddWithValue("@newQty", newQty.ToString());
+                    if (currentQty == "1") // Delete entry
+                    {
+                        cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
+                    }
+
+                    else // Minus one from quantity in Rtable
+                    {
+                        cmd.CommandText = "UPDATE Rtable SET Qty = @newQty WHERE PartNum = @partNum && BatchID = @batchID";
+                        int newQty = Int32.Parse(currentQty) - 1;
+                        cmd.Parameters.AddWithValue("@newQty", newQty.ToString());
+
+                    }
                     cmd.Parameters.AddWithValue("@partNum", PartNum.Text);
                     cmd.Parameters.AddWithValue("batchID", BatchID.Text);
                     cmd.ExecuteNonQuery();
@@ -226,6 +339,15 @@ namespace InventorySystem.Checkout
         {
             ClearAll();
             PartNum.Text = String.Empty;
+            Description.Text = String.Empty;
         }
+
+
+    }
+
+    public class SerialNumber
+    {
+        public string SerialNum { get; set; }
+        public Boolean CheckStatus { get; set; }
     }
 }

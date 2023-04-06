@@ -24,7 +24,7 @@ namespace InventorySystem.InventoryPage
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return (int)(double)value - 25;
+            return (int)(double)value - 24;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

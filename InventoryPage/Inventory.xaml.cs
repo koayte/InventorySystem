@@ -48,6 +48,7 @@ namespace InventorySystem.InventoryPage
                 bool PartNumFilter = string.IsNullOrEmpty(PartNumSearch.Text) || item.PartNum.Contains(PartNumSearch.Text);
                 bool BatchIDFilter = string.IsNullOrEmpty(BatchSearch.Text) || item.BatchID.Contains(BatchSearch.Text);
                 bool DescFilter = string.IsNullOrEmpty(DescSearch.Text) || item.Description.ToLower().Contains(DescSearch.Text.ToLower());
+                bool SupplierFilter = string.IsNullOrEmpty(SupplierSearch.Text) || item.Supplier.Contains(SupplierSearch.Text);
                 bool QtyFilter = string.IsNullOrEmpty(QtySearch.Text) || item.Qty.Contains(QtySearch.Text);
                 bool AreaFilter = string.IsNullOrEmpty(AreaSearch.Text) || item.Area.Contains(AreaSearch.Text);
                 bool SecFilter = string.IsNullOrEmpty(SecSearch.Text) || item.Section.Contains(SecSearch.Text);
@@ -77,16 +78,42 @@ namespace InventorySystem.InventoryPage
             var area = ((Item)group.Items[0]).Area;
             var section = ((Item)group.Items[0]).Section;
             var modelNum = ((Item)group.Items[0]).ModelNum;
+            var supplier = ((Item)group.Items[0]).Supplier;
+            var remarks = ((Item)group.Items[0]).Remarks;
+            int qtyInt = 0;
+            for (int i = 0; i < (int)(group.Items.Count); i++)
+            {
+                qtyInt += Int32.Parse(((Item)group.Items[i]).Qty);
+            }
+            var qty = qtyInt.ToString();
+
+            StringBuilder serialNums = new StringBuilder();
+            if (!string.IsNullOrEmpty(((Item)group.Items[0]).SerialNums))
+            {
+                for (int i = 0; i < (int)(group.Items.Count); i++)
+                {
+                    serialNums.Append(((Item)group.Items[i]).SerialNums + '\n');
+                }
+            }
+
+            else
+            {
+                serialNums.Append("");
+            }
+
             SharedData.BatchID = batchID;
             SharedData.PartNum = partNum;
             SharedData.Description = description;
             SharedData.Area = area;
             SharedData.Section = section;
             SharedData.ModelNum = modelNum;
+            SharedData.Supplier = supplier;
+            SharedData.Remarks = remarks;
+            SharedData.Qty = qty;
+            SharedData.SerialNums = serialNums.ToString();
 
             // MessageBox.Show(batchID);
             inventoryFrame.Navigate(new Uri("/InputPages/Update.xaml", UriKind.Relative));
-
         }
 
         private static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject

@@ -81,21 +81,58 @@
                     <TextBlock x:Name="UserWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=User}"/>
                 </StackPanel>
 
+                <!-- Description -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Description" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
+                    <ComboBox x:Name="Description" KeyUp="Control_Enter" Width="425" GotFocus="TextBox_GotFocus"
+                              IsEditable="True"
+                              ItemsSource="{Binding Source={StaticResource myData}, Path=products}"
+                              DisplayMemberPath="Description"
+                              SelectedValuePath="Description"
+                              IsTextSearchEnabled="True" 
+                              SelectionChanged="Description_SelectionChanged"
+                              SelectedValue="Description"/>
+                    <!-- TextBoxBase.TextChanged="Description_TextChanged" -->
+                    <TextBlock x:Name="DescriptionWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Description}"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 2nd row -->
+            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Part Number -->
                 <StackPanel>
-                    <TextBlock Text="Part Number" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
-                    <ComboBox x:Name="PartNum" ItemsSource="{Binding Source={StaticResource myData}, Path=partNums}" SelectionChanged="PartNum_SelectionChanged"/>
+                    <TextBlock Text="Part Number" Style="{StaticResource TextLabels}"/>
+                    <TextBox x:Name="PartNum" TextChanged="PartNum_TextChanged" IsReadOnly="True"/>
                     <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}"/>
+                </StackPanel>
+                
+                <!-- BatchID -->
+                <StackPanel>
+                    <TextBlock Text="Batch ID" Style="{StaticResource TextLabels}"/>
+                    <ComboBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True" SelectionChanged="BatchID_SelectionChanged" SelectedValue="BatchID"/>
+                    <TextBlock x:Name="BatchIDWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=BatchID}"/>
                 </StackPanel>
                 
                 <!-- Serial Number -->
                 <StackPanel>
                     <WrapPanel>
-                        <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" Foreground="Gray" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
+                        <TextBlock x:Name="SerialNumbers" Text="Serial Numbers" Foreground="Gray" Style="{StaticResource TextLabels}" />
                         <CheckBox x:Name="SerialNumsCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" Checked="Serial_CheckBox_Checked" Unchecked="Serial_CheckBox_Unchecked"/>
                     </WrapPanel>
 
-                    <ComboBox x:Name="SerialNums" IsReadOnly="True" SelectionChanged="SerialNum_SelectionChanged"/>
+                    <ComboBox x:Name="SerialNums"
+                              StaysOpenOnEdit="True"
+                              IsEditable="True">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Name="checkSerialNum" Content="{Binding SerialNum}"
+                                          Checked="checkSerialNum_CheckedandUnchecked"
+                                          Unchecked="checkSerialNum_CheckedandUnchecked"
+                                          IsChecked="{Binding CheckStatus}"
+                                          Width="202" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
                     <TextBlock x:Name="SerialNumsWarning" Height="Auto"
                        Style="{StaticResource WarningLabels}"
@@ -103,22 +140,25 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- 2nd row, Purpose -->
-            <StackPanel>
-                <TextBlock Text="Check-out Purpose" Style="{StaticResource TextLabels}"/>
-                <TextBox x:Name="Purpose" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" Width="646" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5"/>
-                <TextBlock x:Name="PurposeWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Purpose}"/>
-            </StackPanel>
-
             <!-- 3rd row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                <!-- BatchID -->
-                <StackPanel>
-                    <TextBlock Text="Batch ID" Style="{StaticResource TextLabels}" Foreground="Gray"/>
-                    <TextBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True" Foreground="Gray"/>
-                    <TextBlock x:Name="BatchIDWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=BatchID}"/>
+                <!-- Quantity checked out -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Quantity Checked Out" Style="{StaticResource TextLabels}"/>
+                    <TextBox x:Name="Qty" KeyUp="Control_Enter" TextChanged="Qty_TextChanged"/>
+                    <TextBlock x:Name="QtyWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Qty}"/>
                 </StackPanel>
 
+                <!-- Purpose -->
+                <StackPanel>
+                    <TextBlock Text="Check-out Purpose" Style="{StaticResource TextLabels}"/>
+                    <TextBox x:Name="Remarks" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" Width="425"/>
+                    <TextBlock x:Name="RemarksWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Remarks}"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 4th row -->
+            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Model Number -->
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
@@ -128,16 +168,16 @@
                     <TextBox x:Name="ModelNum" IsReadOnly="True" KeyUp="Control_Enter" Foreground="Gray"/>
                     <TextBlock x:Name="ModelNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=ModelNum}"/>
                 </StackPanel>
-                
-                <!-- Description -->
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Description" Style="{StaticResource TextLabels}" Foreground="Gray"/>
-                    <TextBox x:Name="Description" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True" Foreground="Gray"/>
-                    <TextBlock x:Name="DescriptionWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Description}"/>
+
+                <!-- Supplier -->
+                <StackPanel>
+                    <TextBlock Text="Supplier" Style="{StaticResource TextLabels}" Foreground="Gray"/>
+                    <TextBox x:Name="Supplier" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True" Foreground="Gray"/>
+                    <TextBlock x:Name="SupplierWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=BatchID}"/>
                 </StackPanel>
             </StackPanel>
             
-            <!-- 4th row -->
+            <!-- 5th row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                 <!-- Area -->
                 <StackPanel Grid.Column="0">
@@ -161,12 +201,12 @@
                     <TextBlock x:Name="SectionWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Section}"/>
                 </StackPanel>
                 
-                <!-- Quantity -->
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Quantity" Style="{StaticResource TextLabels}" Foreground="Gray"/>
-                    <TextBox x:Name="Qty" KeyUp="Control_Enter" IsReadOnly="True"/>
-                    <TextBlock x:Name="QtyWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=Qty}"/>
-                </StackPanel>
+
+            </StackPanel>
+
+            <!-- Warnings -->
+            <StackPanel>
+                <TextBlock x:Name="QtyZeroWarning" Style="{StaticResource WarningLabels}" Height="Auto"/>
             </StackPanel>
         </StackPanel>
 
@@ -176,7 +216,7 @@
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource allTextConverter}">
                         <Binding ElementName="User" Path="Text" />
-                        <Binding ElementName="Purpose" Path="Text"/>
+                        <Binding ElementName="Remarks" Path="Text"/>
                         <Binding ElementName="PartNum" Path="Text"/>
                         <Binding ElementName="Description" Path="Text"/>
                         <Binding ElementName="Qty" Path="Text"/>

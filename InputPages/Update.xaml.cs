@@ -40,81 +40,34 @@ namespace InventorySystem.InputPages
 
         private void SetTextBoxesFromUpdate() 
         {
-            // Get BatchID
-            string batchID = SharedData.BatchID;
-            BatchID.Text = batchID;
-
-            List<Item> items = GetFullItem();
-            int firstIndex = items.FindIndex(a => a.BatchID == batchID);
-            int lastIndex = items.FindLastIndex(a => a.BatchID == batchID);
-
+            BatchID.Text = SharedData.BatchID;
             PartNum.Text = SharedData.PartNum;
             Description.Text = SharedData.Description;
             Area.Text = SharedData.Area;
             Section.Text = SharedData.Section;
+            Qty.Text = SharedData.Qty;
+            Remarks.Text = SharedData.Remarks;
+            Supplier.Text = SharedData.Supplier;
+
             if (!string.IsNullOrEmpty(SharedData.ModelNum))
             {
                 ModelNum.Text = SharedData.ModelNum;
                 ModelNumCheckbox.IsChecked = true;
             }
 
-            if (firstIndex == lastIndex)
+            if (!string.IsNullOrEmpty(SharedData.SerialNums))
             {
-                // get quantity from item directly
-                Qty.Text = items[firstIndex].Qty;
-
-                if (!string.IsNullOrEmpty(items[firstIndex].SerialNums))
-                {
-                    SerialNumsCheckbox.IsChecked = true;
-                    SerialNums.Text = items[firstIndex].SerialNums;
-                }
-
-            }
-
-            // Serial Numbers entered on separate lines 5
-            else
-            {
-                int count = lastIndex - firstIndex + 1;
-                Qty.Text = count.ToString();
-
                 SerialNumsCheckbox.IsChecked = true;
-                StringBuilder serialNums = new StringBuilder();
-                for (int i = firstIndex; i <= lastIndex; i++)
-                {
-                    string serialNum = items[i].SerialNums;
-                    serialNums.Append(serialNum + '\n');
-                }
-                SerialNums.Text = serialNums.ToString();
-
+                SerialNums.Text = SharedData.SerialNums;
                 SerialNums.CaretIndex = SerialNums.Text.Length;
             }
-
-        }
-
-        private List<Item> GetFullItem()
-        {
-            List<Item> data = new List<Item>();
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            else
             {
-                string commandText = "SELECT UserName, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums FROM Rtable ORDER BY PartNum, BatchID";
-                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
-                connection.Open();
-                MySqlDataReader reader = loadInventory.ExecuteReader();
-                while (reader.Read())
-                {
-                    var type = typeof(Item);
-                    Item obj = (Item)Activator.CreateInstance(type);
-                    foreach (var prop in type.GetProperties())
-                    {
-                        var propType = prop.PropertyType;
-                        prop.SetValue(obj, Convert.ChangeType(reader[prop.Name].ToString(), propType));
-                    }
-                    data.Add(obj);
-                }
-                connection.Close();
+                SerialNumsCheckbox.IsChecked = false;
             }
-            return data;
         }
+
+
 
         private void SerialNum_Entered(object sender, TextChangedEventArgs e)
         {
@@ -169,13 +122,12 @@ namespace InventorySystem.InputPages
 
         private void UpdateItem_Click(object sender, RoutedEventArgs e)
         {
-            List<string> placeholders = new List<string> { "@userName", "@partNum", "@qty", "@description", "@area", "@section", "@batchId", "@modelNum", "@serialNums" };
-            List<string> inputs = new List<string> { User.Text, PartNum.Text, Qty.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text };
+            List<string> placeholders = new List<string> { "@userName", "@partNum", "@qty", "@supplier", "@description", "@area", "@section", "@batchId", "@modelNum", "@serialNums", "@remarks" };
+            List<string> inputs = new List<string> { User.Text, PartNum.Text, Qty.Text, Supplier.Text, Description.Text, Area.Text, Section.Text, BatchID.Text, ModelNum.Text, SerialNums.Text, Remarks.Text };
             string serialNumsReplaced = SerialNums.Text.Replace("\r\n", "\n");
             var serialNumberList = serialNumsReplaced.Split("\n", StringSplitOptions.RemoveEmptyEntries).ToList();
 
             // Get indexes for batchID to be updated, so that oldSerialNum(s) can be accessed.
-            List<Item> items = GetFullItem();
             string batchID = SharedData.BatchID;
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -188,8 +140,8 @@ namespace InventorySystem.InputPages
                 cmd.ExecuteNonQuery();
 
                 // INSERT UPDATED ROWS WITH THIS BATCHID
-                commandText = "INSERT INTO Rtable (UserName, PartNum, BatchID, Description, Qty, Area, Section, ModelNum, SerialNums) VALUE " +
-                    "(@userName, @partNum, @batchId, @description, @qty, @area, @section, @modelNum, @serialNums)";
+                commandText = "INSERT INTO Rtable (UserName, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks) VALUE " +
+                    "(@userName, @partNum, @batchId, @supplier, @description, @qty, @area, @section, @modelNum, @serialNums, @remarks)";
                 cmd.CommandText = commandText;
                 cmd.Parameters.Clear();
                 if (serialNumberList.Count <= 1)
@@ -214,7 +166,7 @@ namespace InventorySystem.InputPages
                                     cmd.Parameters.AddWithValue(placeholders[j], "1");
                                     break;
 
-                                case 8:
+                                case 9:
                                     cmd.Parameters.AddWithValue(placeholders[j], num);
                                     break;
 
@@ -226,19 +178,17 @@ namespace InventorySystem.InputPages
                         cmd.ExecuteNonQuery();
                         cmd.Parameters.Clear();
                     }
-                    
                 }
 
                 // ADD INTO HISTORY DATABASE TABLE
                 cmd.Parameters.Clear();
-                commandText = "INSERT INTO Htable (UserName, Status, Purpose, PartNum, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums) " +
-                    "VALUE (@userName, @status, @purpose, @partNum, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums)";
+                commandText = "INSERT INTO Htable (UserName, Status, PartNum, Supplier, Qty, Description, Area, Section, BatchID, ModelNum, SerialNums, Remarks) " +
+                    "VALUE (@userName, @status, @partNum, @supplier, @qty, @description, @area, @section, @batchId, @modelNum, @serialNums, @remarks)";
                 cmd.CommandText = commandText;
 
                 if (serialNumberList.Count <= 1)
                 {
                     cmd.Parameters.AddWithValue("@status", "Update");
-                    cmd.Parameters.AddWithValue("@purpose", "");
                     for (int j = 0; j < placeholders.Count; j++)
                     {
                         cmd.Parameters.AddWithValue(placeholders[j], inputs[j]);
@@ -252,7 +202,6 @@ namespace InventorySystem.InputPages
                     foreach (var num in serialNumberList)
                     {
                         cmd.Parameters.AddWithValue("@status", "Update");
-                        cmd.Parameters.AddWithValue("@purpose", "");
                         for (int j = 0; j < placeholders.Count; j++)
                         {
                             switch (j)
@@ -261,7 +210,7 @@ namespace InventorySystem.InputPages
                                     cmd.Parameters.AddWithValue(placeholders[j], "1");
                                     break;
 
-                                case 8:
+                                case 9:
                                     cmd.Parameters.AddWithValue(placeholders[j], num);
                                     break;
 
@@ -276,7 +225,6 @@ namespace InventorySystem.InputPages
 
                 }
             }
-
             // AddNewArea();
             ClearAll();
             updateFrame.Navigate(new Uri("/InventoryPage/Inventory.xaml", UriKind.Relative));
@@ -409,7 +357,7 @@ namespace InventorySystem.InputPages
             {
                 if (Qty.Text.Any(x => !char.IsDigit(x)))
                 {
-                    QtyWarning.Text = "Please enter a number.";
+                    QtyWarning.Text = "Please enter a number for quantity.";
                     Qty.BorderBrush = Brushes.Red;
                 }
                 else
