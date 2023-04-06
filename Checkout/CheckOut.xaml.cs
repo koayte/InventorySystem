@@ -44,6 +44,7 @@ namespace InventorySystem.Checkout
             DataSource dataSource = new DataSource();
             products = dataSource.products;
             items = dataSource.items;
+
         }
 
         private void Control_Enter(object sender, KeyEventArgs e)
@@ -114,6 +115,7 @@ namespace InventorySystem.Checkout
         //}
         private void Description_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
             var descSelected = (sender as ComboBox).SelectedValue?.ToString() ?? "";
             ClearAll();
             if (!string.IsNullOrEmpty(descSelected))
@@ -346,6 +348,11 @@ namespace InventorySystem.Checkout
             ClearAll();
             PartNum.Text = String.Empty;
             Description.Text = String.Empty;
+
+            // Get new inventory 
+            DataSource dataSource = new DataSource();
+            products = dataSource.products;
+            items = dataSource.items;
         }
 
         private void clearAll_Click(object sender, RoutedEventArgs e)
