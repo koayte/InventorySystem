@@ -50,6 +50,18 @@
             <Setter Property="Margin" Value="7,0,0,0"/>
         </Style>
 
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="19,0,0,19"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="27"/>
+
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+
         <CollectionViewSource x:Name="cvActions" x:Key="cvsActions" Source="{Binding Source={StaticResource myData}, Path=itemActions}">
         </CollectionViewSource>
     </Page.Resources>
@@ -160,5 +172,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        
+        <Button Content="Export to .txt" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click"/>
     </Grid>
 </Page>
