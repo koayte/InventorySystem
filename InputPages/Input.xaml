@@ -152,6 +152,7 @@
                 <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}"  Height="Auto"/>
                 <TextBlock x:Name="QtyWarning" Style="{StaticResource WarningLabels}" Height="Auto"/>
                 <TextBlock x:Name="SerialNumsWarning" Style="{StaticResource WarningLabels}" Height="Auto"/>
+                <TextBlock x:Name="Success" Style="{StaticResource WarningLabels}" Height="Auto" Foreground="Green"/>
             </StackPanel>
         </StackPanel>
 

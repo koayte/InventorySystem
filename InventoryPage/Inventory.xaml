@@ -55,6 +55,19 @@
             <Setter Property="Margin" Value="7,0,0,0"/>
         </Style>
 
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="19,0,0,19"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="27"/>
+
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+
+
         <CollectionViewSource x:Name="cvItems" x:Key="cvsItems" Source="{Binding Source={StaticResource myData}, Path=items}"  Filter="cvs_Filter">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="PartNum"/>
@@ -85,7 +98,7 @@
                     <Setter Property="Height" Value="23"/>
                 </Style>
 
-                <Style TargetType="DatePicker">
+                <!--<Style TargetType="DatePicker">
                     <Style.Resources>
                         <Style TargetType="DatePickerTextBox">
                             <Setter Property="Background" Value="White" />
@@ -112,7 +125,7 @@
                     </Style.Resources>
                     <Setter Property="VerticalAlignment" Value="Top"/>
                     <Setter Property="BorderThickness" Value="0.5"/>
-                </Style>
+                </Style>-->
 
             </StackPanel.Resources>
 
@@ -135,7 +148,7 @@
         </StackPanel>
 
         <DataGrid x:Name="inventoryGrid"
-                  Margin="20,70,20,20"
+                  Margin="20,70,20,70"
                   AutoGenerateColumns="False"
                   BorderThickness="0"
                   Style="{StaticResource dataGridStyle}"
@@ -311,8 +324,6 @@
                 <DataGridTemplateColumn Header="Action" Width="*" x:Name="ActionHeader">
                 </DataGridTemplateColumn>
 
-
-
                 <!--<DataGridTemplateColumn Header="Date" Width="*" x:Name="DateHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -323,6 +334,8 @@
 
             </DataGrid.Columns>
         </DataGrid>
+
+        <Button Content="Export to .txt" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click"/>
         <Frame x:Name="inventoryFrame" Grid.RowSpan="2"/>
     </Grid>
 

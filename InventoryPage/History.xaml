@@ -54,7 +54,7 @@
         </CollectionViewSource>
     </Page.Resources>
     <Grid>
-        <DataGrid Margin="20,70,20,20"
+        <DataGrid Margin="20,70,20,70"
                   AutoGenerateColumns="False"
                   BorderThickness="0"
                   Style="{StaticResource dataGridStyle}"

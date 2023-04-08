@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -128,23 +129,39 @@ namespace InventorySystem.InventoryPage
         }
 
 
+        // ------------------------------------------------------------ Export to .txt
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            string path = @"C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\rtable.txt";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            Export();
+        }
 
-
-
-        // ------------------------------------------------------------ Old code :(
-        private void LoadIntoDataGrid2()
+        private void Export()
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT PartNum, CAST(BatchID AS CHAR) AS BatchID, Description, CAST(Qty AS CHAR) AS Qty, Location, ModelNum, SerialNums, DATE_FORMAT(Time, '%e/%c/%Y %H:%i:%s') AS Time FROM inputs ORDER BY BatchID";
-                MySqlCommand loadInventory = new MySqlCommand(commandText, connection);
+                string commandText = "SELECT * FROM rtable INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/rtable.txt' " +
+                    "FIELDS TERMINATED BY ',' " +
+                    "ENCLOSED BY '\"' " +
+                    "LINES TERMINATED BY '\r\n'";
                 connection.Open();
-                DataTable dt = new DataTable();
-                dt.Load(loadInventory.ExecuteReader());
+                using (MySqlCommand cmd = new MySqlCommand(commandText, connection))
+                {
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        MessageBox.Show("Export successful!");
+                    }
+
+                }
                 connection.Close();
-                inventoryGrid.DataContext = dt;
             }
         }
+
+        // ------------------------------------------------------------ Old code :(
 
         private void ApplyFilter2()
         {
@@ -194,10 +211,6 @@ namespace InventorySystem.InventoryPage
             return columnNames;
         }
 
-        private void inventoryFrame_Navigated(object sender, NavigationEventArgs e)
-        {
-
-        }
     }
 
 

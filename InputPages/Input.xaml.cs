@@ -205,7 +205,6 @@ namespace InventorySystem
                                 SerialNumsWarning.Text = "";
                                 SerialNums.ClearValue(TextBox.BorderBrushProperty);
                             }
-
                         }
                         timer.Stop();
                     };
@@ -404,6 +403,7 @@ namespace InventorySystem
 
             AddSupplierDB();
             ClearAll();
+            Success.Text = "Item added successfully!";
 
         }
         private void clearAll_Click(object sender, RoutedEventArgs e)
