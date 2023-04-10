@@ -129,10 +129,10 @@ namespace InventorySystem.InventoryPage
         }
 
 
-        // ------------------------------------------------------------ Export to .txt
+        // ------------------------------------------------------------ Export to .csv
         private void Export_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\rtable.txt";
+            string path = @"C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\rtable.csv";
             if (File.Exists(path))
             {
                 File.Delete(path);
@@ -144,7 +144,7 @@ namespace InventorySystem.InventoryPage
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT * FROM rtable INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/rtable.txt' " +
+                string commandText = "SELECT * FROM rtable INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/rtable.csv' " +
                     "FIELDS TERMINATED BY ',' " +
                     "ENCLOSED BY '\"' " +
                     "LINES TERMINATED BY '\r\n'";

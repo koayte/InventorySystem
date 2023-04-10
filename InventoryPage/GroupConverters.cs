@@ -42,6 +42,34 @@ namespace InventorySystem.InventoryPage
         }
     }
 
+    public class TopHeaderSumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!(value is ReadOnlyObservableCollection<Object>))
+            {
+                Debug.WriteLine("{0}", value.GetType().ToString());
+                return "0";
+            }
+            ReadOnlyObservableCollection<Object> subheaders = (ReadOnlyObservableCollection<Object>)value;
+            int sum = 0;
+            for (int i = 0; i < subheaders.Count; i++)
+            {
+                ReadOnlyObservableCollection<Object> items = (ReadOnlyObservableCollection<Object>)subheaders[i].GetType().GetProperty("Items").GetValue(subheaders[i]);
+                foreach (Object item in items)
+                {
+                    sum += System.Convert.ToInt32(item.GetType().GetProperty("Qty").GetValue(item));
+                }
+            }
+            return sum.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class SerialNumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

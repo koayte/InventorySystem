@@ -31,7 +31,7 @@ namespace InventorySystem.InventoryPage
         // ------------------------------------------------------------ Export to .txt
         private void Export_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\htable.txt";
+            string path = @"C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\htable.csv";
             if (File.Exists(path))
             {
                 File.Delete(path);
@@ -43,7 +43,7 @@ namespace InventorySystem.InventoryPage
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT * FROM htable INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/htable.txt' " +
+                string commandText = "SELECT * FROM htable INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/htable.csv' " +
                     "FIELDS TERMINATED BY ',' " +
                     "ENCLOSED BY '\"' " +
                     "LINES TERMINATED BY '\r\n'";

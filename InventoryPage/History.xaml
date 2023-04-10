@@ -173,6 +173,6 @@
             </DataGrid.Columns>
         </DataGrid>
         
-        <Button Content="Export to .txt" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click"/>
+        <Button Content="Export to .csv" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click"/>
     </Grid>
 </Page>

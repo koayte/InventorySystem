@@ -13,6 +13,7 @@
         <local:WidthConverter x:Key="WidthConverter"/>
         <local:GroupHeaderWidthConverter x:Key="GroupHeaderWidthConverter"/>
         <local:GroupSumConverter x:Key="GroupSumConverter" />
+        <local:TopHeaderSumConverter x:Key="TopHeaderConverter" />
         <local:SerialNumConverter x:Key="SerialNumConverter" />
         <local:DataSource x:Key="myData" />
 
@@ -162,7 +163,9 @@
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Background="LightGray" Height="20">
-                                <TextBlock FontWeight="Bold" Margin="3,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Name}"/>
+                                <TextBlock FontWeight="Bold" Margin="3,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Name}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}"/>
+                                <TextBlock/>
+                                <TextBlock FontWeight="Bold" Margin="263,0,0,0" VerticalAlignment="Center" Text="{Binding Items, Converter={StaticResource TopHeaderConverter}}"/>
                             </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -170,27 +173,6 @@
 
                 
                 <!-- 2nd level grouping by PartNum -->
-                <!--<GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <Expander>
-                                <Expander.Header>
-                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=PartNum}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}" VerticalAlignment="Center"/>
-                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=BatchID}" Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Description}" Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Items, Converter={StaticResource groupSumConverter}}" Margin="0,0,5,0" Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Area}" Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=Section}" Width="{Binding ActualWidth, ElementName=SecHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                    <TextBlock DataContext="{Binding Items}" Margin="0,0,5,0" Text="{Binding Path=ModelNum}" Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                    <TextBlock Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" VerticalAlignment="Center"/>
-                                    <Button Content="Update" Click="Update_Click" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
-                                </Expander.Header>
-                            </Expander>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                </GroupStyle>-->
-                
-                
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
                         <Style TargetType="{x:Type GroupItem}">
@@ -335,7 +317,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button Content="Export to .txt" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click"/>
+        <Button Content="Export to .csv" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click"/>
         <Frame x:Name="inventoryFrame" Grid.RowSpan="2"/>
     </Grid>
 

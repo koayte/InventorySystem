@@ -27,9 +27,9 @@
             <y:NavButton x:Name="checkOut" Textlabel="Check out" Navlink="/Checkout/CheckOut.xaml" Width="97"/>
             <y:NavButton x:Name="inventory" Textlabel="Inventory" Navlink="/InventoryPage/Inventory.xaml" Width="97"/>
             <y:NavButton x:Name="history" Textlabel="History" Navlink="/InventoryPage/History.xaml" Width="97"/>
-
+            <y:NavButton x:Name="version" Textlabel="Version 2.3" Width="97"/>
         </ListBox>
-
+        
         <Frame Grid.Column="1" x:Name="navframe" NavigationUIVisibility="Hidden"  Background="White" />
 
     </Grid>
