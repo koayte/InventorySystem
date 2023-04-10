@@ -132,7 +132,8 @@ namespace InventorySystem.InventoryPage
         // ------------------------------------------------------------ Export to .csv
         private void Export_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\rtable.csv";
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
+            string path = "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/rtable_" + timestamp + ".csv";
             if (File.Exists(path))
             {
                 File.Delete(path);
@@ -144,18 +145,22 @@ namespace InventorySystem.InventoryPage
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT * FROM rtable INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/rtable.csv' " +
+                string commandText = "SELECT 'UserName', 'PartNum', 'BatchID', 'Supplier', 'Description', 'Qty', 'Area', 'Section', 'ModelNum', 'SerialNums', 'Remarks', 'Time', 'Date' " +
+                    "UNION ALL " +
+                    "SELECT * FROM rtable INTO OUTFILE @path " +
                     "FIELDS TERMINATED BY ',' " +
                     "ENCLOSED BY '\"' " +
                     "LINES TERMINATED BY '\r\n'";
+                var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
+                string path = "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/rtable_" + timestamp + ".csv";
                 connection.Open();
                 using (MySqlCommand cmd = new MySqlCommand(commandText, connection))
                 {
+                    cmd.Parameters.AddWithValue("@path", path);
                     if (cmd.ExecuteNonQuery() > 0)
                     {
                         MessageBox.Show("Export successful!");
                     }
-
                 }
                 connection.Close();
             }
