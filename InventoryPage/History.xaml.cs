@@ -46,7 +46,8 @@ namespace InventorySystem.InventoryPage
             {
                 string commandText = "SELECT 'UserName', 'Status', 'PartNum', 'BatchID', 'Supplier', 'Description', 'Qty', 'Area', 'Section', 'ModelNum', 'SerialNums', 'Remarks', 'Time', 'Date' " +
                     "UNION ALL " +
-                    "SELECT * FROM htable INTO OUTFILE @path " +
+                    "SELECT UserName, Status, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks, DATE_FORMAT(Time, \"%Y-%m-%d %H:%i:%s\") AS Time, DATE_FORMAT(Date, \"%Y-%m-%d\") AS Date " +
+                    "FROM htable INTO OUTFILE @path " +
                     "FIELDS TERMINATED BY ',' " +
                     "ENCLOSED BY '\"' " +
                     "LINES TERMINATED BY '\r\n'";
