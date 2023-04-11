@@ -57,7 +57,7 @@
         </Style>
 
         <Style TargetType="Button">
-            <Setter Property="Margin" Value="19,0,0,19"/>
+            <Setter Property="Margin" Value="19,0,0,0"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Height" Value="27"/>
 
@@ -317,7 +317,18 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button Content="Export to .csv" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click"/>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="19,0,0,0">
+            <StackPanel>
+                <TextBlock Text="Export from..." FontSize="15"/>
+                <DatePicker x:Name="StartDate" Height="27" Margin="0,3,0,19"/>
+            </StackPanel>
+            <StackPanel Margin="19,0,0,0">
+                <TextBlock Text="To..." FontSize="15"/>
+                <DatePicker x:Name="EndDate" Height="27" Margin="0,3,0,19"/>
+            </StackPanel>
+            <Button Content="Export to .csv" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click" Margin="19,0,0,19"/>
+        </StackPanel>
+
         <Frame x:Name="inventoryFrame" Grid.RowSpan="2"/>
     </Grid>
 
