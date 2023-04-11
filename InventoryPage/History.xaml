@@ -4,12 +4,15 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:InventorySystem.InventoryPage"
+      xmlns:input="clr-namespace:InventorySystem.InputPages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="History"
       Background="White">
     <Page.Resources>
         <local:DataSource x:Key="myData" />
+        <input:ExportValidationConverter x:Key="ExportValidationConverter" />
+
         <Style x:Key="dataGridStyle" TargetType="DataGrid">
             <Setter Property="GridLinesVisibility" Value="None" />
             <Setter Property="HeadersVisibility" Value="Column" />
@@ -172,7 +175,24 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        
-        <Button Content="Export to .csv" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click"/>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="19,0,0,0">
+            <StackPanel>
+                <TextBlock Text="Export from..." FontSize="15"/>
+                <DatePicker x:Name="StartDate" Height="27" Margin="0,3,0,19"/>
+            </StackPanel>
+            <StackPanel Margin="19,0,0,0">
+                <TextBlock Text="To..." FontSize="15"/>
+                <DatePicker x:Name="EndDate" Height="27" Margin="0,3,0,19"/>
+            </StackPanel>
+            <Button Content="Export to .csv" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click" Margin="19,0,0,19">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource ExportValidationConverter}">
+                        <Binding ElementName="StartDate" Path="Text"/>
+                        <Binding ElementName="EndDate" Path="Text"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
+        </StackPanel>
     </Grid>
 </Page>

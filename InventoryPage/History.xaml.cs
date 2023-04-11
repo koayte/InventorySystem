@@ -42,12 +42,16 @@ namespace InventorySystem.InventoryPage
 
         private void Export()
         {
+            string startDate = GetFormattedDate(StartDate);
+            string endDate = GetFormattedDate(EndDate);
+
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 string commandText = "SELECT 'UserName', 'Status', 'PartNum', 'BatchID', 'Supplier', 'Description', 'Qty', 'Area', 'Section', 'ModelNum', 'SerialNums', 'Remarks', 'Time', 'Date' " +
                     "UNION ALL " +
                     "SELECT UserName, Status, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks, DATE_FORMAT(Time, \"%Y-%m-%d %H:%i:%s\") AS Time, DATE_FORMAT(Date, \"%Y-%m-%d\") AS Date " +
-                    "FROM htable INTO OUTFILE @path " +
+                    "FROM htable WHERE Date BETWEEN @startDate AND @endDate " +
+                    "INTO OUTFILE @path " +
                     "FIELDS TERMINATED BY ',' " +
                     "ENCLOSED BY '\"' " +
                     "LINES TERMINATED BY '\r\n'";
@@ -56,6 +60,8 @@ namespace InventorySystem.InventoryPage
                 connection.Open();
                 using (MySqlCommand cmd = new MySqlCommand(commandText, connection))
                 {
+                    cmd.Parameters.AddWithValue("@startDate", startDate);
+                    cmd.Parameters.AddWithValue("@endDate", endDate);
                     cmd.Parameters.AddWithValue("@path", path);
                     if (cmd.ExecuteNonQuery() > 0)
                     {
@@ -64,6 +70,18 @@ namespace InventorySystem.InventoryPage
                 }
                 connection.Close();
             }
+        }
+
+        private string GetFormattedDate(DatePicker datePicker)
+        {
+            string formattedDate = "";
+            if (!string.IsNullOrEmpty(datePicker.Text))
+            {
+                DateTime dateChosen = DateTime.Parse(datePicker.Text);
+                formattedDate = dateChosen.ToString("yyyy-MM-dd");
+                return formattedDate;
+            }
+            return formattedDate;
         }
     }
 
