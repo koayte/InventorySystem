@@ -167,7 +167,7 @@
                             <StackPanel Orientation="Horizontal" Background="LightGray" Height="20">
                                 <TextBlock FontWeight="Bold" Margin="3,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Name}" Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource GroupHeaderWidthConverter}}"/>
                                 <TextBlock/>
-                                <TextBlock FontWeight="Bold" Margin="263,0,0,0" VerticalAlignment="Center" Text="{Binding Items, Converter={StaticResource TopHeaderConverter}}"/>
+                                <TextBlock FontWeight="Bold" Margin="30,0,0,0" VerticalAlignment="Center" Text="{Binding Items, Converter={StaticResource TopHeaderConverter}}"/>
                             </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -225,7 +225,7 @@
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Part Number" Width="85" x:Name="PartNumHeader">
+                <DataGridTemplateColumn Header="Part Number" Width="3*" x:Name="PartNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding PartNum}" TextWrapping="Wrap"/>
@@ -233,7 +233,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="BatchID" Width="95" x:Name="BatchHeader">
+                <DataGridTemplateColumn Header="BatchID" Width="3*" x:Name="BatchHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding BatchID}" TextWrapping="Wrap"/>
@@ -241,7 +241,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Description" Width="80" x:Name="DescHeader">
+                <DataGridTemplateColumn Header="Description" Width="3*" x:Name="DescHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
@@ -249,7 +249,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Supplier" Width="60" x:Name="SupplierHeader">
+                <DataGridTemplateColumn Header="Supplier" Width="1.5*" x:Name="SupplierHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Supplier}" TextWrapping="Wrap"/>
@@ -257,7 +257,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Qty" Width="30" x:Name="QtyHeader">
+                <DataGridTemplateColumn Header="Qty" Width="0.7*" x:Name="QtyHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Qty}" TextWrapping="Wrap"/>
@@ -265,7 +265,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Area" Width="70" x:Name="AreaHeader">
+                <DataGridTemplateColumn Header="Area" Width="2*" x:Name="AreaHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock x:Name="LocData" Text="{Binding Area}" TextWrapping="Wrap"/>
@@ -273,7 +273,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Section" Width="50" x:Name="SecHeader">
+                <DataGridTemplateColumn Header="Section" Width="1*" x:Name="SecHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock x:Name="SecData"  Text="{Binding Section}" TextWrapping="Wrap"/>
@@ -281,7 +281,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Model Number" Width="100" x:Name="ModelNumHeader">
+                <DataGridTemplateColumn Header="Model Number" Width="1.5*" x:Name="ModelNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ModelNum}" TextWrapping="Wrap"/>
@@ -289,7 +289,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Serial Numbers" Width="90" x:Name="SerialNumsHeader">
+                <DataGridTemplateColumn Header="Serial Numbers" Width="2*" x:Name="SerialNumsHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding SerialNums}" TextWrapping="Wrap"/>
@@ -297,7 +297,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Remarks" Width="90" x:Name="RemarksHeader">
+                <DataGridTemplateColumn Header="Remarks" Width="2*" x:Name="RemarksHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Remarks}" TextWrapping="Wrap"/>
@@ -305,7 +305,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Action" Width="*" x:Name="ActionHeader">
+                <DataGridTemplateColumn Header="Action" Width="1*" x:Name="ActionHeader">
                 </DataGridTemplateColumn>
 
                 <!--<DataGridTemplateColumn Header="Date" Width="*" x:Name="DateHeader">

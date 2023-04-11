@@ -61,7 +61,7 @@ namespace InventorySystem.InventoryPage
                     sum += System.Convert.ToInt32(item.GetType().GetProperty("Qty").GetValue(item));
                 }
             }
-            return sum.ToString();
+            return "Total quantity: " + sum.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
