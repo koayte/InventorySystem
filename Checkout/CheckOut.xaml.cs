@@ -132,7 +132,16 @@ namespace InventorySystem.Checkout
             ClearAll();
             if (!string.IsNullOrEmpty(partNumSelected))
             {
-                
+                if (string.IsNullOrEmpty(Description.Text))
+                {
+                    var prodSelected = products.SingleOrDefault(x => x.PartNum == partNumSelected);
+                    if (prodSelected != null)
+                    {
+                        Description.SelectedValue = prodSelected.Description.ToString();
+                    }
+                }
+
+
                 batchIDQtyList = items.Where(x => x.PartNum == partNumSelected).Select(x => x.BatchID).Distinct().ToList();
                 if (batchIDQtyList.Count == 0) // PartNum has run out of stock.
                 {
