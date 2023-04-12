@@ -33,12 +33,11 @@ namespace InventorySystem.Checkout
         public List<SerialNumber> serialNumObjList;
         public List<string> serialNumsSelected;
 
-
         public CheckOut()
         {
             InitializeComponent();
 
-            inputBoxes = new List<TextBox> { Remarks, ModelNum, Area, Section, Qty };
+            inputBoxes = new List<TextBox> { Remarks, ModelNum, Area, Section, Supplier, Qty };
             User.Focus();
 
             DataSource dataSource = new DataSource();
@@ -119,7 +118,8 @@ namespace InventorySystem.Checkout
 
             var descSelected = (sender as ComboBox).SelectedValue?.ToString() ?? "";
             ClearAll();
-            if (!string.IsNullOrEmpty(descSelected) && string.IsNullOrEmpty(PartNum.Text))
+            // PartNum.Text = "";
+            if (!string.IsNullOrEmpty(descSelected)) // Autofill PartNum if user searches by Description.
             {
                 PartNum.Text = products.Single(x => x.Description == descSelected).PartNum.ToString();
             }
@@ -127,65 +127,70 @@ namespace InventorySystem.Checkout
 
         private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
         {
+            BatchAndQty.Text = "BatchID, Remaining Qty \n";
             string partNumSelected = PartNum.Text;
-            List<string> batchIDQtyList = new List<string>();
+            var prodSelected = products.SingleOrDefault(x => x.PartNum == partNumSelected);
+            List<string> batchIDList = new List<string>();
+            Dictionary<string, string> batchQtyDict = new Dictionary<string, string>();
             ClearAll();
+            Description.Text = "";
             if (!string.IsNullOrEmpty(partNumSelected))
             {
-                if (string.IsNullOrEmpty(Description.Text))
+                if (prodSelected != null) // Product exists in ptable.
                 {
-                    var prodSelected = products.SingleOrDefault(x => x.PartNum == partNumSelected);
-                    if (prodSelected != null)
+                    if (string.IsNullOrEmpty(Description.Text)) // Autoselect Description if user searches by PartNum.
                     {
                         Description.SelectedValue = prodSelected.Description.ToString();
                     }
+
+                    batchIDList = items.Where(x => x.PartNum == partNumSelected).Select(x => x.BatchID).Distinct().ToList();
+                    if (batchIDList.Count == 0) // Product has run out of stock in rtable.
+                    {
+                        PartNumWarning.Text = "WARNING: Product is out of stock.";
+                        BatchID.ItemsSource = null;
+                    }
+                    else // Product still has stock in rtable.
+                    {
+                        PartNumWarning.Text = "";
+                        // Autofill Area, Section, ModelNum, Supplier based on PartNum from Product Table
+                        Area.Text = prodSelected.Area.ToString();
+                        Section.Text = prodSelected.Section.ToString();
+                        Supplier.Text = prodSelected.Supplier.ToString();
+                        if (!string.IsNullOrEmpty(prodSelected.ModelNum.ToString()))
+                        {
+                            ModelNumCheckbox.IsChecked = true;
+                            ModelNum.Text = prodSelected.ModelNum.ToString();
+                        }
+
+                        // Bind relevant BatchID with remaining Qty to BatchID ComboBox.
+                        for (int i = 0; i < batchIDList.Count; i++)
+                        {
+                            string batchID = batchIDList[i];
+                            List<int> currentQtyList = items.Where(x => x.BatchID == batchID).Select(x => Int32.Parse(x.Qty)).ToList();
+                            string currentQty = currentQtyList.Sum().ToString();
+                            batchQtyDict.Add(batchID, currentQty);
+                        }
+                        BatchAndQty.Text = BatchAndQty.Text + String.Join('\n', batchQtyDict);
+                        BatchID.ItemsSource = batchIDList;
+                        if (batchIDList.Count == 1)
+                        {
+                            BatchID.SelectedValue = batchIDList[0];
+                        }
+                    }
                 }
 
-
-                batchIDQtyList = items.Where(x => x.PartNum == partNumSelected).Select(x => x.BatchID).Distinct().ToList();
-                if (batchIDQtyList.Count == 0) // PartNum has run out of stock.
+                else // Product does not exist in ptable.
                 {
-                    PartNumWarning.Text = "WARNING: Product is out of stock.";
-                    BatchID.ItemsSource = null;
-                }
-                else // PartNum still has stock 
-                {
-                    PartNumWarning.Text = "";
-                    // Autofill Area, Section, ModelNum, Supplier based on PartNum from Product Table
-                    var selectedProduct = products.Single(x => x.PartNum == partNumSelected);
-                    Area.Text = selectedProduct.Area.ToString();
-                    Section.Text = selectedProduct.Section.ToString();
-                    Supplier.Text = selectedProduct.Supplier.ToString();
-                    if (!string.IsNullOrEmpty(selectedProduct.ModelNum.ToString()))
-                    {
-                        ModelNumCheckbox.IsChecked = true;
-                        ModelNum.Text = selectedProduct.ModelNum.ToString();
-                    }
-
-                    // Bind relevant BatchID with remaining Qty to BatchID ComboBox.
-                    for (int i = 0; i < batchIDQtyList.Count; i++)
-                    {
-                        string batchID = batchIDQtyList[i];
-                        List<int> currentQtyList = items.Where(x => x.BatchID == batchID).Select(x => Int32.Parse(x.Qty)).ToList();
-                        string currentQty = currentQtyList.Sum().ToString();
-                        batchIDQtyList[i] += " : " + currentQty;
-                    }
-                    BatchID.ItemsSource = batchIDQtyList;
-                    if (batchIDQtyList.Count == 1)
-                    {
-                        BatchID.SelectedValue = batchIDQtyList[0];
-                    }
+                    PartNumWarning.Text = "WARNING: Product does not exist in product table.";
                 }
             }
         }
 
         private void BatchID_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string batchIDQty = (sender as ComboBox).SelectedValue?.ToString() ?? "";
-            string batchID = "";
-            if (!string.IsNullOrEmpty(batchIDQty))
+            string batchID = (sender as ComboBox).SelectedValue?.ToString() ?? "";
+            if (!string.IsNullOrEmpty(batchID))
             {
-                batchID = batchIDQty.Substring(0, 14);
                 string partNumSelected = PartNum.Text;
                 List<string> serialNumStrList = new List<string>();
                 serialNumStrList = items.Where(x => (x.BatchID == batchID) && (x.SerialNums != "")).Select(x => x.SerialNums).ToList();
@@ -240,8 +245,7 @@ namespace InventorySystem.Checkout
 
         private void Qty_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string batchIDQty = BatchID.SelectedValue?.ToString() ?? "";
-            string currentQty = "";
+            string batchID = BatchID.SelectedValue?.ToString() ?? "";
             if (Qty.Text.Length > 0)
             {
                 if (Qty.Text.Any(x => !char.IsDigit(x)))
@@ -252,10 +256,10 @@ namespace InventorySystem.Checkout
                 else
                 {
                     QtyWarning.Text = "";
-                    if (!string.IsNullOrEmpty(batchIDQty))
+                    if (!string.IsNullOrEmpty(batchID))
                     {
-                        currentQty = batchIDQty.Substring(17);
-                        int currentQtyInt = Int32.Parse(currentQty);
+                        List<int> currentQtyList = items.Where(x => x.BatchID == batchID).Select(x => Int32.Parse(x.Qty)).ToList();
+                        int currentQtyInt = currentQtyList.Sum();
                         int qtyCheckedOutInt = Int32.Parse(Qty.Text);
                         if (qtyCheckedOutInt > currentQtyInt)
                         {
@@ -290,15 +294,10 @@ namespace InventorySystem.Checkout
         private void checkOut_Click(object sender, RoutedEventArgs e)
         {
             // Get BatchID 
-            string batchIDQty = BatchID.SelectedValue?.ToString() ?? "";
-            string batchID = "";
-            string currentQty = "";
+            string batchID = BatchID.SelectedValue?.ToString() ?? "";
+            List<int> currentQtyList = items.Where(x => x.BatchID == batchID).Select(x => Int32.Parse(x.Qty)).ToList();
+            string currentQty = currentQtyList.Sum().ToString();
             string qtyCheckedOut = Qty.Text;
-            if (!string.IsNullOrEmpty(batchIDQty))
-            {
-                batchID = batchIDQty.Substring(0, 14);
-                currentQty = batchIDQty.Substring(17);
-            }
 
             List<string> placeholders = new List<string> { "@userName", "@partNum", "@batchID", "@supplier", "@description", "@qty", "@area", "@section",  "@modelNum", "@remarks" };
             List<string> inputs = new List<string> { User.Text, PartNum.Text, batchID, Supplier.Text, Description.Text, Qty.Text, Area.Text, Section.Text, ModelNum.Text, Remarks.Text };
@@ -370,6 +369,8 @@ namespace InventorySystem.Checkout
             ClearAll();
             PartNum.Text = String.Empty;
             Description.Text = String.Empty;
+            PartNumCheckbox.IsChecked = false;
+            DescCheckbox.IsChecked = false;
         }
 
 
