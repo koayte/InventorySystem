@@ -329,7 +329,7 @@ namespace InventorySystem.Checkout
                         cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
                     }
 
-                    else if (currentQty == qtyCheckedOut)
+                    else if (currentQty == qtyCheckedOut) // Delete entry
                     {
                         cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
                     }

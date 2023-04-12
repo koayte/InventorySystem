@@ -40,6 +40,7 @@ namespace InventorySystem
         // Checking PartNum against database
         private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
         {
+            Success.Text = "";
             DateTime dateTime = DateTime.Today;
             string todayDate = dateTime.ToString("yyyy-MM-dd");
             string partNum = PartNum.Text;
