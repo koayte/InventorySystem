@@ -329,6 +329,11 @@ namespace InventorySystem.Checkout
                         cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
                     }
 
+                    else if (currentQty == qtyCheckedOut)
+                    {
+                        cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
+                    }
+
                     else // Minus QtyCheckedOut from quantity in Rtable
                     {
                         cmd.CommandText = "UPDATE Rtable SET Qty = @newQty WHERE PartNum = @partNum && BatchID = @batchID";
