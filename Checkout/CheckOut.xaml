@@ -14,6 +14,7 @@
     <Page.Resources>
         <inventory:DataSource x:Key="myData"/>
         <input:ValidationConverter x:Key="allTextConverter"/>
+        <local:CheckboxConverter x:Key="checkboxConverter" />
 
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="25"/>
@@ -67,7 +68,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid ShowGridLines="False">
+    <Grid ShowGridLines="True">
         <StackPanel>
             <!-- First row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
@@ -78,13 +79,29 @@
                           ItemsSource="{Binding Source={StaticResource myData}, Path=users}"
                           DisplayMemberPath="Name"/>
                 </StackPanel>
+            </StackPanel>
+
+            <!-- 2nd row -->
+            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                <!-- Part Number -->
+                <StackPanel>
+                    <WrapPanel>
+                        <TextBlock Text="Search by Part Number" Style="{StaticResource TextLabels}"/>
+                        <CheckBox x:Name="PartNumCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked, Converter={StaticResource checkboxConverter}}"/>
+                    </WrapPanel>
+                    <TextBox x:Name="PartNum" TextChanged="PartNum_TextChanged" IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked}"/>
+                </StackPanel>
 
                 <!-- Description -->
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Description" Style="{StaticResource TextLabels}" Margin="19,10,0,0"/>
+                    <WrapPanel>
+                        <TextBlock Text="Search by Description" Style="{StaticResource TextLabels}"/>
+                        <CheckBox x:Name="DescCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked, Converter={StaticResource checkboxConverter}}"/>
+                    </WrapPanel>
                     <ComboBox x:Name="Description" KeyUp="Control_Enter" Width="425" GotFocus="TextBox_GotFocus"
                               IsEditable="True"
                               IsReadOnly="False"
+                              IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked}"
                               ItemsSource="{Binding Source={StaticResource myData}, Path=products}"
                               DisplayMemberPath="Description"
                               SelectedValuePath="Description"
@@ -95,20 +112,21 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- 2nd row -->
+            <!-- 3rd row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                <!-- Part Number -->
-                <StackPanel>
-                    <TextBlock Text="Part Number" Style="{StaticResource TextLabels}"/>
-                    <TextBox x:Name="PartNum" TextChanged="PartNum_TextChanged" IsReadOnly="True"/>
-                </StackPanel>
-                
+
                 <!-- BatchID -->
                 <StackPanel>
                     <TextBlock Text="Batch ID" Style="{StaticResource TextLabels}"/>
                     <ComboBox x:Name="BatchID" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" IsReadOnly="True" SelectionChanged="BatchID_SelectionChanged" SelectedValue="BatchID"/>
                 </StackPanel>
                 
+                <!-- Quantity checked out -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Quantity Checked Out" Style="{StaticResource TextLabels}"/>
+                    <TextBox x:Name="Qty" KeyUp="Control_Enter" TextChanged="Qty_TextChanged"/>
+                </StackPanel>
+
                 <!-- Serial Number -->
                 <StackPanel>
                     <WrapPanel>
@@ -132,21 +150,12 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- 3rd row -->
-            <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                <!-- Quantity checked out -->
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Quantity Checked Out" Style="{StaticResource TextLabels}"/>
-                    <TextBox x:Name="Qty" KeyUp="Control_Enter" TextChanged="Qty_TextChanged"/>
-                </StackPanel>
-
-                <!-- Purpose -->
-                <StackPanel>
-                    <TextBlock Text="Check-out Purpose" Style="{StaticResource TextLabels}"/>
-                    <TextBox x:Name="Remarks" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" Width="425"/>
-                </StackPanel>
+            <!-- 3rd row, Purpose -->
+            <StackPanel>
+                <TextBlock Text="Check-out Purpose" Style="{StaticResource TextLabels}"/>
+                <TextBox x:Name="Remarks" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" Width="646"/>
             </StackPanel>
-
+            
             <WrapPanel>
                 <!-- 4th and 5th rows -->
                 <StackPanel>
@@ -194,6 +203,7 @@
 
                 <!-- Warnings -->
                 <StackPanel>
+                    <TextBlock x:Name="BatchAndQty" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}" Height="Auto"/>
                     <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}" Height="Auto"/>
                     <TextBlock x:Name="QtyWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}" Height="Auto"/>
                 </StackPanel>

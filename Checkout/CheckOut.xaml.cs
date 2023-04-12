@@ -63,6 +63,7 @@ namespace InventorySystem.Checkout
                 textBox.SelectAll();
             }
         }
+        // ------------------------------------------------- CheckBoxes
         private void Model_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(Qty.Text) && !string.IsNullOrEmpty(BatchID.Text) && !string.IsNullOrEmpty(Description.Text))
@@ -118,7 +119,7 @@ namespace InventorySystem.Checkout
 
             var descSelected = (sender as ComboBox).SelectedValue?.ToString() ?? "";
             ClearAll();
-            if (!string.IsNullOrEmpty(descSelected))
+            if (!string.IsNullOrEmpty(descSelected) && string.IsNullOrEmpty(PartNum.Text))
             {
                 PartNum.Text = products.Single(x => x.Description == descSelected).PartNum.ToString();
             }
@@ -361,6 +362,8 @@ namespace InventorySystem.Checkout
             PartNum.Text = String.Empty;
             Description.Text = String.Empty;
         }
+
+
     }
 
     public class SerialNumber
