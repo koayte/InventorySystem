@@ -233,7 +233,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="BatchID" Width="3*" x:Name="BatchHeader">
+                <DataGridTemplateColumn Header="BatchID" Width="3.2*" x:Name="BatchHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding BatchID}" TextWrapping="Wrap"/>
@@ -257,7 +257,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Qty" Width="0.7*" x:Name="QtyHeader">
+                <DataGridTemplateColumn Header="Qty" Width="1*" x:Name="QtyHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Qty}" TextWrapping="Wrap"/>
