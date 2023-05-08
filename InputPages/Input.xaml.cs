@@ -267,22 +267,29 @@ namespace InventorySystem
             }
         }
 
+        // Add user input in Area ComboBox to locations table in db.
         private void AddAreaDB()
         {
             string area = Area.Text;
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            DataSource ds = new DataSource();
+            
+            if (!ds.areas.Any(x => x == area))
             {
-                string commandText = "INSERT INTO locations (Area, Section) VALUES " +
-                    "(@area, 'A'), " +
-                    "(@area, 'B'), " +
-                    "(@area, 'C'), " +
-                    "(@area, 'D')";
-                MySqlCommand addArea = new MySqlCommand(commandText, connection);
-                addArea.Parameters.AddWithValue("@area", area);
-                connection.Open();
-                addArea.ExecuteNonQuery();
-                connection.Close();
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    string commandText = "INSERT INTO locations (Area, Section) VALUES " +
+                        "(@area, \"A\"), " +
+                        "(@area, \"B\"), " +
+                        "(@area, \"C\"), " +
+                        "(@area, \"D\");";
+                    MySqlCommand addArea = new MySqlCommand(commandText, connection);
+                    addArea.Parameters.AddWithValue("@area", area);
+                    connection.Open();
+                    addArea.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
+            
         }
 
         // Buttons

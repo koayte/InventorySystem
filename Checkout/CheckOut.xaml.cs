@@ -2,6 +2,7 @@
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -293,6 +294,9 @@ namespace InventorySystem.Checkout
 
         private void checkOut_Click(object sender, RoutedEventArgs e)
         {
+            // Disable button after one click 
+            checkOut.IsEnabled = false;
+
             // Get BatchID 
             string batchID = BatchID.SelectedValue?.ToString() ?? "";
             List<int> currentQtyList = items.Where(x => x.BatchID == batchID).Select(x => Int32.Parse(x.Qty)).ToList();
@@ -302,68 +306,77 @@ namespace InventorySystem.Checkout
             List<string> placeholders = new List<string> { "@userName", "@partNum", "@batchID", "@supplier", "@description", "@qty", "@area", "@section",  "@modelNum", "@remarks" };
             List<string> inputs = new List<string> { User.Text, PartNum.Text, batchID, Supplier.Text, Description.Text, Qty.Text, Area.Text, Section.Text, ModelNum.Text, Remarks.Text };
 
-
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            try
             {
-                string commandText = "";
-                MySqlCommand cmd = new MySqlCommand(commandText, connection);
-                connection.Open();
-
-                // If SerialNum is selected
-                if (!string.IsNullOrEmpty(SerialNums.Text))
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-                    cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && SerialNums = @serialNum";
-                    // Delete from Rtable
-                    foreach (var serialNumSelected in serialNumsSelected)
+                    string commandText = "";
+                    MySqlCommand cmd = new MySqlCommand(commandText, connection);
+                    connection.Open();
+
+                    // If SerialNum is selected
+                    if (!string.IsNullOrEmpty(SerialNums.Text))
                     {
+                        cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && SerialNums = @serialNum";
+                        // Delete from Rtable
+                        foreach (var serialNumSelected in serialNumsSelected)
+                        {
+                            cmd.Parameters.AddWithValue("@partNum", PartNum.Text);
+                            cmd.Parameters.AddWithValue("@serialNum", serialNumSelected);
+                            cmd.ExecuteNonQuery();
+                            cmd.Parameters.Clear();
+                        }
+                    }
+
+                    else
+                    {
+                        if (currentQty == "1") // Delete entry
+                        {
+                            cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
+                        }
+
+                        else if (currentQty == qtyCheckedOut) // Delete entry
+                        {
+                            cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
+                        }
+
+                        else // Minus QtyCheckedOut from quantity in Rtable
+                        {
+                            cmd.CommandText = "UPDATE Rtable SET Qty = @newQty WHERE PartNum = @partNum && BatchID = @batchID";
+                            int newQty = Int32.Parse(currentQty) - Int32.Parse(qtyCheckedOut);
+                            cmd.Parameters.AddWithValue("@newQty", newQty.ToString());
+
+                        }
                         cmd.Parameters.AddWithValue("@partNum", PartNum.Text);
-                        cmd.Parameters.AddWithValue("@serialNum", serialNumSelected);
+                        cmd.Parameters.AddWithValue("batchID", batchID);
                         cmd.ExecuteNonQuery();
-                        cmd.Parameters.Clear();
                     }
-                }
 
-                else
-                {
-                    if (currentQty == "1") // Delete entry
+                    // Insert into Htable
+                    // System.Threading.Thread.Sleep(5000);
+                    cmd.Parameters.Clear();
+                    cmd.CommandText = "INSERT INTO Htable (UserName, Status, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks) VALUE " +
+                        "(@userName, @status, @partNum, @batchID, @supplier, @description, @qty, @area, @section, @modelNum, @serialNums, @remarks)";
+                    for (int i = 0; i < placeholders.Count; i++)
                     {
-                        cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
+                        cmd.Parameters.AddWithValue(placeholders[i], inputs[i]);
                     }
-
-                    else if (currentQty == qtyCheckedOut) // Delete entry
-                    {
-                        cmd.CommandText = "DELETE FROM Rtable WHERE PartNum = @partNum && BatchID = @batchID";
-                    }
-
-                    else // Minus QtyCheckedOut from quantity in Rtable
-                    {
-                        cmd.CommandText = "UPDATE Rtable SET Qty = @newQty WHERE PartNum = @partNum && BatchID = @batchID";
-                        int newQty = Int32.Parse(currentQty) - Int32.Parse(qtyCheckedOut);
-                        cmd.Parameters.AddWithValue("@newQty", newQty.ToString());
-
-                    }
-                    cmd.Parameters.AddWithValue("@partNum", PartNum.Text);
-                    cmd.Parameters.AddWithValue("batchID", batchID);
+                    cmd.Parameters.AddWithValue("@status", "Check out");
+                    cmd.Parameters.AddWithValue("@serialNums", SerialNums.Text);
                     cmd.ExecuteNonQuery();
+                    connection.Close();
                 }
-
-                // Insert into Htable
-                cmd.Parameters.Clear();
-                cmd.CommandText = "INSERT INTO Htable (UserName, Status, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks) VALUE " +
-                    "(@userName, @status, @partNum, @batchID, @supplier, @description, @qty, @area, @section, @modelNum, @serialNums, @remarks)";
-                for (int i = 0; i < placeholders.Count; i++)
-                {
-                    cmd.Parameters.AddWithValue(placeholders[i], inputs[i]);
-                }
-                cmd.Parameters.AddWithValue("@status", "Check out");
-                cmd.Parameters.AddWithValue("@serialNums", SerialNums.Text);
-                cmd.ExecuteNonQuery();
-                connection.Close();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+            
             ClearAll();
             PartNum.Text = String.Empty;
             Description.Text = String.Empty;
+            Success.Text = "Item checked out successfully!";
 
             // Get new inventory 
             DataSource dataSource = new DataSource();
