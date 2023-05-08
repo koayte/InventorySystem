@@ -302,6 +302,8 @@ namespace InventorySystem.Checkout
             List<string> placeholders = new List<string> { "@userName", "@partNum", "@batchID", "@supplier", "@description", "@qty", "@area", "@section",  "@modelNum", "@remarks" };
             List<string> inputs = new List<string> { User.Text, PartNum.Text, batchID, Supplier.Text, Description.Text, Qty.Text, Area.Text, Section.Text, ModelNum.Text, Remarks.Text };
 
+
+
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 string commandText = "";

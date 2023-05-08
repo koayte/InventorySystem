@@ -47,16 +47,16 @@ namespace InventorySystem.InventoryPage
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT 'UserName', 'Status', 'PartNum', 'BatchID', 'Supplier', 'Description', 'Qty', 'Area', 'Section', 'ModelNum', 'SerialNums', 'Remarks', 'Time', 'Date' " +
+                string commandText = "SELECT 'UserName', 'Action', 'PartNum', 'BatchID', 'Supplier', 'Description', 'Qty', 'Area', 'Section', 'ModelNum', 'SerialNums', 'Remarks', 'DateTime' " +
                     "UNION ALL " +
-                    "SELECT UserName, Status, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks, DATE_FORMAT(Time, \"%Y-%m-%d %H:%i:%s\") AS Time, DATE_FORMAT(Date, \"%Y-%m-%d\") AS Date " +
+                    "SELECT UserName, Status, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks, DATE_FORMAT(Time, \"%Y-%m-%d %H:%i:%s\") AS Time " +
                     "FROM htable WHERE Date BETWEEN @startDate AND @endDate " +
                     "INTO OUTFILE @path " +
                     "FIELDS TERMINATED BY ',' " +
                     "ENCLOSED BY '\"' " +
                     "LINES TERMINATED BY '\r\n'";
-                var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
-                string path = "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/htable_" + timestamp + ".csv";
+                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string path = "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/history_" + timestamp + ".csv";
                 connection.Open();
                 using (MySqlCommand cmd = new MySqlCommand(commandText, connection))
                 {

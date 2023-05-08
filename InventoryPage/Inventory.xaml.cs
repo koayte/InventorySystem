@@ -149,15 +149,15 @@ namespace InventorySystem.InventoryPage
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string commandText = "SELECT 'UserName', 'PartNum', 'BatchID', 'Supplier', 'Description', 'Qty', 'Area', 'Section', 'ModelNum', 'SerialNums', 'Remarks', 'Time', 'Date' " +
+                string commandText = "SELECT 'UserName', 'PartNum', 'BatchID', 'Supplier', 'Description', 'Qty', 'Area', 'Section', 'ModelNum', 'SerialNums', 'Remarks', 'Datetime' " +
                     "UNION ALL " +
-                    "SELECT * FROM rtable WHERE Date BETWEEN @startDate AND @endDate " +
+                    "SELECT UserName, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks, Time FROM rtable WHERE Date BETWEEN @startDate AND @endDate " +
                     "INTO OUTFILE @path " +
                     "FIELDS TERMINATED BY ',' " +
                     "ENCLOSED BY '\"' " +
                     "LINES TERMINATED BY '\r\n'";
-                var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
-                string path = "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/rtable_" + timestamp + ".csv";
+                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string path = "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/inventory_" + timestamp + ".csv";
                 connection.Open();
                 using (MySqlCommand cmd = new MySqlCommand(commandText, connection))
                 {

@@ -267,6 +267,24 @@ namespace InventorySystem
             }
         }
 
+        private void AddAreaDB()
+        {
+            string area = Area.Text;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string commandText = "INSERT INTO locations (Area, Section) VALUES " +
+                    "(@area, 'A'), " +
+                    "(@area, 'B'), " +
+                    "(@area, 'C'), " +
+                    "(@area, 'D')";
+                MySqlCommand addArea = new MySqlCommand(commandText, connection);
+                addArea.Parameters.AddWithValue("@area", area);
+                connection.Open();
+                addArea.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
         // Buttons
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
@@ -403,6 +421,7 @@ namespace InventorySystem
             }
 
             AddSupplierDB();
+            AddAreaDB();
             ClearAll();
             Success.Text = "Item added successfully!";
 

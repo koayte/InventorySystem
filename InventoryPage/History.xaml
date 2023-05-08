@@ -94,7 +94,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Status" Width="2*" x:Name="StatusHeader">
+                <DataGridTemplateColumn Header="Action" Width="2*" x:Name="StatusHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Status}" TextWrapping="Wrap"/>

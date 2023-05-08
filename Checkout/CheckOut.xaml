@@ -86,8 +86,8 @@
                 <!-- Part Number -->
                 <StackPanel>
                     <WrapPanel>
-                        <TextBlock Text="Search by Part Number" Style="{StaticResource TextLabels}"/>
-                        <CheckBox x:Name="PartNumCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked, Converter={StaticResource checkboxConverter}}"/>
+                        <RadioButton x:Name="PartNumCheckbox"  VerticalAlignment="Bottom" Margin="19,7,0,2" IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked, Converter={StaticResource checkboxConverter}}"/>
+                        <TextBlock Text="Search by Part Number" Style="{StaticResource TextLabels}" Margin="5,7,0,0"/>
                     </WrapPanel>
                     <TextBox x:Name="PartNum" TextChanged="PartNum_TextChanged" IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked}"/>
                 </StackPanel>
@@ -95,8 +95,8 @@
                 <!-- Description -->
                 <StackPanel Orientation="Vertical">
                     <WrapPanel>
-                        <TextBlock Text="Search by Description" Style="{StaticResource TextLabels}"/>
-                        <CheckBox x:Name="DescCheckbox"  VerticalAlignment="Bottom" Margin="7,0,0,2" IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked, Converter={StaticResource checkboxConverter}}"/>
+                        <RadioButton x:Name="DescCheckbox"  VerticalAlignment="Bottom" Margin="19,7,0,2" IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked, Converter={StaticResource checkboxConverter}}"/>
+                        <TextBlock Text="Search by Description" Style="{StaticResource TextLabels}" Margin="5,7,0,0"/>
                     </WrapPanel>
                     <ComboBox x:Name="Description" KeyUp="Control_Enter" Width="425" GotFocus="TextBox_GotFocus"
                               IsEditable="True"
@@ -111,6 +111,8 @@
                     <!-- TextBoxBase.TextChanged="Description_TextChanged" -->
                 </StackPanel>
             </StackPanel>
+
+            <TextBlock x:Name="BatchAndQty" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}" Height="Auto"/>
 
             <!-- 3rd row -->
             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
@@ -203,7 +205,6 @@
 
                 <!-- Warnings -->
                 <StackPanel>
-                    <TextBlock x:Name="BatchAndQty" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}" Height="Auto"/>
                     <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}" Height="Auto"/>
                     <TextBlock x:Name="QtyWarning" Style="{StaticResource WarningLabels}" Width="{Binding ActualWidth, ElementName=PartNum}" Height="Auto"/>
                 </StackPanel>
