@@ -89,7 +89,10 @@
                         <RadioButton x:Name="PartNumCheckbox"  VerticalAlignment="Bottom" Margin="19,7,0,2" IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked, Converter={StaticResource checkboxConverter}}"/>
                         <TextBlock Text="Search by Part Number" Style="{StaticResource TextLabels}" Margin="5,7,0,0"/>
                     </WrapPanel>
-                    <TextBox x:Name="PartNum" TextChanged="PartNum_TextChanged" IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked}"/>
+                    <TextBox x:Name="PartNum" 
+                              TextChanged="PartNum_TextChanged"
+                              />
+                    <!--IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked}"-->
                 </StackPanel>
 
                 <!-- Description -->
@@ -101,13 +104,14 @@
                     <ComboBox x:Name="Description" KeyUp="Control_Enter" Width="425" GotFocus="TextBox_GotFocus"
                               IsEditable="True"
                               IsReadOnly="False"
-                              IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked}"
                               ItemsSource="{Binding Source={StaticResource myData}, Path=products}"
                               DisplayMemberPath="Description"
                               SelectedValuePath="Description"
                               IsTextSearchEnabled="True" 
                               SelectionChanged="Description_SelectionChanged"
                               SelectedValue="Description"/>
+                    <!--IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked}"-->
+
                     <!-- TextBoxBase.TextChanged="Description_TextChanged" -->
                 </StackPanel>
             </StackPanel>

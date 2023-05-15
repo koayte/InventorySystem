@@ -16,7 +16,8 @@
     <Page.Resources>
         <inventory:DataSource x:Key="myData" />
         <input:ValidationConverter x:Key="allTextConverter"/>
-        
+        <input:FillDescValidConverter x:Key="fillDescConverter"/>
+
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="25"/>
             <Setter Property="Margin" Value="19,3,0,0"/>
@@ -195,6 +196,14 @@
 
         <!-- Buttons -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Height="46" >
+            <Button x:Name="fillDesc" Content="Fill Desc" Width="80" Click="fillDesc_Click">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource fillDescConverter}">
+                        <Binding ElementName="PartNum" Path="Text"/>
+                        <Binding ElementName="Supplier" Path="Text"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
             <Button x:Name="addItem" Content="Add Item" Width="80" Click="addItem_Click">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource allTextConverter}">

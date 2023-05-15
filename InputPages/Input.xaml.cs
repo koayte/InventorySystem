@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using InventorySystem.InventoryPage;
+using System.IO;
 
 namespace InventorySystem
 {
@@ -293,6 +294,44 @@ namespace InventorySystem
         }
 
         // Buttons
+        private void fillDesc_Click(object sender, RoutedEventArgs e)
+        {
+            string descPath = "C:\\Users\\james\\source\\repos\\InventorySystem\\description.txt";
+            DateTime prevModified = File.GetLastWriteTime(descPath);
+            var supplier = Supplier.Text.Trim();
+            var partNum = PartNum.Text.Trim();
+            if (supplier == "Mouser" || supplier == "Digi-Key")
+            {
+                try
+                {
+                    File.AppendAllText(@"C:\Users\james\source\repos\InventorySystem\mouser_digikey_part.txt", supplier + "," + partNum);
+                    // MessageBox.Show(description);
+                    // MessageBox.Show(description.Length.ToString());
+                    
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+            {
+                // open camera, perform OCR 
+                MessageBox.Show(supplier + "   " + partNum + "UNSUCCESSFUL");
+            }
+            System.Threading.Thread.Sleep(6000);
+            DateTime nowModified = File.GetLastWriteTime(descPath);
+            MessageBox.Show(nowModified.ToString());
+            if (nowModified > prevModified)
+            {
+                string description = File.ReadAllText(descPath, Encoding.UTF8);
+                Description.Text = description.Substring(2, description.Length - 4);
+            }
+            
+        }
+
+
+
         private void addItem_Click(object sender, RoutedEventArgs e)
         {
             List<string> placeholders = new List<string> { "@userName", "@partNum", "@supplier", "@qty", "@description", "@area", "@section", "@batchID", "@modelNum", "@serialNums", "@remarks"};

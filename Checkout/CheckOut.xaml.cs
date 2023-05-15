@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using InventorySystem.InventoryPage;
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Tls;
 
 namespace InventorySystem.Checkout
 {
@@ -114,15 +115,47 @@ namespace InventorySystem.Checkout
         //    ClearAll();
         //    Description.ItemsSource = products.Where(x => x.Description.ToLower().Contains(Description.Text.ToLower())).Select(x => x.Description).ToList();
         //}
+
+        // Autofill Area, Section, ModelNum, Supplier based on PartNum / Description (searchText) from Product Table
+        private void Fill_AreaSectionModelnumSupplier()
+        {
+            
+            // If user searches by Description
+            if (DescCheckbox.IsChecked == true && Description.SelectedValue != null)
+            {
+                var descSelected = Description.SelectedValue?.ToString() ?? "";
+
+            }
+        }
+
+
         private void Description_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //if (DescCheckbox.IsChecked == true && PartNumCheckbox.IsChecked == false)
+            //{
 
+            //}
+
+            List<string> partNumList = new List<string>();
             var descSelected = (sender as ComboBox).SelectedValue?.ToString() ?? "";
             ClearAll();
-            // PartNum.Text = "";
+            PartNum.Text = "";
             if (!string.IsNullOrEmpty(descSelected)) // Autofill PartNum if user searches by Description.
             {
-                PartNum.Text = products.Single(x => x.Description == descSelected).PartNum.ToString();
+                if (string.IsNullOrEmpty(PartNum.Text))
+                {
+                    partNumList = products.Where(x => x.Description == descSelected).Select(x => x.PartNum).ToList();
+                    if (partNumList.Count == 1)
+                    {
+                        PartNum.Text = partNumList[0];
+                    }
+                    else
+                    {
+                        MessageBox.Show("More than 1 PartNum found. Please select 1 from the following:");
+                        PartNum.Text = String.Join(',', partNumList.ToArray()).ToString();
+                        PartNum.IsReadOnly = false;
+                    }
+                }
             }
         }
 
@@ -139,7 +172,7 @@ namespace InventorySystem.Checkout
             {
                 if (prodSelected != null) // Product exists in ptable.
                 {
-                    if (string.IsNullOrEmpty(Description.Text)) // Autoselect Description if user searches by PartNum.
+                    if (Description.SelectedValue == null) // Autoselect Description if user searches by PartNum.
                     {
                         Description.SelectedValue = prodSelected.Description.ToString();
                     }
@@ -186,6 +219,67 @@ namespace InventorySystem.Checkout
                 }
             }
         }
+
+        //private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    BatchAndQty.Text = "BatchID, Remaining Qty \n";
+        //    string partNumSelected = PartNum.Text;
+        //    var prodSelected = products.SingleOrDefault(x => x.PartNum == partNumSelected);
+        //    List<string> batchIDList = new List<string>();
+        //    Dictionary<string, string> batchQtyDict = new Dictionary<string, string>();
+        //    ClearAll();
+        //    Description.Text = "";
+        //    if (!string.IsNullOrEmpty(partNumSelected))
+        //    {
+        //        if (prodSelected != null) // Product exists in ptable.
+        //        {
+        //            if (string.IsNullOrEmpty(Description.Text)) // Autoselect Description if user searches by PartNum.
+        //            {
+        //                Description.SelectedValue = prodSelected.Description.ToString();
+        //            }
+
+        //            batchIDList = items.Where(x => x.PartNum == partNumSelected).Select(x => x.BatchID).Distinct().ToList();
+        //            if (batchIDList.Count == 0) // Product has run out of stock in rtable.
+        //            {
+        //                PartNumWarning.Text = "WARNING: Product is out of stock.";
+        //                BatchID.ItemsSource = null;
+        //            }
+        //            else // Product still has stock in rtable.
+        //            {
+        //                PartNumWarning.Text = "";
+        //                // Autofill Area, Section, ModelNum, Supplier based on PartNum from Product Table
+        //                Area.Text = prodSelected.Area.ToString();
+        //                Section.Text = prodSelected.Section.ToString();
+        //                Supplier.Text = prodSelected.Supplier.ToString();
+        //                if (!string.IsNullOrEmpty(prodSelected.ModelNum.ToString()))
+        //                {
+        //                    ModelNumCheckbox.IsChecked = true;
+        //                    ModelNum.Text = prodSelected.ModelNum.ToString();
+        //                }
+
+        //                // Bind relevant BatchID with remaining Qty to BatchID ComboBox.
+        //                for (int i = 0; i < batchIDList.Count; i++)
+        //                {
+        //                    string batchID = batchIDList[i];
+        //                    List<int> currentQtyList = items.Where(x => x.BatchID == batchID).Select(x => Int32.Parse(x.Qty)).ToList();
+        //                    string currentQty = currentQtyList.Sum().ToString();
+        //                    batchQtyDict.Add(batchID, currentQty);
+        //                }
+        //                BatchAndQty.Text = BatchAndQty.Text + String.Join('\n', batchQtyDict);
+        //                BatchID.ItemsSource = batchIDList;
+        //                if (batchIDList.Count == 1)
+        //                {
+        //                    BatchID.SelectedValue = batchIDList[0];
+        //                }
+        //            }
+        //        }
+
+        //        else // Product does not exist in ptable.
+        //        {
+        //            PartNumWarning.Text = "WARNING: Product does not exist in product table.";
+        //        }
+        //    }
+        //}
 
         private void BatchID_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
