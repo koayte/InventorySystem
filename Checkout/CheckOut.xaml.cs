@@ -116,18 +116,6 @@ namespace InventorySystem.Checkout
         //    Description.ItemsSource = products.Where(x => x.Description.ToLower().Contains(Description.Text.ToLower())).Select(x => x.Description).ToList();
         //}
 
-        // Autofill Area, Section, ModelNum, Supplier based on PartNum / Description (searchText) from Product Table
-        private void Fill_AreaSectionModelnumSupplier()
-        {
-            
-            // If user searches by Description
-            if (DescCheckbox.IsChecked == true && Description.SelectedValue != null)
-            {
-                var descSelected = Description.SelectedValue?.ToString() ?? "";
-
-            }
-        }
-
 
         private void Description_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -139,24 +127,29 @@ namespace InventorySystem.Checkout
             List<string> partNumList = new List<string>();
             var descSelected = (sender as ComboBox).SelectedValue?.ToString() ?? "";
             ClearAll();
-            PartNum.Text = "";
-            if (!string.IsNullOrEmpty(descSelected)) // Autofill PartNum if user searches by Description.
+            if (!string.IsNullOrEmpty(descSelected)) 
             {
-                if (string.IsNullOrEmpty(PartNum.Text))
+                if (DescCheckbox.IsChecked == true) // Autofill PartNum if user searches by Description.
                 {
                     partNumList = products.Where(x => x.Description == descSelected).Select(x => x.PartNum).ToList();
                     if (partNumList.Count == 1)
                     {
                         PartNum.Text = partNumList[0];
+                        choosePart.Visibility = Visibility.Hidden;
                     }
                     else
                     {
-                        MessageBox.Show("More than 1 PartNum found. Please select 1 from the following:");
-                        PartNum.Text = String.Join(',', partNumList.ToArray()).ToString();
-                        PartNum.IsReadOnly = false;
+                        MessageBox.Show("More than 1 PartNum found. Please select 1.");
+                        choosePart.Visibility = Visibility.Visible;
+                        choosePartBox.ItemsSource = partNumList;
                     }
                 }
             }
+        }
+
+        private void confirmPart_Click(object sender, RoutedEventArgs e)
+        {
+            PartNum.Text = choosePartBox.SelectedItem as string;
         }
 
         private void PartNum_TextChanged(object sender, TextChangedEventArgs e)
@@ -167,12 +160,11 @@ namespace InventorySystem.Checkout
             List<string> batchIDList = new List<string>();
             Dictionary<string, string> batchQtyDict = new Dictionary<string, string>();
             ClearAll();
-            Description.Text = "";
             if (!string.IsNullOrEmpty(partNumSelected))
             {
                 if (prodSelected != null) // Product exists in ptable.
                 {
-                    if (Description.SelectedValue == null) // Autoselect Description if user searches by PartNum.
+                    if (PartNumCheckbox.IsChecked == true) // Autoselect Description if user searches by PartNum.
                     {
                         Description.SelectedValue = prodSelected.Description.ToString();
                     }
@@ -384,6 +376,8 @@ namespace InventorySystem.Checkout
 
             // Send caret position back to PartNum textbox.
             PartNum.Focus();
+
+            choosePart.Visibility = Visibility.Hidden;
         }
 
         private void checkOut_Click(object sender, RoutedEventArgs e)

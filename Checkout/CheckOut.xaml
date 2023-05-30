@@ -91,8 +91,8 @@
                     </WrapPanel>
                     <TextBox x:Name="PartNum" 
                               TextChanged="PartNum_TextChanged"
-                              />
-                    <!--IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked}"-->
+                              IsEnabled="{Binding ElementName=PartNumCheckbox, Path=IsChecked}"/>
+                    <!---->
                 </StackPanel>
 
                 <!-- Description -->
@@ -109,8 +109,9 @@
                               SelectedValuePath="Description"
                               IsTextSearchEnabled="True" 
                               SelectionChanged="Description_SelectionChanged"
-                              SelectedValue="Description"/>
-                    <!--IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked}"-->
+                              SelectedValue="Description"
+                              IsEnabled="{Binding ElementName=DescCheckbox, Path=IsChecked}"/>
+                    <!---->
 
                     <!-- TextBoxBase.TextChanged="Description_TextChanged" -->
                 </StackPanel>
@@ -204,6 +205,15 @@
                               Foreground="Gray">
                             </TextBox>
                         </StackPanel>
+                    </StackPanel>
+                    
+                    <!-- 6th row -->
+                    <StackPanel x:Name="choosePart" Orientation="Horizontal" Visibility="Hidden">
+                        <TextBlock Text="Choose PartNum" Style="{StaticResource TextLabels}"/>
+                        <ComboBox x:Name="choosePartBox" Margin="19,6,0,0"
+                              SelectedItem="PartNum">
+                        </ComboBox>
+                        <Button x:Name="confirmPart" Content="Confirm" Width="80" Margin="19,6,0,0" Click="confirmPart_Click"/>
                     </StackPanel>
                 </StackPanel>
 
