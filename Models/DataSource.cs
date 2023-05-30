@@ -16,6 +16,8 @@ namespace InventorySystem.InventoryPage
         public ObservableCollection<string> sections { get; set; }
         public ObservableCollection<User> users { get; set; }
         public ObservableCollection<ItemAction> itemActions { get; set; }
+        public List<string> histPartNums { get; set; }
+        public List<string> histActions { get; set; }
         public List<string> partNums { get; set; }
         public List<string> suppliers { get; set; }
         public ObservableCollection<Product> products { get; set; }
@@ -31,6 +33,8 @@ namespace InventorySystem.InventoryPage
             users = new ObservableCollection<User>();
             LoadUserData();
             itemActions = new ObservableCollection<ItemAction>();
+            histPartNums = new List<string>();
+            histActions = new List<string>();
             LoadItemActionData();
             suppliers = new List<string>();
             LoadSupplierData();
@@ -176,6 +180,16 @@ namespace InventorySystem.InventoryPage
                         Remarks = remarks,
                         Time = time
                     });
+
+                    if (!histPartNums.Contains(partNum))
+                    {
+                        histPartNums.Add(partNum);
+                    }
+
+                    if (!histActions.Contains(status))
+                    {
+                        histActions.Add(status);
+                    }
                 }
             }
         }

@@ -10,6 +10,7 @@
       Title="History"
       Background="White">
     <Page.Resources>
+        <local:WidthConverter x:Key="WidthConverter"/>
         <local:DataSource x:Key="myData" />
         <input:ExportValidationConverter x:Key="ExportValidationConverter" />
 
@@ -65,18 +66,77 @@
             </Style.Resources>
         </Style>
 
-        <CollectionViewSource x:Name="cvActions" x:Key="cvsActions" Source="{Binding Source={StaticResource myData}, Path=itemActions}">
+        <CollectionViewSource x:Name="cvActions" x:Key="cvsActions" Source="{Binding Source={StaticResource myData}, Path=itemActions}" Filter="cvs_Filter">
         </CollectionViewSource>
     </Page.Resources>
     <Grid>
-        <DataGrid Margin="20,70,20,70"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="13*"/>
+            <RowDefinition Height="137*"/>
+        </Grid.RowDefinitions>
+        <WrapPanel Margin="20,10,20,0" Grid.Row="0" >
+            <TextBlock Margin="0,0,10,0" VerticalAlignment="Center">From:</TextBlock>
+            <DatePicker x:Name="StartDate" Height="27" Margin="0,0,10,0" VerticalAlignment="Center" TextBoxBase.TextChanged="Search_TextChanged"></DatePicker>
+            <TextBlock Margin="0,0,10,0" VerticalAlignment="Center">To:</TextBlock>
+            <DatePicker x:Name="EndDate" Height="27" Margin="0,0,10,0" VerticalAlignment="Center" TextBoxBase.TextChanged="Search_TextChanged"></DatePicker>
+            <TextBlock VerticalAlignment="Center">Please select both dates to see the filtered view.</TextBlock>
+        </WrapPanel>
+
+        <!-- Search boxes -->
+        <StackPanel Margin="20,5,20,20" Orientation="Horizontal" Grid.Row="1">
+            <StackPanel.Resources>
+                <Style TargetType="TextBox">
+                    <Setter Property="Height" Value="23"/>
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="3,0,0,0"/>
+                    <Setter Property="BorderThickness" Value="0.5"/>
+                    <!-- <Setter Property="Background" Value="#EDEDED"/> -->
+                    <Setter Property="Margin" Value="0,0,5,0"/>
+                </Style>
+
+                <Style TargetType="ComboBox">
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="BorderThickness" Value="0.5"/>
+                    <Setter Property="Margin" Value="0,0,5,0"/>
+                    <Setter Property="Height" Value="23"/>
+                </Style>
+
+            </StackPanel.Resources>
+
+            <ComboBox Width="{Binding ActualWidth, ElementName=UserHeader, Converter={StaticResource WidthConverter}}" x:Name="UserSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged"
+                      ItemsSource="{Binding Source={StaticResource myData}, Path=users}" DisplayMemberPath="Name"/>
+            <ComboBox Width="{Binding ActualWidth, ElementName=PartNumHeader, Converter={StaticResource WidthConverter}}" x:Name="PartNumSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged"
+                      ItemsSource="{Binding Source={StaticResource myData}, Path=histPartNums}"/>
+            <ComboBox Width="{Binding ActualWidth, ElementName=StatusHeader, Converter={StaticResource WidthConverter}}" x:Name="StatusSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged"
+                      ItemsSource="{Binding Source={StaticResource myData}, Path=histActions}"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=BatchHeader, Converter={StaticResource WidthConverter}}" x:Name="BatchSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=DescHeader, Converter={StaticResource WidthConverter}}" x:Name="DescSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=QtyHeader, Converter={StaticResource WidthConverter}}" x:Name="QtySearch" TextChanged="Search_TextChanged"/>
+            <ComboBox Width="{Binding ActualWidth, ElementName=AreaHeader, Converter={StaticResource WidthConverter}}" x:Name="AreaSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged" 
+                      ItemsSource="{Binding Source={StaticResource myData}, Path=areas}"/>
+            <ComboBox Width="{Binding ActualWidth, ElementName=SecHeader}" x:Name="SecSearch" IsEditable="True" TextBoxBase.TextChanged="Search_TextChanged"
+                      ItemsSource="{Binding Source={StaticResource myData}, Path=sections}"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=ModelNumHeader, Converter={StaticResource WidthConverter}}" x:Name="ModelNumSearch" TextChanged="Search_TextChanged"/>
+            <TextBox Width="{Binding ActualWidth, ElementName=SerialNumsHeader, Converter={StaticResource WidthConverter}}" x:Name="SerialNumSearch" TextChanged="Search_TextChanged"/>
+            <Button Width="70" Height="23" VerticalAlignment="Top" Padding="0,0,0,3" HorizontalAlignment="Right" Content="Reset" Margin="0,0,0,0" Click="ResetFilters_Click"/>
+
+            <!--<DatePicker Width="{Binding ActualWidth, ElementName=DateHeader}"
+                        Background="#ededed"
+                        x:Name="DateSearch"
+                        TextBoxBase.TextChanged="Search_TextChanged"
+                        SelectedDate="{Binding MyDate, StringFormat=dd-mm-yyyy}" />-->
+        </StackPanel>
+
+        <DataGrid x:Name="historyGrid" 
+                  Margin="20,31,20,70"
                   AutoGenerateColumns="False"
                   BorderThickness="0"
                   Style="{StaticResource dataGridStyle}"
                   RowStyle="{StaticResource dataGridRowStyle}"
                   CellStyle="{StaticResource dataGridCellStyle}"
                   ColumnHeaderStyle="{StaticResource dataGridHeaderStyle}"
-                  ItemsSource="{Binding Source={StaticResource cvsActions}}">
+                  ItemsSource="{Binding Source={StaticResource cvsActions}}" Grid.Row="1">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="User" Width="1.5*" x:Name="UserHeader">
                     <DataGridTemplateColumn.CellTemplate>
@@ -85,7 +145,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
+
                 <DataGridTemplateColumn Header="Part Number" Width="3*" x:Name="PartNumHeader">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -176,22 +236,10 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="19,0,0,0">
-            <StackPanel>
-                <TextBlock Text="Export from..." FontSize="15"/>
-                <DatePicker x:Name="StartDate" Height="27" Margin="0,3,0,19"/>
-            </StackPanel>
-            <StackPanel Margin="19,0,0,0">
-                <TextBlock Text="To..." FontSize="15"/>
-                <DatePicker x:Name="EndDate" Height="27" Margin="0,3,0,19"/>
-            </StackPanel>
-            <Button Content="Export to .csv" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Export_Click" Margin="19,0,0,19">
-                <Button.IsEnabled>
-                    <MultiBinding Converter="{StaticResource ExportValidationConverter}">
-                        <Binding ElementName="StartDate" Path="Text"/>
-                        <Binding ElementName="EndDate" Path="Text"/>
-                    </MultiBinding>
-                </Button.IsEnabled>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="19,0,0,0" Grid.Row="1">
+            <Button Content="Export All" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="ExportAll_Click" Margin="0,0,19,19">
+            </Button>
+            <Button Content="Export View" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="ExportView_Click" Margin="0,0,19,19">
             </Button>
         </StackPanel>
     </Grid>

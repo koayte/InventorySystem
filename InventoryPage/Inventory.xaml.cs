@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace InventorySystem.InventoryPage
                 bool SecFilter = string.IsNullOrEmpty(SecSearch.Text) || item.Section.Contains(SecSearch.Text);
                 bool ModelNumFilter = string.IsNullOrEmpty(ModelNumSearch.Text) || item.ModelNum.Contains(ModelNumSearch.Text);
                 bool SerialNumFilter = string.IsNullOrEmpty(SerialNumSearch.Text) || item.SerialNums.Contains(SerialNumSearch.Text);
-                e.Accepted = PartNumFilter && BatchIDFilter && DescFilter && QtyFilter && AreaFilter && SecFilter && ModelNumFilter && SerialNumFilter;
+                e.Accepted = PartNumFilter && BatchIDFilter && DescFilter && SupplierFilter && QtyFilter && AreaFilter && SecFilter && ModelNumFilter && SerialNumFilter;
             }
         }
 
@@ -144,14 +145,11 @@ namespace InventorySystem.InventoryPage
 
         private void Export()
         {
-            string startDate = GetFormattedDate(StartDate);
-            string endDate = GetFormattedDate(EndDate);
-
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 string commandText = "SELECT 'UserName', 'PartNum', 'BatchID', 'Supplier', 'Description', 'Qty', 'Area', 'Section', 'ModelNum', 'SerialNums', 'Remarks', 'Datetime' " +
                     "UNION ALL " +
-                    "SELECT UserName, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks, Time FROM rtable WHERE Date BETWEEN @startDate AND @endDate " +
+                    "SELECT UserName, PartNum, BatchID, Supplier, Description, Qty, Area, Section, ModelNum, SerialNums, Remarks, Time FROM rtable " +
                     "INTO OUTFILE @path " +
                     "FIELDS TERMINATED BY ',' " +
                     "ENCLOSED BY '\"' " +
@@ -161,12 +159,18 @@ namespace InventorySystem.InventoryPage
                 connection.Open();
                 using (MySqlCommand cmd = new MySqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.AddWithValue("@startDate", startDate);
-                    cmd.Parameters.AddWithValue("@endDate", endDate);
                     cmd.Parameters.AddWithValue("@path", path);
                     if (cmd.ExecuteNonQuery() > 0)
                     {
                         MessageBox.Show("Export successful!");
+                        try
+                        {
+                            Process.Start("explorer.exe", @"C:\ProgramData\MySQL\MySQL Server 8.0\Uploads");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                        }
                     }
                 }
                 connection.Close();
