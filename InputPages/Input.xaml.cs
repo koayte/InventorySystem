@@ -20,6 +20,8 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using InventorySystem.InventoryPage;
 using System.IO;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace InventorySystem
 {
@@ -31,6 +33,7 @@ namespace InventorySystem
         public string connectionString = "SERVER=localhost; DATABASE=inventory; UID=semi; PASSWORD=semitech;";
         private DispatcherTimer timer;
         private List<TextBox> inputBoxes;
+        private FileSystemWatcher watcher;
 
         public Input()
         {
@@ -250,6 +253,8 @@ namespace InventorySystem
 
             // Send caret position back to PartNum textbox.
             PartNum.Focus();
+
+            chooseDesc.Visibility = Visibility.Hidden;
         }
 
         // Add user input in Supplier ComboBox to Suppliers table in db.
@@ -295,41 +300,94 @@ namespace InventorySystem
 
         // Buttons
         private void fillDesc_Click(object sender, RoutedEventArgs e)
-        {
-            string descPath = "C:\\Users\\james\\source\\repos\\InventorySystem\\description.txt";
-            DateTime prevModified = File.GetLastWriteTime(descPath);
+        {     
             var supplier = Supplier.Text.Trim();
-            var partNum = PartNum.Text.Trim();
-            if (supplier == "Mouser" || supplier == "Digi-Key")
-            {
+            
+            CreateFileWatcher("C:\\Users\\james\\source\\repos\\InventorySystem");
+            if (supplier == "Digi-Key") {
+                var index_p = PartNum.Text.IndexOf('P');
+                var index_nd = PartNum.Text.IndexOf("-ND");
+                var partNum = PartNum.Text.Substring(index_p + 1, index_nd - index_p + 2);
+                MessageBox.Show(partNum);
+                PartNum.Text = partNum;
+                Supplier.Text = "Digi-Key";
                 try
                 {
                     File.AppendAllText(@"C:\Users\james\source\repos\InventorySystem\mouser_digikey_part.txt", supplier + "," + partNum);
-                    // MessageBox.Show(description);
-                    // MessageBox.Show(description.Length.ToString());
-                    
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message + '\n' + "Please try again.");
                 }
             }
+
             else
             {
-                // open camera, perform OCR 
-                MessageBox.Show(supplier + "   " + partNum + "UNSUCCESSFUL");
+                // search thru Mouser API first. if no results, redirect to OCR.
+                var partNum = PartNum.Text.Trim();
+                try
+                {
+                    File.AppendAllText(@"C:\Users\james\source\repos\InventorySystem\mouser_digikey_part.txt", supplier + "," + partNum);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + '\n' + "Please try again.");
+                }
             }
-            System.Threading.Thread.Sleep(6000);
-            DateTime nowModified = File.GetLastWriteTime(descPath);
-            MessageBox.Show(nowModified.ToString());
-            if (nowModified > prevModified)
+        }
+
+        public void CreateFileWatcher(string path)
+        {
+            watcher = new FileSystemWatcher();
+            watcher.Path = path;
+            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite;
+            watcher.Filter = "description.txt";
+
+            // Add event handlers
+            watcher.Changed += new FileSystemEventHandler(OnChanged);
+
+            // Begin watching
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void OnChanged(object source, FileSystemEventArgs e)
+        {
+            //MessageBox.Show("HELP");
+            try
             {
-                string description = File.ReadAllText(descPath, Encoding.UTF8);
-                Description.Text = description.Substring(2, description.Length - 4);
+                string descPath = "C:\\Users\\james\\source\\repos\\InventorySystem\\description.txt";
+                string descString = File.ReadAllText(descPath, Encoding.UTF8);
+                List<string> descList = descString.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+                MessageBox.Show("Number of descriptions found: " + descList.Count.ToString());
+                if (descList.Count == 1)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        chooseDesc.Visibility = Visibility.Hidden;
+                        Description.Text = descList[0];
+                    });
+                }
+                else if (descList.Count > 1)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        chooseDesc.Visibility = Visibility.Visible;
+                        chooseDescBox.ItemsSource = descList;
+                    });
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + '\n' + "Please try again.");
             }
             
         }
 
+        private void confirmDesc_Click(object sender, RoutedEventArgs e)
+        {
+            Description.Text = chooseDescBox.SelectedItem as string;
+        }
 
 
         private void addItem_Click(object sender, RoutedEventArgs e)

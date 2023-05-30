@@ -148,6 +148,16 @@
                 <TextBox x:Name="Remarks" KeyUp="Control_Enter" GotFocus="TextBox_GotFocus" Width="423"/>
             </StackPanel>
             
+            <!-- Sixth row, Description Choose -->
+            <StackPanel x:Name="chooseDesc" Visibility="Hidden" Orientation="Vertical" Margin="0,5,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Choose Desc" Style="{StaticResource TextLabels}"/>
+                    <ComboBox x:Name="chooseDescBox" Margin="19,6,0,0"
+                              SelectedItem="Description"/>
+                    <Button x:Name="confirmDesc" Content="Confirm" Width="80" Margin="19,6,0,0" Click="confirmDesc_Click"/>
+                </StackPanel>
+            </StackPanel>
+            
             <!-- Warnings -->
             <StackPanel>
                 <TextBlock x:Name="PartNumWarning" Style="{StaticResource WarningLabels}"  Height="Auto"/>
